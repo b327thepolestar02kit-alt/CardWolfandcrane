@@ -1,0 +1,1619 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b1020">
+  <meta name="description" content="メダルで遊べるクレーンゲーム">
+  <title>クレーンゲーム | PRIZE CATCHER</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=v482">
+  <style>
+    :root{--cg-bg:#070b15;--cg-panel:#111827;--cg-panel2:#182338;--cg-line:#334155;--cg-blue:#45b8ff;--cg-cyan:#76f4ff;--cg-yellow:#ffd86a;--cg-pink:#ff78b7;--cg-green:#67e8a5}
+    *{box-sizing:border-box}
+    body.crane-body{margin:0;background:radial-gradient(circle at 50% 10%,#203653 0,#0c1322 34%,#050811 80%);color:#eef5ff;overflow-x:hidden;font-family:"Zen Kaku Gothic New",system-ui,sans-serif}
+    .crane-shell{min-height:100dvh;padding:10px 10px 34px;position:relative}
+    .crane-top{width:min(1180px,100%);margin:auto;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:7px 2px 10px}
+    .cg-logo{font-weight:900;letter-spacing:.06em;font-size:clamp(1rem,2.5vw,1.35rem);text-shadow:0 0 16px rgba(118,244,255,.45)}
+    .cg-logo small{display:block;font-size:.55em;color:#93a7bf;letter-spacing:.18em;font-weight:700}
+    .medal-pill{display:flex;align-items:center;gap:8px;padding:8px 13px;border-radius:999px;background:rgba(7,13,25,.85);border:1px solid #3e5878;box-shadow:0 4px 20px rgba(0,0,0,.25);font-weight:900}
+    .medal-pill img{width:25px;height:25px;object-fit:contain}
+    .medal-pill strong{color:var(--cg-yellow);font-size:1.1rem}
+    .cg-layout{width:min(1180px,100%);margin:auto;display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:14px}
+    .machine-wrap{position:relative;padding:12px;border-radius:24px;background:linear-gradient(145deg,#263b54,#0c1422 55%,#070c16);border:1px solid #4c6c8e;box-shadow:0 25px 70px rgba(0,0,0,.45),inset 0 1px rgba(255,255,255,.1)}
+    .machine-head{height:54px;border-radius:16px 16px 9px 9px;background:linear-gradient(#4e6d89,#24384e 55%,#18273a);border:1px solid #6f8da7;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+    .machine-head:before{content:"PRIZE CATCHER";font-size:clamp(1rem,3vw,1.65rem);font-weight:900;letter-spacing:.12em;color:#d9f6ff;text-shadow:0 0 13px #42bde9;opacity:.95}
+    .machine-head:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent);animation:shine 4s linear infinite}
+    @keyframes shine{from{transform:translateX(-120%)}to{transform:translateX(120%)}}
+    .cabinet{position:relative;margin-top:9px;aspect-ratio:16/9;min-height:390px;border-radius:15px;background:linear-gradient(180deg,#132237,#07101c);border:8px solid #293c51;box-shadow:inset 0 0 0 2px #6d89a0,inset 0 -60px 80px rgba(0,0,0,.35);overflow:hidden}
+    .glass{position:absolute;inset:9px 9px 70px;border:2px solid rgba(172,224,255,.32);border-radius:9px;background:linear-gradient(180deg,rgba(127,199,231,.12),rgba(7,15,26,.25) 54%,rgba(0,0,0,.55));overflow:hidden}
+    .glass:after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,rgba(255,255,255,.09),transparent 22%,transparent 70%,rgba(255,255,255,.04));pointer-events:none}
+    .top-rail{position:absolute;left:7%;right:7%;top:8%;height:12px;border-radius:10px;background:linear-gradient(#c6d7e4,#526b81 45%,#23374b);box-shadow:0 4px 8px #0008}
+    .rail-light{position:absolute;left:8%;right:8%;top:7.3%;height:3px;background:#9cefff;box-shadow:0 0 13px #53d9ff}
+    .crane-carriage{position:absolute;top:5.7%;left:var(--carriage-left,45%);width:70px;height:45px;transform:translateX(-50%);transition:left .16s ease-out;z-index:7}
+    .carriage-body{height:30px;border-radius:7px 7px 11px 11px;background:linear-gradient(#dce8f0,#748ba0 48%,#304457);border:2px solid #9bb2c3;box-shadow:0 4px 8px #0009}
+    .cable{position:absolute;left:50%;top:29px;width:5px;height:var(--cable-height,118px);transform:translateX(-50%);background:linear-gradient(90deg,#15212e,#e1edf4,#1a2836);z-index:5;transition:height .35s ease}
+    .claw{position:absolute;left:50%;top:calc(29px + var(--cable-height,118px));width:80px;height:58px;transform:translate(-50%,-3px);z-index:8;transition:top .35s ease}
+    .claw-ring{position:absolute;left:50%;top:0;width:27px;height:27px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(circle at 35% 30%,#f5fbff,#8296a9 45%,#34495c 70%);border:2px solid #b7c7d2}
+    .finger{position:absolute;top:19px;width:29px;height:48px;border:7px solid #aebdca;border-top:0;border-radius:0 0 18px 18px;filter:drop-shadow(0 4px 3px #0008)}
+    .finger.left{left:6px;transform:rotate(18deg)}.finger.right{right:6px;transform:rotate(-18deg)}
+    .claw.grabbing .finger.left{transform:rotate(1deg) translateX(9px)}.claw.grabbing .finger.right{transform:rotate(-1deg) translateX(-9px)}
+    .prize-bed{position:absolute;left:5%;right:5%;bottom:5%;height:42%;border-radius:20px 20px 8px 8px;background:radial-gradient(circle at 15% 25%,#334a62 0 2px,transparent 3px),radial-gradient(circle at 70% 35%,#263b50 0 2px,transparent 3px),linear-gradient(180deg,#1e3146,#0c1827);box-shadow:inset 0 12px 30px rgba(0,0,0,.25);overflow:hidden}
+    .prize-bed:before{content:"";position:absolute;left:0;right:0;top:0;height:13px;background:linear-gradient(#57728a,#2c4358);box-shadow:0 2px 7px #0008}
+    .prizes{position:absolute;left:0;right:0;bottom:7%;height:78%;display:flex;align-items:flex-end;justify-content:center;gap:clamp(3px,1vw,14px);flex-wrap:wrap;overflow:hidden}
+    .plush{--p:#e6a7ad;--p2:#b86c7a;width:clamp(56px,9vw,92px);height:clamp(64px,11vw,105px);position:relative;flex:0 0 auto;filter:drop-shadow(0 5px 4px #0008);transition:transform .2s}
+    .plush:hover{transform:translateY(-5px) rotate(-2deg)}
+    .plush .body{position:absolute;left:11%;right:11%;bottom:0;height:72%;border-radius:45% 45% 38% 38%;background:radial-gradient(circle at 34% 24%,rgba(255,255,255,.55),transparent 18%),linear-gradient(145deg,var(--p),var(--p2));border:2px solid rgba(255,255,255,.18)}
+    .plush .ear{position:absolute;top:4%;width:31%;height:31%;background:linear-gradient(145deg,var(--p),var(--p2));border:2px solid rgba(255,255,255,.18);border-radius:55% 55% 30% 30%;z-index:-1}.plush .ear.l{left:13%;transform:rotate(-24deg)}.plush .ear.r{right:13%;transform:rotate(24deg)}
+    .plush .face{position:absolute;left:27%;right:27%;top:24%;height:29%;border-radius:50%;background:rgba(255,245,230,.38)}
+    .plush .eye{position:absolute;top:38%;width:6px;height:8px;border-radius:50%;background:#1d2632}.plush .eye.l{left:35%}.plush .eye.r{right:35%}.plush .mouth{position:absolute;left:44%;top:57%;width:13%;height:8px;border-bottom:2px solid #633a44;border-radius:50%}
+    .plush .belly{position:absolute;left:28%;right:28%;bottom:16%;height:30%;border-radius:50%;background:rgba(255,255,255,.2)}
+    .plush[data-type="cat"]{--p:#f4c77c;--p2:#d68d44}.plush[data-type="rabbit"]{--p:#eeeaf6;--p2:#b6a7d6}.plush[data-type="penguin"]{--p:#526d96;--p2:#263957}.plush[data-type="fox"]{--p:#ffb46c;--p2:#d76d3b}.plush[data-type="frog"]{--p:#8dd67c;--p2:#3e9a63}.plush[data-type="panda"]{--p:#e9eef2;--p2:#9ba8b3}.plush[data-type="shark"]{--p:#79c7dc;--p2:#3f7896}
+    .control-bar{position:absolute;left:5%;right:5%;bottom:10px;height:52px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 9px;border-radius:10px;background:linear-gradient(#243a50,#101c2b);border:1px solid #5b748a;z-index:10}
+    .remaining{font-weight:900;font-size:.82rem;color:#d9e9f6;white-space:nowrap}.remaining strong{color:var(--cg-yellow);font-size:1.2rem;letter-spacing:.08em;min-width:2ch;display:inline-block;text-align:right}
+    .control-buttons{display:flex;gap:8px}.cg-btn{min-width:76px;border:1px solid #6b8398;border-radius:8px;background:linear-gradient(#4b6379,#1b2b3d);color:#fff;font-weight:900;padding:8px 12px;cursor:pointer;box-shadow:inset 0 1px rgba(255,255,255,.18),0 3px 5px #0007}.cg-btn:hover{filter:brightness(1.15)}.cg-btn:active{transform:translateY(1px)}.cg-btn:disabled{opacity:.42;cursor:not-allowed}.cg-btn.play{background:linear-gradient(#ffd76c,#9f691b);color:#21170a;border-color:#ffe6a0}.cg-btn.stop{background:linear-gradient(#8cecff,#2e6e9a);color:#061522}
+    .machine-lights{position:absolute;left:5%;right:5%;bottom:63px;height:5px;display:flex;gap:5px}.machine-lights i{flex:1;border-radius:8px;background:#4fdfff;box-shadow:0 0 12px #4fdfff;animation:blink 1.2s infinite alternate}.machine-lights i:nth-child(2){animation-delay:.25s}.machine-lights i:nth-child(3){animation-delay:.5s}.machine-lights i:nth-child(4){animation-delay:.75s}@keyframes blink{from{opacity:.25}to{opacity:1}}
+    .side-panel{display:flex;flex-direction:column;gap:12px}.cg-card{background:linear-gradient(145deg,rgba(22,34,53,.96),rgba(9,15,26,.96));border:1px solid #38516c;border-radius:18px;padding:16px;box-shadow:0 12px 35px rgba(0,0,0,.3)}.cg-card h2{font-size:1rem;margin:0 0 11px}.cg-card p{font-size:.78rem;color:#aabbd0;line-height:1.7;margin:0}.cost{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-radius:12px;background:#0a1220;border:1px solid #2c425a;margin:10px 0}.cost strong{color:var(--cg-yellow);font-size:1.3rem}.notice{font-size:.72rem;color:#8196ac;margin-top:8px}
+    .collection-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.collection-item{position:relative;min-width:0;aspect-ratio:.83;border-radius:10px;background:#0a1220;border:1px solid #2d4158;overflow:hidden;cursor:pointer}.collection-item.locked{opacity:.38;filter:grayscale(1)}.collection-item .mini-plush{transform:scale(.52);transform-origin:center top;position:absolute;left:50%;top:2px}.collection-item .qty{position:absolute;right:4px;bottom:4px;background:#15253a;border-radius:8px;padding:2px 5px;font-size:.62rem;font-weight:900;color:#fff}.collection-item .rarity{position:absolute;left:4px;top:4px;font-size:.52rem;color:#b8c9d9}.collection-item .cname{position:absolute;left:3px;right:3px;bottom:23px;text-align:center;font-size:.56rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .back-button{width:100%;display:flex;justify-content:center;text-decoration:none}.reset-note{font-size:.65rem!important;color:#697e96!important;margin-top:10px!important}
+    .status-toast{position:fixed;left:50%;bottom:25px;transform:translate(-50%,20px);padding:11px 16px;border-radius:999px;background:rgba(4,9,17,.95);border:1px solid #5d7690;box-shadow:0 10px 35px #0009;opacity:0;pointer-events:none;transition:.25s;z-index:50;font-weight:900}.status-toast.show{opacity:1;transform:translate(-50%,0)}
+    .win-overlay{position:fixed;inset:0;display:grid;place-items:center;background:radial-gradient(circle,rgba(20,42,72,.68),rgba(2,5,11,.93));opacity:0;pointer-events:none;z-index:40;transition:.25s}.win-overlay.show{opacity:1;pointer-events:auto}.win-card{text-align:center;transform:scale(.82);transition:.35s}.win-overlay.show .win-card{transform:scale(1)}.win-card .burst{font-size:clamp(2rem,8vw,5.8rem);font-weight:900;letter-spacing:.08em;color:#fff;text-shadow:0 0 10px #72f2ff,0 0 32px #4b9dff,0 8px 0 #172d48}.win-card .got{margin-top:8px;color:#dffcff;font-size:1.15rem;font-weight:900}.win-card .win-plush{margin:14px auto 18px;transform:scale(1.55);width:100px;height:115px}.win-card button{padding:11px 22px;border-radius:999px;border:1px solid #9edfff;background:linear-gradient(#72eaff,#2b729f);color:#04131f;font-weight:900;cursor:pointer}
+    .move-hint{position:absolute;left:50%;top:22%;transform:translateX(-50%);font-size:.65rem;color:#d9edf8;background:#0b1523b8;border:1px solid #54708a;border-radius:999px;padding:5px 10px;z-index:12;white-space:nowrap;transition:opacity .25s}.move-hint.hide{opacity:0}
+    @media(max-width:980px){.cg-layout{grid-template-columns:1fr}.side-panel{display:grid;grid-template-columns:1fr 1fr}.side-panel .collection-card{grid-column:1/-1}.machine-wrap{max-width:900px;margin:auto;width:100%}}
+    /* v151-v153: depth stack + independent pinch + dynamic carry/drop physics */
+    .claw.finger-contact-left .finger.l{animation:fingerPinchL .24s ease}
+    .claw.finger-contact-right .finger.r{animation:fingerPinchR .24s ease}
+    .prize-slot.graze{filter:drop-shadow(0 0 10px rgba(255,180,80,.8));animation:grazeWobble .38s ease}
+    .carried-prize.slipping{animation:carrySlip .36s ease-in forwards}
+    @keyframes fingerPinchL{0%,100%{transform:rotate(0)}50%{transform:rotate(-9deg)}}
+    @keyframes fingerPinchR{0%,100%{transform:rotate(0)}50%{transform:rotate(9deg)}}
+    @keyframes grazeWobble{0%,100%{transform:translateX(-50%) rotate(var(--rot))}50%{transform:translateX(calc(-50% + 4px)) rotate(calc(var(--rot) + 5deg))}}
+    @keyframes carrySlip{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(28px) rotate(10deg);opacity:.35}}
+    .prize-slot.pushed{animation:prizePushed .48s ease}
+    @keyframes prizePushed{0%,100%{transform:translateX(-50%) rotate(var(--rot))}45%{transform:translateX(calc(-50% + var(--push-x,6px))) rotate(calc(var(--rot) + 4deg))}75%{transform:translateX(calc(-50% + var(--push-x,6px))) rotate(calc(var(--rot) - 2deg))}}
+    .prize-slot.depth-back{filter:saturate(.9) brightness(.88);z-index:2}.prize-slot.depth-mid{z-index:5}.prize-slot.depth-front{z-index:9}
+    .prize-slot.occluded{filter:saturate(.82) brightness(.78);opacity:.88}
+    .prize-slot.pinch-left,.prize-slot.pinch-right{outline:2px solid rgba(255,220,110,.35);outline-offset:2px}
+    .prize-slot.partial-grip{animation:partialGrip .42s ease}.prize-slot.solid-grip{filter:drop-shadow(0 0 16px rgba(118,244,255,.95))}
+    @keyframes partialGrip{0%,100%{transform:translateX(-50%) rotate(var(--rot,0deg))}50%{transform:translateX(calc(-50% + var(--graze-shift,4px))) rotate(calc(var(--rot,0deg) + 6deg))}}
+    .carried-prize.drop-recover{animation:dropRecover .48s ease-out forwards}
+    @keyframes dropRecover{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(42px) rotate(12deg);opacity:0}}
+    .carried-prize.return-swing{animation:returnSwing .9s cubic-bezier(.2,.7,.3,1)}
+    @keyframes returnSwing{0%{transform:translateX(0) rotate(0)}22%{transform:translateX(-10px) rotate(-4deg)}48%{transform:translateX(12px) rotate(5deg)}72%{transform:translateX(-6px) rotate(-3deg)}100%{transform:translateX(0) rotate(0)}}
+    .chute-drop-item{position:absolute;left:6%;bottom:4px;width:78px;height:92px;z-index:26;pointer-events:none;animation:chuteDrop .72s cubic-bezier(.2,.8,.3,1) forwards}
+    @keyframes chuteDrop{0%{opacity:1;transform:translate(-50%,-120px) rotate(-10deg) scale(.92)}42%{opacity:1;transform:translate(calc(-50% + 9px),-52px) rotate(9deg) scale(1)}72%{opacity:1;transform:translate(calc(-50% - 3px),-10px) rotate(-4deg) scale(.98)}100%{opacity:0;transform:translate(calc(-50% + 2px),18px) rotate(12deg) scale(.9)}}
+    .prize-bed.depth-active .prize-slot.near{filter:drop-shadow(0 0 11px rgba(255,216,106,.95))}
+
+    /* v147/v148: contact, grip, weight and chute physics */
+    .claw.grip-lock{animation:gripLock .22s ease-in-out 2}
+    @keyframes gripLock{0%,100%{filter:drop-shadow(0 4px 3px #0008)}50%{filter:drop-shadow(0 0 10px rgba(255,255,255,.75))}}
+    .prize-slot.contacting{animation:prizeContact .28s ease-in-out 2}
+    @keyframes prizeContact{0%,100%{margin-left:0;transform:translateX(-50%) rotate(var(--rot))}50%{margin-left:2px;transform:translateX(-50%) rotate(calc(var(--rot) + 3deg))}}
+    .prize-slot.slip{animation:prizeSlip .5s ease-out forwards}
+    @keyframes prizeSlip{0%{transform:translateX(-50%) rotate(var(--rot))}45%{transform:translateX(calc(-50% + var(--slip-shift,8px))) rotate(calc(var(--rot) + 7deg))}100%{transform:translateX(calc(-50% + var(--slip-shift,8px))) rotate(calc(var(--rot) + 3deg))}}
+    .carried-prize.weight-light{--sway:5deg}.carried-prize.weight-heavy{--sway:2.5deg}
+    .carried-prize.swing-left{animation:carrySwingLeft .62s ease-out}.carried-prize.swing-right{animation:carrySwingRight .62s ease-out}.carried-prize.swing-return{animation:carrySettle .7s ease-in-out}
+    @keyframes carrySwingLeft{0%{transform:translateX(0) rotate(0)}35%{transform:translateX(-12px) rotate(calc(var(--sway)*-1))}70%{transform:translateX(7px) rotate(var(--sway))}100%{transform:translateX(0) rotate(0)}}
+    @keyframes carrySwingRight{0%{transform:translateX(0) rotate(0)}35%{transform:translateX(12px) rotate(var(--sway))}70%{transform:translateX(-7px) rotate(calc(var(--sway)*-1))}100%{transform:translateX(0) rotate(0)}}
+    @keyframes carrySettle{0%{transform:rotate(0)}35%{transform:rotate(calc(var(--sway)*-1))}70%{transform:rotate(var(--sway))}100%{transform:rotate(0)}}
+    .fall-out{animation:fallOut .58s cubic-bezier(.2,.8,.3,1) forwards;left:6%!important;top:auto!important;bottom:4px!important}
+    @keyframes fallOut{0%{opacity:1;transform:translate(-50%,-110px) rotate(-8deg)}55%{opacity:1;transform:translate(calc(-50% + 7px),-35px) rotate(14deg)}100%{opacity:0;transform:translate(calc(-50% - 2px),10px) rotate(28deg)}}
+    @media(max-width:680px){.crane-shell{padding:6px 6px 26px}.cabinet{min-height:270px;border-width:5px}.control-bar{height:48px;bottom:7px}.control-buttons{gap:4px}.cg-btn{min-width:62px;padding:7px 8px;font-size:.7rem}.side-panel{display:flex}.collection-grid{grid-template-columns:repeat(4,1fr)}.machine-head{height:43px}.machine-head:before{font-size:.82rem}.top-rail{height:8px}.cable{--cable-height:80px}.claw{top:calc(29px + var(--cable-height,80px));transform:translate(-50%,-3px) scale(.75)}.remaining{font-size:.66rem}.remaining strong{font-size:1rem}.prizes{gap:1px}}
+
+    /* v140 crane-play refinement */
+    .machine-wrap.is-playing .cabinet{box-shadow:inset 0 0 0 2px #6d89a0,inset 0 -60px 80px rgba(0,0,0,.35),0 0 38px rgba(83,217,255,.16)}
+    .machine-wrap.camera-pulse .cabinet{animation:cameraPulse .45s ease}
+    @keyframes cameraPulse{0%{transform:scale(1)}45%{transform:scale(1.012)}100%{transform:scale(1)}}
+    .play-status{position:absolute;left:50%;top:24px;transform:translateX(-50%);z-index:12;padding:5px 11px;border-radius:999px;background:rgba(5,10,18,.76);border:1px solid rgba(140,210,240,.3);font-size:.66rem;font-weight:900;letter-spacing:.12em;color:#d7eaf7;opacity:0;transition:opacity .2s;pointer-events:none}
+    .play-status.show{opacity:1}
+    .move-hint{position:absolute;left:50%;top:30%;transform:translateX(-50%);z-index:11;white-space:nowrap;padding:6px 10px;border-radius:999px;background:rgba(7,13,24,.72);border:1px solid #44647e;color:#d7e8f4;font-size:.68rem;font-weight:700;transition:opacity .25s}.move-hint.hide{opacity:0}
+    .prizes{display:block}
+    .prize-slot{position:absolute;bottom:4%;width:78px;height:92px;transform:translateX(-50%);transition:left .12s ease,filter .18s,opacity .35s,transform .25s;cursor:default}
+    .prize-slot .plush{width:78px;height:92px}
+    .prize-slot.near{filter:drop-shadow(0 0 9px rgba(255,216,106,.85))}
+    .prize-slot.grabbed{z-index:20;filter:drop-shadow(0 0 12px rgba(118,244,255,.8))}
+    .prize-slot.removed{opacity:0;transform:translateX(-50%) translateY(28px) scale(.6)}
+    .prize-slot .target-ring{position:absolute;left:50%;top:50%;width:72px;height:72px;transform:translate(-50%,-50%);border:2px solid rgba(255,216,106,.65);border-radius:50%;box-shadow:0 0 18px rgba(255,216,106,.25);opacity:0;pointer-events:none}
+    .prize-slot.near .target-ring{opacity:1;animation:targetRing .9s ease-in-out infinite alternate}
+    @keyframes targetRing{from{transform:translate(-50%,-50%) scale(.9);opacity:.45}to{transform:translate(-50%,-50%) scale(1.06);opacity:.9}}
+    .carriage-body.moving{animation:carriageVibe .12s linear infinite alternate}@keyframes carriageVibe{from{transform:translateX(-1px)}to{transform:translateX(1px)}}
+    .carriage-body.edge-bump{animation:edgeBump .15s ease}@keyframes edgeBump{0%,100%{transform:translateX(0)}50%{transform:translateX(-3px) scaleX(1.03)}}
+    .claw.open .finger.left{transform:rotate(18deg)}.claw.open .finger.right{transform:rotate(-18deg)}
+    .claw.closed .finger.left{transform:rotate(1deg) translateX(9px)}.claw.closed .finger.right{transform:rotate(-1deg) translateX(-9px)}
+    .claw.shake{animation:clawShake .32s ease}@keyframes clawShake{0%,100%{margin-left:0}25%{margin-left:-7px}75%{margin-left:7px}}
+    .carried-prize{position:absolute;left:50%;top:55px;transform:translateX(-50%);z-index:6;pointer-events:none}.carried-prize .prize-slot{position:relative;left:0!important;bottom:auto;width:78px;height:92px;transform:translateX(-50%)}
+    .effect-layer{position:absolute;inset:0;z-index:30;pointer-events:none;overflow:hidden}.spark{position:absolute;width:7px;height:7px;border-radius:50%;background:#fff;box-shadow:0 0 12px #fff;animation:sparkFly .7s ease-out forwards}@keyframes sparkFly{0%{transform:translate(0,0) scale(.5);opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(0);opacity:0}}
+    .control-bar .cg-btn.active{filter:brightness(1.3);box-shadow:0 0 0 2px rgba(118,244,255,.35),inset 0 1px rgba(255,255,255,.2)}
+    /* v146: unified glass-axis mapping for edge accuracy */
+    .prize-slot{will-change:left,transform;transition:left .12s ease,filter .18s,opacity .35s,transform .22s}
+    .prize-slot.shake{animation:prizeShake .42s ease}
+    @keyframes prizeShake{0%,100%{transform:translateX(-50%) rotate(var(--rot,0deg))}20%{transform:translateX(-50%) rotate(calc(var(--rot,0deg) - 7deg))}45%{transform:translateX(-50%) rotate(calc(var(--rot,0deg) + 6deg))}70%{transform:translateX(-50%) rotate(calc(var(--rot,0deg) - 3deg))}}
+    .carried-prize{transition:transform .12s ease}
+.carried-prize{transition:transform .16s ease;transform-origin:50% 0}
+.carried-prize.swing-left{animation:carriedSwingLeft .5s ease}
+.carried-prize.swing-right{animation:carriedSwingRight .5s ease}
+@keyframes carriedSwingLeft{0%,100%{transform:translateX(-50%) rotate(0deg)}35%{transform:translateX(-50%) rotate(-5deg)}70%{transform:translateX(-50%) rotate(2deg)}}
+@keyframes carriedSwingRight{0%,100%{transform:translateX(-50%) rotate(0deg)}35%{transform:translateX(-50%) rotate(5deg)}70%{transform:translateX(-50%) rotate(-2deg)}}
+.prize-slot.fall-out{animation:prizeFallOut .72s cubic-bezier(.2,.8,.3,1) forwards;z-index:25}
+@keyframes prizeFallOut{0%{transform:translateX(-50%) translateY(0) rotate(var(--rot))}28%{transform:translateX(calc(-50% + 10px)) translateY(7px) rotate(calc(var(--rot) + 12deg))}100%{transform:translateX(calc(-50% + 38px)) translateY(72px) rotate(calc(var(--rot) + 38deg));opacity:0}}
+.chute-glow{position:absolute;left:6%;bottom:6%;width:18%;height:15%;border-radius:50%;background:radial-gradient(circle,rgba(105,235,255,.95),rgba(62,145,255,.22) 45%,transparent 72%);filter:blur(2px);opacity:0;transform:scale(.65);transition:opacity .2s,transform .35s;z-index:8;pointer-events:none}
+.chute-glow.show{opacity:1;transform:scale(1)}
+.get-flash{position:absolute;inset:0;background:radial-gradient(circle at 50% 48%,rgba(255,255,255,.92),rgba(121,238,255,.32) 18%,transparent 55%);opacity:0;pointer-events:none;z-index:31}
+.get-flash.show{animation:getFlash .55s ease-out forwards}
+@keyframes getFlash{0%{opacity:0}18%{opacity:1}100%{opacity:0}}
+
+    /* v146: mechanical descent / contact / release feel */
+    .cable{transition:none;will-change:height}
+    .claw{transition:none;will-change:top,transform}
+    .claw.contact{animation:clawContact .18s ease-in-out 2}
+    @keyframes clawContact{0%,100%{transform:translate(-50%,-3px)}50%{transform:translate(-50%,1px) scale(1.035,.97)}}
+    .claw.grab-close .finger.left{animation:fingerCloseLeft .28s cubic-bezier(.2,.75,.25,1) forwards}
+    .claw.grab-close .finger.right{animation:fingerCloseRight .28s cubic-bezier(.2,.75,.25,1) forwards}
+    .claw.grab-open .finger.left{animation:fingerOpenLeft .24s ease-out forwards}
+    .claw.grab-open .finger.right{animation:fingerOpenRight .24s ease-out forwards}
+    @keyframes fingerCloseLeft{from{transform:rotate(18deg)}to{transform:rotate(1deg) translateX(9px)}}
+    @keyframes fingerCloseRight{from{transform:rotate(-18deg)}to{transform:rotate(-1deg) translateX(-9px)}}
+    @keyframes fingerOpenLeft{from{transform:rotate(1deg) translateX(9px)}to{transform:rotate(18deg)}}
+    @keyframes fingerOpenRight{from{transform:rotate(-1deg) translateX(-9px)}to{transform:rotate(-18deg)}}
+    .prize-slot.contacting{filter:drop-shadow(0 0 14px rgba(118,244,255,.95));animation:contactWobble .34s ease}
+    @keyframes contactWobble{0%,100%{transform:translateX(-50%) rotate(var(--rot,0deg)) scale(1)}45%{transform:translateX(-50%) rotate(calc(var(--rot,0deg) - 3deg)) scale(1.035)}75%{transform:translateX(-50%) rotate(calc(var(--rot,0deg) + 2deg)) scale(1.015)}}
+    .prize-slot.pushed{animation:prizePushed .48s ease}
+    @keyframes prizePushed{0%,100%{transform:translateX(-50%) rotate(var(--rot,0deg))}35%{transform:translateX(calc(-50% + var(--push,0px))) rotate(calc(var(--rot,0deg) + 4deg))}70%{transform:translateX(calc(-50% + calc(var(--push,0px)*.55))) rotate(calc(var(--rot,0deg) - 2deg))}}
+    .carried-prize.swing-return{animation:carriedReturnSwing .9s cubic-bezier(.2,.75,.3,1)}
+    @keyframes carriedReturnSwing{0%{transform:translateX(-50%) rotate(0deg)}18%{transform:translateX(-50%) rotate(5deg)}42%{transform:translateX(-50%) rotate(-4deg)}68%{transform:translateX(-50%) rotate(2deg)}100%{transform:translateX(-50%) rotate(0deg)}}
+    .claw.dropping{filter:drop-shadow(0 7px 6px rgba(0,0,0,.5))}
+    .claw.closed .finger.left,.claw.closed .finger.right{filter:drop-shadow(0 4px 3px #0008)}
+    .drop-glow{position:absolute;left:0;right:0;bottom:0;height:24%;background:linear-gradient(180deg,transparent,rgba(89,220,255,.08));opacity:0;transition:opacity .25s;pointer-events:none;z-index:2}
+    .cabinet.drop-ready .drop-glow{opacity:1}
+    .chute-label{position:absolute;left:6%;bottom:7%;padding:5px 9px;border-radius:8px;background:rgba(7,13,24,.72);border:1px solid #54738d;color:#dff7ff;font-size:.64rem;font-weight:900;letter-spacing:.08em;z-index:4;opacity:.8}
+
+    /* v154-v162: mechanical claw width, 3D stack, return sway */
+    .claw.mechanical-open .finger{transition:transform .32s cubic-bezier(.2,.8,.2,1)}
+    .claw.mechanical-open .finger.l,.claw.mechanical-open .finger.left{transform:translateX(-7px) rotate(-3deg)}
+    .claw.mechanical-open .finger.r,.claw.mechanical-open .finger.right{transform:translateX(7px) rotate(3deg)}
+    .claw.mechanical-close .finger.l,.claw.mechanical-close .finger.left{transform:translateX(0) rotate(0)}
+    .claw.mechanical-close .finger.r,.claw.mechanical-close .finger.right{transform:translateX(0) rotate(0)}
+    .claw.finger-contact-left .finger.l{filter:drop-shadow(0 0 8px rgba(255,216,106,.95))}
+    .claw.finger-contact-right .finger.r{filter:drop-shadow(0 0 8px rgba(255,216,106,.95))}
+    .prize-slot.depth-back{transform:translateX(-50%) translateY(-2px) rotate(var(--rot));filter:saturate(.82) brightness(.82) drop-shadow(0 5px 5px #0007)}
+    .prize-slot.depth-mid{transform:translateX(-50%) translateY(-4px) rotate(var(--rot));filter:drop-shadow(0 6px 5px #0008)}
+    .prize-slot.depth-front{transform:translateX(-50%) translateY(-7px) rotate(var(--rot));filter:drop-shadow(0 8px 6px #000a)}
+    .prize-slot.neighbor-hit{animation:neighborHit .34s ease}
+    .prize-slot.stack-lift{animation:stackLift .46s ease-out}
+    @keyframes neighborHit{0%,100%{transform:translateX(-50%) rotate(var(--rot))}45%{transform:translateX(calc(-50% + var(--push-x,0px))) rotate(calc(var(--rot) + 4deg))}}
+    @keyframes stackLift{0%,100%{bottom:var(--base-bottom,4%)}50%{bottom:calc(var(--base-bottom,4%) + 8px)}}
+    .carried-prize.return-physics{transition:transform .08s linear;will-change:transform}
+    .carried-prize.return-physics .prize-slot{filter:drop-shadow(0 12px 8px #0009)}
+    .carried-prize.hard-swing .prize-slot{filter:drop-shadow(0 0 12px rgba(255,216,106,.8))}
+    .cable.return-sway{animation:returnCableSway .8s ease-in-out}
+    @keyframes returnCableSway{0%,100%{transform:translateX(-50%) rotate(0)}22%{transform:translateX(-50%) rotate(1.8deg)}48%{transform:translateX(-50%) rotate(-1.4deg)}72%{transform:translateX(-50%) rotate(.8deg)}}
+    .machine-wrap.stage-flash{animation:stageFlash .28s ease}
+    @keyframes stageFlash{50%{filter:brightness(1.18)}}
+  
+    /* v157-v162: advanced physical feedback */
+    .carried-prize.dynamic-sway{transform-origin:50% 0;transition:none;}
+    .carried-prize.tension-heavy{filter:drop-shadow(0 5px 5px rgba(0,0,0,.28));}
+    .prize-slot.settle{animation:prizeSettle .48s cubic-bezier(.2,.8,.2,1);}
+    .prize-slot.neighbor-hit{animation:neighborHit .36s ease-out;}
+    @keyframes prizeSettle{0%{transform:translateY(-5px) rotate(0deg)}45%{transform:translateY(2px) rotate(var(--settle-rot,1deg))}100%{transform:translateY(0) rotate(0)}}
+    @keyframes neighborHit{0%{transform:translateX(0)}35%{transform:translateX(var(--push-x,3px)) rotate(2deg)}100%{transform:translateX(0)}}
+    .cabinet.stage-alert::after{content:"";position:absolute;inset:0;pointer-events:none;border:2px solid rgba(255,255,255,.18);box-shadow:inset 0 0 32px rgba(255,255,255,.12);animation:stagePulse .55s ease-out;}
+    @keyframes stagePulse{0%{opacity:0}25%{opacity:1}100%{opacity:0}}
+    .chute-drop-item.dynamic-fall{animation:chuteDynamicFall .7s cubic-bezier(.2,.75,.2,1) forwards;}
+    @keyframes chuteDynamicFall{0%{transform:translate(-50%,-70px) rotate(-8deg);opacity:0}25%{opacity:1}65%{transform:translate(-50%,15px) rotate(5deg)}100%{transform:translate(-50%,75px) rotate(0);opacity:0}}
+
+
+    /* v160: reference-video-inspired pastel cabinet shell (branding intentionally generic) */
+    body.crane-body{background:radial-gradient(circle at 50% 8%,#f9e7f2 0,#cfeef0 22%,#a9c9d8 48%,#6b8090 100%);color:#24313d}
+    .crane-shell{padding-top:12px}
+    .crane-top{background:linear-gradient(180deg,rgba(255,255,255,.9),rgba(239,247,250,.72));border:1px solid rgba(91,112,125,.35);border-radius:18px;padding:9px 12px;box-shadow:0 8px 24px rgba(48,67,77,.18)}
+    .cg-logo{color:#34404b;text-shadow:0 2px 0 #fff,0 0 12px rgba(255,255,255,.8)}
+    .cg-logo small{color:#6f7d87}
+    .medal-pill{background:linear-gradient(#fff,#edf4f7);border-color:#aebfc8;color:#34404b;box-shadow:0 4px 16px rgba(58,79,89,.18),inset 0 1px #fff}
+    .cg-layout{gap:16px}
+    .machine-wrap{padding:14px;border-radius:30px;background:linear-gradient(145deg,#fff,#e7edf0 48%,#c2cdd2);border:2px solid #f9ffff;box-shadow:0 25px 60px rgba(47,63,73,.28),inset 0 1px 0 #fff}
+    .machine-head{height:58px;border-radius:19px 19px 11px 11px;background:linear-gradient(180deg,#fff,#e6eef1 52%,#c1cdd3);border:2px solid #aebdc5;box-shadow:inset 0 2px #fff,0 5px 12px rgba(44,60,68,.2)}
+    .machine-head:before{color:#4b5b66;text-shadow:0 1px 0 #fff,0 0 12px rgba(255,255,255,.95)}
+    .cabinet{background:linear-gradient(180deg,#edf8f8,#b9c9ce 65%,#8799a1);border:8px solid #eef4f5;box-shadow:inset 0 0 0 2px #83949d,inset 0 -50px 80px rgba(52,69,76,.18),0 10px 25px rgba(44,58,66,.2)}
+    .cabinet:before{content:"";position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(circle at 8% 10%,rgba(255,145,206,.24),transparent 22%),radial-gradient(circle at 90% 15%,rgba(113,235,255,.25),transparent 22%);mix-blend-mode:screen}
+    .glass{inset:9px 9px 70px;border:3px solid rgba(255,255,255,.75);border-radius:13px;background:linear-gradient(180deg,rgba(238,255,253,.7),rgba(190,238,235,.35) 46%,rgba(76,103,113,.35));box-shadow:inset 0 0 0 1px rgba(88,117,126,.45),inset 0 0 28px rgba(255,255,255,.24)}
+    .glass:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 20% 28%,rgba(255,255,255,.7) 0 3%,transparent 3.5%),radial-gradient(circle at 75% 23%,rgba(255,210,229,.42) 0 7%,transparent 7.5%),linear-gradient(180deg,rgba(255,255,255,.18),transparent 28%);pointer-events:none}
+    .top-rail{background:linear-gradient(#f9ffff,#c7d8dd 45%,#7f949d);border:1px solid #f8ffff;box-shadow:0 4px 8px #40515a55}
+    .rail-light{background:linear-gradient(90deg,#8ff5ff,#ffd7ef,#fff3a1,#8ff5ff);box-shadow:0 0 15px #bafcff}
+    .prize-bed{background:radial-gradient(circle at 15% 25%,#d5a8c5 0 2px,transparent 3px),radial-gradient(circle at 70% 35%,#8bcfd1 0 2px,transparent 3px),linear-gradient(180deg,#b8d8d7,#71949b);box-shadow:inset 0 12px 30px rgba(255,255,255,.18),inset 0 -20px 30px rgba(37,61,70,.22)}
+    .prize-bed:before{background:linear-gradient(#eefafa,#9db9bd);box-shadow:0 2px 7px #3a555c55}
+    .control-bar{background:linear-gradient(#f8ffff,#d7e5e8);border-color:#9cafb7;box-shadow:0 3px 12px rgba(41,58,65,.18),inset 0 1px #fff}
+    .remaining{color:#4d606a}.remaining strong{color:#d58b16;text-shadow:0 1px #fff}
+    .cg-btn{background:linear-gradient(#fff,#dbe7eb);color:#40515a;border-color:#9db0b8;box-shadow:inset 0 1px #fff,0 3px 5px #42545b33}
+    .cg-btn.stop{background:linear-gradient(#e9ffff,#b5dfe4);color:#28545d}.cg-btn.play{background:linear-gradient(#ffeaa0,#efb84d);color:#4b350e;border-color:#fff0b8}
+    .machine-lights{bottom:63px;height:7px}.machine-lights i{background:linear-gradient(90deg,#70efff,#ff9dca,#fff28b);box-shadow:0 0 12px rgba(255,226,245,.9)}
+    /* v161: colorful prize-stage lighting and display cues */
+    .glass.stage-cyan{box-shadow:inset 0 0 38px rgba(89,235,255,.34),0 0 18px rgba(89,235,255,.25)}
+    .glass.stage-pink{box-shadow:inset 0 0 38px rgba(255,126,195,.3),0 0 18px rgba(255,126,195,.22)}
+    .glass.stage-gold{box-shadow:inset 0 0 44px rgba(255,225,104,.4),0 0 22px rgba(255,211,81,.24)}
+    .prize-bed:after{content:"";position:absolute;left:5%;right:5%;bottom:0;height:20%;background:linear-gradient(180deg,transparent,rgba(255,255,255,.08));pointer-events:none}
+    .prize-slot .plush{filter:drop-shadow(0 7px 5px rgba(36,52,59,.42))}
+    .prize-slot.near .plush{filter:drop-shadow(0 0 8px rgba(255,228,118,.9)) drop-shadow(0 7px 5px rgba(36,52,59,.42))}
+    .prize-display-badge{position:absolute;left:50%;top:8px;transform:translateX(-50%);padding:3px 10px;border-radius:999px;background:rgba(255,255,255,.78);border:1px solid rgba(97,125,133,.35);font-size:.62rem;font-weight:900;letter-spacing:.08em;color:#51646d;z-index:3;box-shadow:0 2px 7px rgba(40,59,66,.14)}
+    .stage-lamp{position:absolute;top:2%;width:13px;height:13px;border-radius:50%;background:#fff;box-shadow:0 0 10px #fff;z-index:4;opacity:.7}.stage-lamp.l{left:2%}.stage-lamp.r{right:2%}
+    .stage-lamp.pulse{animation:stageLampPulse .5s ease}.stage-lamp.cyan{background:#8ff8ff;box-shadow:0 0 15px #8ff8ff}.stage-lamp.pink{background:#ffb7dc;box-shadow:0 0 15px #ff9ed0}.stage-lamp.gold{background:#fff0a0;box-shadow:0 0 18px #ffe26b}
+    @keyframes stageLampPulse{0%,100%{transform:scale(1)}45%{transform:scale(1.6)} }
+    /* v162: prize-winning presentation */
+    .win-overlay{background:radial-gradient(circle at 50% 42%,rgba(255,247,211,.82),rgba(255,177,216,.46) 25%,rgba(65,101,116,.9) 72%,rgba(31,48,57,.96));backdrop-filter:blur(2px)}
+    .win-card{width:min(620px,90vw);padding:28px 22px 24px;border-radius:32px;background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(235,248,246,.93));border:3px solid rgba(255,255,255,.9);box-shadow:0 25px 80px rgba(24,46,54,.4),inset 0 1px #fff}
+    .win-card .burst{font-size:clamp(3.2rem,12vw,7rem);letter-spacing:.12em;color:#fff;text-shadow:0 3px 0 #e2a52d,0 0 10px #fff,0 0 26px #ff91c5,0 0 48px #73eaff;animation:getTitlePulse .8s ease-out}
+    .win-card .got{color:#415863;font-size:1.15rem;text-shadow:0 1px #fff}
+    .win-card .win-plush{filter:drop-shadow(0 14px 8px rgba(52,72,78,.28));animation:winPlushBounce .9s ease-in-out infinite alternate}
+    .win-card button{background:linear-gradient(#fff1a4,#efbd54);border-color:#fff7c8;color:#4a3512;box-shadow:0 5px 15px rgba(132,95,26,.2),inset 0 1px #fff}
+    @keyframes getTitlePulse{0%{transform:scale(.55) rotate(-5deg);opacity:0}55%{transform:scale(1.12) rotate(2deg);opacity:1}100%{transform:scale(1) rotate(0)}}
+    @keyframes winPlushBounce{from{transform:scale(1.45) translateY(0)}to{transform:scale(1.55) translateY(-9px)}}
+    .get-confetti{position:absolute;width:9px;height:18px;border-radius:2px;left:50%;top:43%;opacity:0;animation:getConfetti .95s ease-out forwards}
+    @keyframes getConfetti{0%{transform:translate(0,0) rotate(0);opacity:1}100%{transform:translate(var(--dx),var(--dy)) rotate(var(--rot));opacity:0}}
+
+
+    /* v164: reference-video-inspired candy / underwater playfield atmosphere.
+       Branding is generic; no third-party logo or text is reproduced. */
+    .machine-wrap{background:linear-gradient(145deg,#ffffff 0%,#f5fbfc 30%,#dce9ed 58%,#c4d4d8 100%);border-color:#ffffff}
+    .machine-head{height:62px;background:linear-gradient(180deg,#ffffff 0%,#f4f8f8 42%,#cdd9dc 100%);border-color:#b8c7cb;box-shadow:inset 0 3px #fff,0 7px 15px rgba(54,76,82,.16)}
+    .machine-head:before{display:none}
+    .head-badge{font-weight:900;letter-spacing:.14em;font-size:clamp(.95rem,2.7vw,1.55rem);color:#536872;text-shadow:0 2px 0 #fff,0 0 12px rgba(122,235,240,.55);z-index:2}
+    .head-lights{position:absolute;left:8%;right:8%;top:7px;display:flex;gap:7px;justify-content:center;pointer-events:none}
+    .head-lights i{width:10px;height:10px;border-radius:50%;background:#8ff7ff;box-shadow:0 0 12px rgba(107,236,247,.85);animation:headLight 1.8s ease-in-out infinite alternate}
+    .head-lights i:nth-child(2){background:#ffb6dc;animation-delay:.2s}.head-lights i:nth-child(3){background:#ffe889;animation-delay:.4s}.head-lights i:nth-child(4){background:#a8ed8b;animation-delay:.6s}.head-lights i:nth-child(5){background:#9edfff;animation-delay:.8s}
+    @keyframes headLight{from{opacity:.35;transform:scale(.85)}to{opacity:1;transform:scale(1.15)}}
+    .glass{background:linear-gradient(180deg,#aaf4f1 0%,#c9f3e8 23%,#f4e8e7 54%,#c3d8e0 100%);border-color:rgba(255,255,255,.9);box-shadow:inset 0 0 0 1px rgba(94,130,139,.28),inset 0 0 35px rgba(255,255,255,.4),0 0 20px rgba(129,232,239,.16)}
+    .glass:after{background:linear-gradient(106deg,rgba(255,255,255,.32),transparent 20%,transparent 72%,rgba(255,255,255,.2));mix-blend-mode:screen}
+    .scene-decor{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:1}
+    .scene-decor:before{content:"";position:absolute;left:-5%;right:-5%;bottom:14%;height:30%;background:radial-gradient(ellipse at 15% 90%,rgba(255,170,208,.72),transparent 28%),radial-gradient(ellipse at 42% 92%,rgba(147,232,219,.8),transparent 30%),radial-gradient(ellipse at 78% 95%,rgba(255,206,159,.72),transparent 27%),linear-gradient(180deg,transparent,rgba(255,255,255,.12));filter:blur(2px)}
+    .scene-decor:after{content:"";position:absolute;left:0;right:0;top:19%;height:35%;background:radial-gradient(ellipse at 20% 35%,rgba(255,255,255,.68),transparent 18%),radial-gradient(ellipse at 70% 28%,rgba(255,255,255,.55),transparent 16%),radial-gradient(ellipse at 48% 55%,rgba(255,181,218,.24),transparent 26%);opacity:.9}
+    .cloud-hill{position:absolute;width:27%;height:19%;border-radius:50% 50% 0 0;background:linear-gradient(180deg,rgba(255,188,216,.68),rgba(242,205,223,.25));bottom:38%;filter:blur(1px)}
+    .cloud-hill.h1{left:8%}.cloud-hill.h2{right:7%;bottom:43%;width:23%;height:15%;background:linear-gradient(180deg,rgba(255,211,193,.65),rgba(240,221,229,.2))}
+    .bubble{position:absolute;border:2px solid rgba(255,255,255,.7);border-radius:50%;background:rgba(255,255,255,.13);box-shadow:0 0 8px rgba(255,255,255,.35);animation:bubbleFloat 5.8s ease-in-out infinite}
+    .bubble.b1{left:8%;bottom:23%;width:10px;height:10px}.bubble.b2{left:18%;bottom:32%;width:6px;height:6px;animation-delay:-1.1s}.bubble.b3{right:13%;bottom:27%;width:13px;height:13px;animation-delay:-2.3s}.bubble.b4{right:24%;bottom:40%;width:7px;height:7px;animation-delay:-3.4s}.bubble.b5{left:42%;bottom:24%;width:5px;height:5px;animation-delay:-4.2s}
+    @keyframes bubbleFloat{0%,100%{transform:translateY(0) scale(1);opacity:.5}50%{transform:translateY(-22px) scale(1.08);opacity:.95}}
+    .coral{position:absolute;bottom:14%;width:4%;height:16%;border-radius:55% 45% 0 0;background:linear-gradient(90deg,#ff9cc9,#f6d17e);opacity:.68;filter:blur(.3px)}
+    .coral:before,.coral:after{content:"";position:absolute;bottom:0;width:45%;height:80%;border-radius:50% 50% 0 0;background:inherit}.coral:before{left:-55%;transform:rotate(-18deg)}.coral:after{right:-55%;transform:rotate(18deg)}
+    .coral.c1{left:2%;transform:scale(.8)}.coral.c2{right:3%;height:12%;background:linear-gradient(90deg,#a9e6df,#ffb4d4);transform:scale(.75)}
+    .prize-bed{background:linear-gradient(180deg,#f9d4dc 0%,#eabfd1 18%,#a9d7d2 48%,#6fa5a5 100%);border:2px solid rgba(255,255,255,.7);box-shadow:inset 0 12px 30px rgba(255,255,255,.25),inset 0 -20px 30px rgba(61,107,112,.24),0 5px 15px rgba(64,83,90,.16)}
+    .prize-bed:before{background:linear-gradient(#fff,#d4e7e8);height:11px;box-shadow:0 2px 7px rgba(67,97,102,.28)}
+    .prize-bed:after{background:linear-gradient(180deg,transparent,rgba(255,255,255,.18));height:30%}
+    .tray-ribbon{position:absolute;left:50%;top:10px;transform:translateX(-50%);padding:3px 12px;border-radius:999px;background:rgba(255,255,255,.7);border:1px solid rgba(117,150,152,.25);color:#6c8082;font-size:.52rem;font-weight:900;letter-spacing:.14em;z-index:5;box-shadow:0 2px 5px rgba(65,92,96,.1)}
+    .chute-label{left:3.5%;bottom:4.5%;padding:4px 8px;background:linear-gradient(180deg,rgba(255,255,255,.92),rgba(226,246,245,.86));border-color:rgba(103,139,144,.35);color:#5a7477;box-shadow:0 3px 8px rgba(55,79,82,.16)}
+    .chute-label span{display:block;font-size:.62rem}.chute-label small{display:block;font-size:.45rem;opacity:.7;letter-spacing:.08em}
+    .top-rail{background:linear-gradient(#fff,#dbe7e9 45%,#9cafb4);border-color:#fff;box-shadow:0 4px 8px rgba(64,84,91,.28)}
+    .rail-light{background:linear-gradient(90deg,#78f3ff,#ff9ed2,#ffe57b,#a9edc4,#78f3ff);box-shadow:0 0 16px rgba(170,249,249,.9)}
+
+    /* v165: rounded character-like crane carriage and pastel mechanical hardware. */
+    .crane-carriage{width:82px;height:52px;z-index:12}
+    .carriage-body{height:35px;border-radius:14px 14px 20px 20px;background:linear-gradient(180deg,#ffffff,#dff7f5 42%,#9fd5d6);border:2px solid #8aaeb3;box-shadow:0 5px 10px rgba(52,78,84,.3),inset 0 2px 0 #fff}
+    .carriage-body:before{content:"";position:absolute;left:50%;top:-9px;width:20px;height:12px;transform:translateX(-50%);border-radius:10px 10px 3px 3px;background:linear-gradient(#ff9ec9,#e97caa);border:2px solid #fff;box-shadow:0 2px 5px rgba(62,82,87,.22)}
+    .carriage-body:after{content:"";position:absolute;left:50%;bottom:-8px;width:30px;height:10px;transform:translateX(-50%);border-radius:50%;background:rgba(100,150,156,.3);filter:blur(2px)}
+    .bot-eye{position:absolute;top:11px;width:6px;height:9px;border-radius:50%;background:#40555d;box-shadow:0 0 0 2px rgba(255,255,255,.5)}
+    .bot-eye.left{left:27px}.bot-eye.right{right:27px}
+    .bot-mouth{position:absolute;left:50%;top:22px;width:14px;height:6px;transform:translateX(-50%);border-bottom:2px solid #6f5a67;border-radius:50%}
+    .bot-fin{position:absolute;top:14px;width:16px;height:10px;border-radius:60% 20% 20% 60%;background:linear-gradient(135deg,#ffb8d7,#f18eb9);opacity:.9}.bot-fin.left{left:-8px;transform:rotate(-20deg)}.bot-fin.right{right:-8px;transform:scaleX(-1) rotate(-20deg)}
+    .cable{width:5px;background:linear-gradient(90deg,#627a7f,#fff,#718b90);box-shadow:0 0 4px rgba(255,255,255,.65)}
+    .claw-ring{background:radial-gradient(circle at 35% 30%,#fff,#8cd8d8 46%,#4c7f85 72%);border-color:#fff;box-shadow:0 0 8px rgba(123,237,238,.45)}
+    .finger{border-color:#edfafa;filter:drop-shadow(0 4px 3px rgba(47,73,78,.38))}
+    .finger:after{content:"";position:absolute;left:50%;bottom:-6px;width:12px;height:10px;transform:translateX(-50%);border-radius:50%;background:#f7b2cb;border:1px solid #fff}
+    .machine-lights i{background:linear-gradient(90deg,#76f3ff,#ff9bca,#ffe37b,#a6e9cb);box-shadow:0 0 13px rgba(166,240,237,.85)}
+    .control-bar{height:58px;background:linear-gradient(180deg,#ffffff,#eef8f7 45%,#d0e0e2);border-color:#9eb5b9;box-shadow:0 4px 12px rgba(46,70,75,.18),inset 0 2px #fff;overflow:visible}
+    .panel-status{display:flex;align-items:center;gap:5px;padding:4px 7px;border-radius:999px;background:rgba(255,255,255,.72);border:1px solid rgba(103,136,141,.25);color:#647a7e;font-size:.52rem;font-weight:900;letter-spacing:.08em;box-shadow:inset 0 1px #fff}
+    .status-led{width:7px;height:7px;border-radius:50%;background:#7fe7c3;box-shadow:0 0 8px #74e5bf;animation:ledPulse 1s infinite alternate}@keyframes ledPulse{from{opacity:.45}to{opacity:1}}
+    .panel-joystick{position:absolute;right:12%;bottom:42px;width:34px;height:28px;pointer-events:none;z-index:13}.panel-joystick .stick{position:absolute;left:50%;bottom:7px;width:5px;height:18px;transform:translateX(-50%) rotate(-8deg);transform-origin:bottom;background:#7d9497;border-radius:5px}.panel-joystick .knob{position:absolute;left:50%;top:0;width:15px;height:15px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffcadf,#e98bb4 62%,#b65f87);border:2px solid #fff;box-shadow:0 3px 5px rgba(57,76,81,.25)}
+    .control-buttons{margin-right:40px}.cg-btn{background:linear-gradient(#fff,#e2eeee);color:#4b666b;border-color:#9eb4b7;box-shadow:inset 0 1px #fff,0 3px 6px rgba(50,71,75,.18)}.cg-btn.stop{background:linear-gradient(#d9ffff,#9fdddd);color:#3b6268}.cg-btn.play{background:linear-gradient(#ffe89c,#efb74d);color:#563d10;border-color:#fff2bc}
+
+    /* v166: dense prize presentation, arcade HUD cues, and a stronger GET moment. */
+    .prizes{height:86%;bottom:2%;padding:0 2%}
+    .prize-slot{width:clamp(68px,9vw,94px);height:clamp(76px,11vw,108px)}
+    .prize-slot .plush{width:82px;height:96px}
+    .prize-slot .plush:after{content:"";position:absolute;left:18%;right:18%;top:14%;height:8%;border-radius:50%;background:rgba(255,255,255,.28);filter:blur(2px);pointer-events:none}
+    .prize-slot.near .plush{filter:drop-shadow(0 0 10px rgba(255,228,118,.9)) drop-shadow(0 8px 5px rgba(50,73,78,.35))}
+    .prize-display-badge{top:7px;background:linear-gradient(180deg,rgba(255,255,255,.92),rgba(236,250,248,.78));color:#5c7478;border-color:rgba(96,131,135,.25);box-shadow:0 3px 8px rgba(52,76,80,.12)}
+    .glass:before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(180deg,rgba(255,255,255,.24),transparent 18%,transparent 78%,rgba(255,255,255,.1));mix-blend-mode:screen}
+    .play-status{background:rgba(255,255,255,.84)!important;border-color:rgba(104,142,146,.28)!important;color:#587177!important;box-shadow:0 4px 12px rgba(55,78,82,.12)!important}
+    .move-hint{background:rgba(255,255,255,.72)!important;color:#647b80!important;border-color:rgba(100,136,141,.25)!important}
+    .get-flash{background:radial-gradient(circle at 50% 48%,rgba(255,255,255,.98),rgba(255,226,133,.55) 17%,rgba(255,154,204,.18) 34%,transparent 60%)}
+    .win-overlay{background:radial-gradient(circle at 50% 35%,rgba(255,255,255,.92),rgba(255,215,150,.58) 18%,rgba(255,163,211,.42) 35%,rgba(70,115,121,.9) 74%,rgba(42,67,72,.97))}
+    .win-card{background:linear-gradient(180deg,#fff,#f5ffff 52%,#e5f4f2);border-color:#fff;border-radius:34px;box-shadow:0 30px 90px rgba(45,69,74,.42),inset 0 2px #fff}
+    .win-card .burst{color:#fff;text-shadow:0 3px 0 #e1a02e,0 0 14px #fff,0 0 30px #ff8fc6,0 0 55px #7beef0}
+    .win-card .got{color:#4f686e;font-weight:900}
+    .win-card button{background:linear-gradient(#fff1a7,#f0bb52);border-color:#fff6c6}
+    .collection-card{background:linear-gradient(145deg,rgba(255,255,255,.94),rgba(232,246,246,.9));border-color:rgba(115,146,151,.34);box-shadow:0 12px 35px rgba(48,70,75,.14)}
+    .collection-card h2,.collection-card p,.collection-card .reset-note{color:#587076}.collection-item{background:rgba(255,255,255,.65);border-color:rgba(110,143,147,.25)}.collection-item .qty{background:#dceeed;color:#547074}.collection-item.locked{opacity:.5}
+    .back-button{background:linear-gradient(145deg,rgba(255,255,255,.9),rgba(226,240,241,.88));color:#567076!important;border-color:rgba(110,143,147,.28)}
+    @media(max-width:680px){.head-lights{top:4px}.machine-head{height:48px}.panel-status{display:none}.control-buttons{margin-right:26px}.panel-joystick{right:7%;transform:scale(.8);transform-origin:bottom right}.prize-slot .plush{transform:scale(.88);transform-origin:center bottom}.tray-ribbon{font-size:.43rem}.scene-decor .bubble{opacity:.7}}
+
+
+    /* v167: cabinet silhouette, trim, and ambient depth */
+    .machine-wrap{position:relative;overflow:visible}.machine-wrap:before,.machine-wrap:after{content:"";position:absolute;top:86px;bottom:22px;width:9px;border-radius:9px;background:linear-gradient(180deg,#fff,#d6e6e8 45%,#9fb8bd);box-shadow:0 0 0 2px rgba(120,150,155,.22),0 8px 18px rgba(48,71,76,.12);z-index:0}.machine-wrap:before{left:5px}.machine-wrap:after{right:5px}.cabinet{box-shadow:inset 0 0 0 2px #fff,inset 0 -60px 80px rgba(58,85,91,.12),0 10px 25px rgba(52,74,79,.12)}
+    .cabinet-side-decor{position:absolute;top:8%;bottom:7%;width:8px;border-radius:8px;background:linear-gradient(#fff,#c5d9dc 50%,#f8ffff);box-shadow:0 0 0 1px rgba(110,143,148,.2),0 0 12px rgba(113,231,235,.18);z-index:4;pointer-events:none}.cabinet-side-decor.left{left:3px}.cabinet-side-decor.right{right:3px}
+    .overhead-lamp{position:absolute;left:50%;top:3.4%;width:24%;height:9px;transform:translateX(-50%);border-radius:999px;background:linear-gradient(90deg,#8ef4ff,#fff,#ffb9d9,#fff,#ffe98a);box-shadow:0 0 18px rgba(148,240,244,.8);z-index:6;opacity:.88;animation:overheadPulse 2.8s ease-in-out infinite}@keyframes overheadPulse{50%{opacity:1;filter:brightness(1.16)}}
+    /* v168: rounded mechanical crane housing */
+    .crane-carriage{width:82px;height:54px;z-index:9}.carriage-body{height:34px;border-radius:12px 12px 15px 15px;background:linear-gradient(180deg,#fff,#dce9eb 42%,#9fb4b8);border:2px solid #fff;box-shadow:0 5px 10px rgba(54,76,81,.25),inset 0 2px #fff}.carriage-body:before{content:"";position:absolute;left:8px;right:8px;top:4px;height:4px;border-radius:9px;background:linear-gradient(90deg,#85edf4,#ff9ecb,#ffe37a);opacity:.75}.carriage-body:after{content:"";position:absolute;left:4px;right:4px;bottom:-5px;height:7px;border-radius:0 0 10px 10px;background:linear-gradient(#b4c9cc,#6e878c);box-shadow:0 2px 3px rgba(46,65,70,.2)}
+    .carriage-body .bot-eye{width:7px;height:9px;top:12px;background:#536b70;box-shadow:0 0 0 2px #fff}.carriage-body .bot-mouth{bottom:5px;border-color:#668087}.carriage-body .bot-fin{top:11px;width:6px;height:12px;background:#f1b3cd;border:1px solid #fff}.carriage-body .bot-fin.left{left:-7px}.carriage-body .bot-fin.right{right:-7px}
+    .cable{width:6px;background:linear-gradient(90deg,#73898d,#fff,#8ba2a6);box-shadow:0 0 0 1px rgba(68,89,94,.18)}.cable:after{content:"";position:absolute;left:50%;top:8px;width:11px;height:24px;transform:translateX(-50%);border-left:2px dotted rgba(75,101,106,.42);border-right:2px dotted rgba(255,255,255,.65);opacity:.8}
+    .claw-ring{width:31px;height:31px;background:radial-gradient(circle at 35% 30%,#fff,#b7c9cc 45%,#6f8589 72%);border-color:#fff;box-shadow:0 2px 5px rgba(47,68,73,.25)}.finger{border-color:#b9c8cb;background:linear-gradient(90deg,#81989c,#edf8f7,#8da5a9);background-clip:border-box}.finger:after{background:#ffb5cf;box-shadow:0 0 7px rgba(255,158,202,.5)}
+    /* v169: aiming lane and target reticle */
+    .aim-guide{position:absolute;top:10%;bottom:7%;width:2px;left:8%;transform:translateX(-50%);z-index:5;pointer-events:none;opacity:0;transition:left .12s ease,opacity .2s}.aim-guide.active{opacity:1}.aim-line{position:absolute;left:0;top:0;bottom:0;width:2px;background:linear-gradient(180deg,rgba(255,255,255,.0),rgba(255,234,145,.65) 28%,rgba(255,155,203,.8) 72%,rgba(255,255,255,.05));box-shadow:0 0 9px rgba(255,196,215,.8)}.aim-reticle{position:absolute;left:50%;top:61%;width:28px;height:28px;transform:translate(-50%,-50%);border:2px solid rgba(255,235,139,.95);border-radius:50%;box-shadow:0 0 0 5px rgba(255,255,255,.14),0 0 16px rgba(255,210,108,.85);animation:reticleSpin 4s linear infinite}.aim-reticle:before,.aim-reticle:after{content:"";position:absolute;left:50%;top:50%;background:#fff1a1;box-shadow:0 0 6px #fff0a0}.aim-reticle:before{width:42px;height:2px;transform:translate(-50%,-50%)}.aim-reticle:after{width:2px;height:42px;transform:translate(-50%,-50%)}@keyframes reticleSpin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+    /* v170: prize rarity signage and layered presentation */
+    .prize-slot .rarity-chip{position:absolute;right:1px;top:3px;z-index:12;padding:2px 5px;border-radius:999px;background:rgba(255,255,255,.82);border:1px solid rgba(105,137,142,.25);font-size:.47rem;font-weight:900;color:#62787c;box-shadow:0 2px 4px rgba(45,68,73,.12)}.prize-slot[data-rarity="SSR"] .rarity-chip{background:#fff1b1;color:#8b6a20}.prize-slot[data-rarity="SR"] .rarity-chip{background:#ffe0ef;color:#a45d7c}.prize-slot[data-rarity="R"] .rarity-chip{background:#dffaff;color:#4e7d87}.prize-slot .target-ring{width:38px;height:38px;border-color:rgba(255,238,132,.72);box-shadow:0 0 14px rgba(255,221,100,.48)}.prize-slot.near .target-ring{animation:targetPulse .7s ease-in-out infinite alternate}@keyframes targetPulse{to{transform:translate(-50%,-50%) scale(1.18);opacity:.45}}
+    /* v171: prize-stage floor and depth shadows */
+    .prize-bed{isolation:isolate}.prize-bed:after{z-index:1}.prizes{z-index:3}.prize-slot:after{content:"";position:absolute;left:16%;right:16%;bottom:2%;height:9px;border-radius:50%;background:rgba(54,82,87,.2);filter:blur(4px);z-index:-1}.prize-slot.depth-back{transform:translateX(-50%) scale(.9);transform-origin:center bottom}.prize-slot.depth-mid{transform:translateX(-50%) scale(.96);transform-origin:center bottom}.prize-slot.depth-front{transform:translateX(-50%) scale(1);transform-origin:center bottom}
+    /* v172: physical controls and status feedback */
+    .panel-joystick .knob{transition:transform .12s ease,filter .12s ease}.control-bar.is-moving .knob{filter:brightness(1.12);box-shadow:0 0 12px rgba(255,159,199,.55),0 3px 5px rgba(57,76,81,.25)}.control-bar.is-moving.left .knob{transform:translateX(-70%) rotate(-8deg)}.control-bar.is-moving.right .knob{transform:translateX(-30%) rotate(8deg)}.panel-status.busy{background:rgba(255,239,173,.76);color:#80631d}.panel-status.busy .status-led{background:#ffce64;box-shadow:0 0 10px #ffd86b}.panel-status.get{background:rgba(255,183,215,.76);color:#8c5470}.panel-status.get .status-led{background:#ff8fbd;box-shadow:0 0 10px #ff8fbd}
+    /* v173: collection progress and rarity readability */
+    .collection-progress{height:7px;border-radius:999px;background:#d9e8e9;overflow:hidden;margin:-4px 0 10px;box-shadow:inset 0 1px 2px rgba(61,88,92,.14)}.collection-progress span{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,#7eeef1,#ff9fca,#ffe279);box-shadow:0 0 8px rgba(125,234,236,.45);transition:width .35s ease}.collection-item{transition:transform .18s ease,box-shadow .18s ease}.collection-item:hover{transform:translateY(-2px);box-shadow:0 5px 12px rgba(57,79,84,.12)}.collection-item .rarity{font-weight:900}.collection-item .qty{border:1px solid rgba(93,124,129,.12)}
+    /* v174: chute mechanics and prize exit */
+    .chute-door{position:absolute;left:4%;bottom:0;width:17%;height:16%;border-radius:12px 12px 5px 5px;background:linear-gradient(180deg,#fff,#b9d3d4 45%,#7c9ca0);border:2px solid rgba(255,255,255,.85);box-shadow:inset 0 3px #fff,0 -2px 8px rgba(49,75,79,.15);z-index:7;transform-origin:bottom;transition:transform .2s ease}.chute-door.open{transform:perspective(80px) rotateX(55deg) translateY(2px)}.chute-label{z-index:8}
+    /* v175: camera/GET staging and idle shimmer */
+    .machine-wrap.camera-pulse{animation:cameraPulse .5s ease}.machine-wrap.is-playing .rail-light{animation:railSweep 1.2s linear infinite}.machine-wrap:not(.is-playing) .carriage-body{animation:idleCarriage 3.8s ease-in-out infinite}.glass:after{animation:glassShimmer 5.5s ease-in-out infinite}@keyframes cameraPulse{0%{transform:scale(1)}25%{transform:scale(1.008) rotate(.15deg)}100%{transform:scale(1)}}@keyframes railSweep{from{filter:brightness(.9)}50%{filter:brightness(1.3)}to{filter:brightness(.9)}}@keyframes idleCarriage{0%,100%{transform:translateY(0)}50%{transform:translateY(1px)}}@keyframes glassShimmer{0%,100%{opacity:.8}50%{opacity:1}}
+    /* v176: compact responsive polish and final visual hierarchy */
+    .tray-ribbon{position:absolute;left:50%;top:5px;transform:translateX(-50%);z-index:9;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,.72);border:1px solid rgba(99,130,135,.2);font-size:.5rem;letter-spacing:.14em;font-weight:900;color:#60777b;box-shadow:0 2px 7px rgba(48,72,76,.1)}
+    .cg-logo{color:#5d7479;text-shadow:0 2px #fff}.cg-logo small{color:#82999c}.medal-pill{background:rgba(255,255,255,.86);border-color:#c4d4d6;color:#536c71;box-shadow:0 4px 20px rgba(54,76,81,.12)}.medal-pill strong{color:#c78617}.side-panel .cg-card{box-shadow:0 12px 35px rgba(52,75,79,.12)}
+    @media(max-width:680px){.cabinet-side-decor{display:none}.aim-reticle{width:23px;height:23px}.aim-reticle:before{width:34px}.aim-reticle:after{height:34px}.overhead-lamp{width:30%}.chute-door{width:20%}.collection-progress{margin-top:-3px}}
+
+
+    /* v178-v187: ten-stage reference-style presentation pass. */
+    .glass-glare{position:absolute;inset:0;z-index:10;pointer-events:none;overflow:hidden;opacity:.75}
+    .glass-glare:before{content:"";position:absolute;top:-20%;left:-28%;width:22%;height:150%;transform:rotate(17deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.34),transparent);filter:blur(2px);animation:glareSweep 7s ease-in-out infinite}
+    @keyframes glareSweep{0%,58%{left:-30%;opacity:0}66%{opacity:.8}84%{left:115%;opacity:.2}100%{left:130%;opacity:0}}
+    .scanline{position:absolute;inset:0;z-index:9;pointer-events:none;background:repeating-linear-gradient(180deg,rgba(255,255,255,.04) 0 1px,transparent 1px 5px);mix-blend-mode:soft-light;opacity:.35}
+    .target-card{position:absolute;left:12px;top:43px;z-index:15;min-width:122px;padding:6px 10px;border-radius:12px;background:rgba(255,255,255,.82);border:1px solid rgba(96,132,137,.22);box-shadow:0 5px 13px rgba(45,70,75,.12);backdrop-filter:blur(4px);transition:transform .18s ease,box-shadow .18s ease,opacity .18s ease;opacity:.72}
+    .target-card.active{transform:translateY(-2px);box-shadow:0 7px 18px rgba(255,188,102,.24);opacity:1}
+    .target-card .target-label{display:block;font-size:.43rem;letter-spacing:.16em;color:#8a9da0;font-weight:900}.target-card strong{display:block;color:#536c70;font-size:.72rem;line-height:1.15;margin-top:2px}.target-card small{display:block;color:#7a8d90;font-size:.42rem;margin-top:2px}
+    .stage-counter,.prize-counter{position:absolute;right:12px;z-index:15;padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.78);border:1px solid rgba(100,136,141,.22);color:#647a7d;font-size:.44rem;font-weight:900;letter-spacing:.1em;box-shadow:0 3px 8px rgba(47,71,76,.1)}
+    .stage-counter{top:43px}.prize-counter{top:69px}
+    .machine-wrap.stage-position .target-card{box-shadow:0 7px 20px rgba(126,232,239,.24)}
+    .machine-wrap.stage-descend .cabinet{filter:saturate(1.08)}.machine-wrap.stage-descend .overhead-lamp{opacity:1;filter:brightness(1.25)}
+    .machine-wrap.stage-grab .target-card{animation:targetCardPulse .42s ease-in-out infinite alternate}.machine-wrap.stage-grab .carriage-body{filter:brightness(1.12) drop-shadow(0 0 8px rgba(255,220,114,.35))}
+    .machine-wrap.stage-return .scene-decor{transform:translateX(-1.5%);transition:transform .7s ease}.machine-wrap.stage-get .cabinet{box-shadow:0 0 0 3px rgba(255,220,129,.2),0 0 45px rgba(255,151,199,.18)}
+    @keyframes targetCardPulse{to{transform:scale(1.025)}}
+    .carriage-body.stage-ready .bot-eye{animation:eyeBlink 3.4s infinite}.carriage-body.stage-grab .bot-eye{transform:scale(1.2);background:#6d5661}.carriage-body.stage-get .bot-eye{animation:getEyes .28s ease-in-out 3}
+    @keyframes eyeBlink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.15)}}@keyframes getEyes{50%{transform:scale(1.35)}}
+    .coin-slot{position:absolute;left:12px;bottom:17px;width:26px;height:22px;border-radius:7px;background:linear-gradient(#dce8e9,#9fb4b7);border:1px solid #839da1;box-shadow:inset 0 1px #fff,0 2px 4px rgba(47,68,73,.18);z-index:12}.coin-slot span{position:absolute;left:50%;top:4px;width:7px;height:11px;transform:translateX(-50%);border-radius:4px;background:#455c61;box-shadow:inset 0 1px #1f3033}.coin-slot i{position:absolute;right:4px;top:4px;width:4px;height:4px;border-radius:50%;background:#ffe27b;box-shadow:0 0 5px #ffe27b}
+    .control-bar.is-moving .coin-slot i{animation:coinLed .45s infinite alternate}@keyframes coinLed{to{filter:brightness(1.8)}}
+    .cg-btn.pressed{transform:translateY(2px);box-shadow:inset 0 2px 5px rgba(50,71,75,.22)!important}
+    .prize-slot .plush{animation:plushBreath 3.8s ease-in-out infinite}.prize-slot:nth-child(3n) .plush{animation-delay:-1.2s}.prize-slot:nth-child(4n) .plush{animation-delay:-2.1s}
+    @keyframes plushBreath{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-1.5px) rotate(.35deg)}}
+    .prize-slot.near .plush{animation:prizeTargetGlow .72s ease-in-out infinite alternate}@keyframes prizeTargetGlow{to{transform:translateY(-2px) scale(1.025)}}
+    .prize-slot[data-rarity="SSR"] .plush:before{content:"";position:absolute;inset:4px;border-radius:35%;background:linear-gradient(120deg,transparent 35%,rgba(255,255,255,.65) 48%,transparent 62%);animation:rareShine 3.2s linear infinite;pointer-events:none;z-index:8}@keyframes rareShine{0%,65%{transform:translateX(-80%);opacity:0}75%{opacity:.9}100%{transform:translateX(80%);opacity:0}}
+    .prize-bed.getting .prize-slot{animation:stageBounce .45s ease}.prize-bed.getting .chute-label{animation:chuteLabelPop .5s ease}
+    @keyframes stageBounce{50%{transform:translateX(-50%) translateY(-4px)}}@keyframes chuteLabelPop{50%{transform:scale(1.08)}}
+    .prize-counter.hot{background:#fff1c0;color:#8a671c;box-shadow:0 0 14px rgba(255,213,103,.42)}
+    .machine-wrap.stage-get .prize-counter{animation:counterPop .55s ease}.machine-wrap.stage-get .stage-counter{background:#ffe6a1;color:#805e16}
+    @keyframes counterPop{50%{transform:scale(1.12)}}
+    @media(max-width:680px){.target-card{left:7px;top:38px;min-width:92px;padding:5px 7px}.target-card strong{font-size:.62rem}.stage-counter{right:7px;top:38px}.prize-counter{right:7px;top:61px}.coin-slot{left:7px;bottom:13px;transform:scale(.8);transform-origin:left bottom}.glass-glare{opacity:.55}}
+
+
+    /* v198-v208: ten-stage cinematic refinement inspired by arcade crane motion. */
+    .dock-indicator{position:absolute;left:5.2%;bottom:13%;display:flex;align-items:center;gap:5px;padding:3px 7px;border-radius:999px;background:rgba(255,255,255,.72);border:1px solid rgba(104,139,143,.28);color:#698286;font-size:.46rem;font-weight:900;letter-spacing:.1em;z-index:16;opacity:.5;transition:.25s}.dock-indicator span{width:7px;height:7px;border-radius:50%;background:#9edfe0;box-shadow:0 0 7px #9edfe0}.dock-indicator.docked{opacity:1;transform:scale(1.06);background:#fff5bd}.dock-indicator.docked span{background:#ffe174;box-shadow:0 0 10px #ffe174;animation:dockPulse .5s ease}
+    @keyframes dockPulse{50%{transform:scale(1.7)}}
+    .machine-wrap.cinematic-aim .aim-reticle{animation:aimLock 1s ease-in-out infinite alternate}.machine-wrap.cinematic-aim .aim-line{opacity:.9}
+    @keyframes aimLock{to{transform:translate(-50%,-50%) scale(1.16);box-shadow:0 0 0 4px rgba(255,255,255,.24),0 0 22px rgba(255,218,117,.9)}}
+    .machine-wrap.parallax-active .scene-decor{transition:transform .12s linear}.machine-wrap.parallax-active .top-rail{transition:transform .12s linear}.machine-wrap.parallax-active .prize-bed{transition:transform .12s linear}
+    .cable.mechanical-tension{transform-origin:50% 0;animation:cableTension .32s ease-in-out 2}.cable.servo-pulse{box-shadow:0 0 8px rgba(255,217,117,.8),0 0 14px rgba(255,159,205,.35)}
+    @keyframes cableTension{25%{transform:translateX(-50%) scaleX(1.16)}75%{transform:translateX(-50%) scaleX(.86)}}
+    .claw.servo-active .claw-ring{animation:servoRing .18s linear 4}.claw.servo-active .finger{filter:drop-shadow(0 0 7px rgba(255,214,126,.95))}.claw.contact-shock:after{content:"";position:absolute;left:50%;top:34px;width:14px;height:14px;border:3px solid rgba(255,255,255,.9);border-radius:50%;transform:translate(-50%,-50%);animation:contactShock .48s ease-out;pointer-events:none}
+    @keyframes servoRing{50%{transform:translateX(-50%) scale(1.18);filter:brightness(1.4)}}
+    @keyframes contactShock{0%{opacity:.9;transform:translate(-50%,-50%) scale(.4)}100%{opacity:0;transform:translate(-50%,-50%) scale(3.5)}}
+    .prize-slot.contact-glow .plush{filter:drop-shadow(0 0 11px rgba(255,229,132,.9)) drop-shadow(0 8px 5px rgba(36,52,59,.42))}.prize-slot.contact-glow:after{content:"";position:absolute;inset:6% 10%;border:2px solid rgba(255,234,147,.55);border-radius:35%;animation:contactRing .6s ease-out;pointer-events:none}
+    @keyframes contactRing{from{opacity:1;transform:scale(.72)}to{opacity:0;transform:scale(1.2)}}
+    .machine-wrap.return-dock .cabinet{animation:dockThump .48s ease-out}.machine-wrap.return-dock .rail-light{animation:dockRail .55s ease-out}
+    @keyframes dockThump{45%{transform:translateY(2px) scale(1.004)}100%{transform:translateY(0) scale(1)}}@keyframes dockRail{50%{filter:brightness(1.8)}}
+    .prize-bed.chute-land .chute-door{animation:chuteLand .58s cubic-bezier(.2,.8,.2,1)}.prize-bed.chute-land:after{animation:trayBounce .55s ease-out}
+    @keyframes chuteLand{30%{transform:translateY(-3px) scaleY(.9)}60%{transform:translateY(1px) scaleY(1.04)}100%{transform:translateY(0)}}@keyframes trayBounce{35%{opacity:.7;transform:translateY(-5px)}100%{opacity:1;transform:translateY(0)}}
+    .win-overlay.cinematic-get{background:radial-gradient(circle at 50% 44%,rgba(255,255,224,.96),rgba(255,179,217,.7) 20%,rgba(102,203,210,.72) 45%,rgba(42,65,71,.96) 82%)}.win-overlay.cinematic-get .win-card{animation:getCardCinematic .72s cubic-bezier(.2,.9,.2,1)}
+    @keyframes getCardCinematic{0%{opacity:0;transform:translateY(28px) scale(.78) rotate(-2deg)}55%{opacity:1;transform:translateY(-5px) scale(1.04) rotate(1deg)}100%{transform:translateY(0) scale(1) rotate(0)}}
+    .attract-target{position:absolute;left:50%;bottom:19%;transform:translateX(-50%);padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.7);border:1px solid rgba(93,130,134,.25);font-size:.5rem;font-weight:900;letter-spacing:.1em;color:#60777c;z-index:14;opacity:0;transition:opacity .35s}.attract-target.show{opacity:1}.attract-target strong{color:#d27fa5}.machine-wrap.attract-sweep .rail-light{animation:attractSweep 2.4s linear infinite;background:linear-gradient(90deg,transparent,#8ff5ff,#ffb4d6,#ffe58c,#8ff5ff,transparent);background-size:200% 100%}
+    @keyframes attractSweep{to{background-position:200% 0}}
+    @media(prefers-reduced-motion:reduce){.bubble,.head-lights i,.machine-lights i,.prize-slot .plush,.claw.servo-active .claw-ring{animation:none!important}.machine-wrap.parallax-active .scene-decor,.machine-wrap.parallax-active .top-rail,.machine-wrap.parallax-active .prize-bed{transition:none!important}}
+
+
+    /* v210-v219: ten-stage arcade polish batch */
+    .aim-guide .aim-line{background:linear-gradient(180deg,rgba(126,246,245,.12),rgba(255,229,126,.82),rgba(255,255,255,.12));box-shadow:0 0 10px rgba(255,224,126,.28)}
+    .aim-guide .aim-reticle{border-color:rgba(255,224,126,.95);box-shadow:0 0 0 3px rgba(255,255,255,.22),0 0 18px rgba(255,218,112,.7)}
+    .machine-wrap.target-lock .target-card{box-shadow:0 0 0 2px rgba(255,225,126,.35),0 5px 18px rgba(72,94,98,.18);transform:translateY(-1px)}
+    .machine-wrap.target-lock .target-card .target-label{color:#d3972e}
+    .alignment-meter{position:absolute;left:50%;top:64px;transform:translateX(-50%);width:132px;height:8px;padding:1px;border-radius:999px;background:rgba(255,255,255,.72);border:1px solid rgba(105,139,143,.25);z-index:18;opacity:0;transition:.2s;pointer-events:none}.alignment-meter.show{opacity:1}.alignment-meter i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,#8fdde0,#ffe178,#ff9fc8);box-shadow:0 0 8px rgba(255,225,120,.45);transition:width .12s}.alignment-meter b{position:absolute;right:0;top:-11px;font-size:.38rem;color:#637a7e;letter-spacing:.08em}
+    .crane-carriage.motion-ready .carriage-body:before{animation:carriageReady 1.1s ease-in-out infinite alternate}.crane-carriage.motion-grab .carriage-body:before{animation:carriageGrab .22s linear 3}.crane-carriage.motion-return .carriage-body:before{animation:carriageReturn .7s ease-in-out infinite alternate}
+    @keyframes carriageReady{to{filter:brightness(1.18)}}@keyframes carriageGrab{50%{filter:brightness(1.55)}}@keyframes carriageReturn{to{filter:brightness(1.12)}}
+    .claw.pre-contact .finger{animation:preContact .22s ease-in-out 2}.claw.pre-contact .claw-ring{filter:brightness(1.2)}
+    @keyframes preContact{50%{transform:translateY(2px) scaleY(.94)}}
+    .claw.lift-pulse .claw-ring{animation:liftPulse .35s ease-out 2}.cable.lift-pulse{box-shadow:0 0 10px rgba(255,225,126,.72)}
+    @keyframes liftPulse{50%{transform:translateX(-50%) scale(1.13)}}
+    .machine-wrap.home-settle .cabinet{animation:homeSettle .58s cubic-bezier(.2,.8,.2,1)}
+    @keyframes homeSettle{0%{transform:translateY(0)}35%{transform:translateY(2px)}65%{transform:translateY(-1px)}100%{transform:translateY(0)}}
+    .prize-bed.settle-wave .prize-slot{animation:settleWave .5s ease-out}.prize-bed.settle-wave .prize-slot:nth-child(2n){animation-delay:.04s}.prize-bed.settle-wave .prize-slot:nth-child(3n){animation-delay:.08s}
+    @keyframes settleWave{45%{transform:translateY(-3px) rotate(1deg)}100%{transform:translateY(0) rotate(0)}}
+    .play-progress{position:absolute;left:50%;bottom:67px;transform:translateX(-50%);display:flex;gap:4px;padding:4px 7px;border-radius:999px;background:rgba(255,255,255,.72);border:1px solid rgba(104,139,143,.25);z-index:20;opacity:0;pointer-events:none;transition:.25s}.play-progress.show{opacity:1}.play-progress i{width:6px;height:6px;border-radius:50%;background:#d7e4e5;box-shadow:inset 0 1px #fff}.play-progress i.active{background:#ffe06e;box-shadow:0 0 7px #ffe06e}.play-progress i.done{background:#8edfd1}
+    .queue-pulse{animation:queuePulse .55s ease-out}.remaining.queue-pulse strong{transform:scale(1.18);color:#d48a18}@keyframes queuePulse{50%{filter:brightness(1.2)}}
+    .get-hold-hint{position:absolute;left:50%;bottom:16%;transform:translateX(-50%);padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.88);border:1px solid rgba(106,140,145,.24);color:#5e7479;font-size:.48rem;font-weight:900;letter-spacing:.08em;z-index:25;opacity:0;pointer-events:none}.win-overlay.cinematic-get .get-hold-hint{opacity:1;animation:hintFloat 1.3s ease-in-out infinite alternate}@keyframes hintFloat{to{transform:translateX(-50%) translateY(-3px)}}
+    .machine-wrap.attract-sweep .play-progress{display:none}
+    @media(max-width:680px){.alignment-meter{top:59px;width:108px}.play-progress{bottom:60px;transform:translateX(-50%) scale(.88)}}
+
+    /* v220-v229: final interaction/physicality polish batch */
+    .prize-slot.idle-bob{animation:idleBob 2.8s ease-in-out infinite;animation-delay:var(--idle-delay,0s)}
+    @keyframes idleBob{0%,100%{transform:translateX(-50%) rotate(var(--rot,0deg)) translateY(0)}50%{transform:translateX(-50%) rotate(calc(var(--rot,0deg) + 1deg)) translateY(-2px)}}
+    .prize-slot.target-preview{outline:2px solid rgba(255,236,137,.85);outline-offset:4px;filter:drop-shadow(0 0 12px rgba(255,216,106,.72))}
+    .prize-slot.target-preview:after{content:"AIM";position:absolute;left:50%;top:-18px;transform:translateX(-50%);font-size:8px;font-weight:900;letter-spacing:.12em;color:#fff4a6;text-shadow:0 1px 4px #234}
+    .claw-shadow{position:absolute;left:50%;top:calc(100% - 4px);width:66px;height:12px;transform:translateX(-50%);border-radius:50%;background:rgba(3,10,18,.28);filter:blur(5px);opacity:.45;pointer-events:none}
+    .cable.mechanical-tension{filter:drop-shadow(0 0 5px rgba(125,236,255,.55));width:6px}
+    .return-track{position:absolute;left:8%;right:8%;top:21%;height:2px;background:linear-gradient(90deg,rgba(255,220,110,.85),rgba(125,239,255,.12));opacity:0;transition:opacity .25s;z-index:4;box-shadow:0 0 8px rgba(125,239,255,.3)}
+    .machine-wrap.return-track-on .return-track{opacity:1}
+    .chute-door.pulse{animation:chutePulse .5s ease-in-out 2}
+    @keyframes chutePulse{50%{filter:brightness(1.55);box-shadow:0 0 24px rgba(255,220,110,.8)}}
+    .play-transition{position:absolute;inset:0;z-index:35;pointer-events:none;opacity:0;background:radial-gradient(circle,rgba(255,255,255,.2),transparent 45%);transition:opacity .18s}
+    .play-transition.show{opacity:1}
+    .result-stamp{position:absolute;left:50%;top:12%;transform:translate(-50%,-8px) scale(.8);padding:5px 10px;border-radius:999px;background:rgba(255,248,203,.92);color:#624c0a;font-size:.58rem;font-weight:900;letter-spacing:.12em;opacity:0;z-index:26;pointer-events:none;transition:.25s}
+    .result-stamp.show{opacity:1;transform:translate(-50%,0) scale(1)}
+    .machine-wrap.is-playing .target-card{transition:transform .2s,box-shadow .2s}.machine-wrap.target-lock .target-card{box-shadow:0 0 18px rgba(255,216,106,.28)}
+    .remaining strong{transition:transform .18s,color .18s}
+    @media(max-width:680px){.prize-slot.target-preview:after{font-size:7px;top:-15px}.claw-shadow{width:48px;height:8px}}
+
+
+
+/* v250-v259: control/HUD feedback pass */
+.control-telemetry{position:absolute;right:12px;top:18%;z-index:19;display:flex;gap:5px;align-items:center;padding:4px 7px;border-radius:999px;background:rgba(5,12,20,.68);border:1px solid rgba(130,205,220,.28);font-size:7px;letter-spacing:.1em;color:#c9e8ed;opacity:.72;pointer-events:none}.control-telemetry strong{color:#ffe18a}.joystick-active .knob{transform:translate(calc(var(--joy-x,0px)),calc(var(--joy-y,0px)));transition:transform .08s ease}.stage-progress{position:absolute;left:50%;bottom:72px;transform:translateX(-50%);display:flex;gap:5px;z-index:22;opacity:.7;pointer-events:none}.stage-progress i{width:7px;height:3px;border-radius:4px;background:rgba(190,220,225,.3);transition:.2s}.stage-progress i.on{background:#ffe07d;box-shadow:0 0 8px rgba(255,224,125,.5)}.stage-progress i.hot{background:#8ee9e5;box-shadow:0 0 10px rgba(142,233,229,.6)}.bed-count{position:absolute;right:10px;top:18px;z-index:7;padding:4px 7px;border-radius:999px;background:rgba(4,11,18,.58);border:1px solid rgba(145,190,204,.22);font-size:7px;color:#c8dfe5;letter-spacing:.08em;pointer-events:none}.bed-count.hot{color:#ffe08a;box-shadow:0 0 12px rgba(255,224,138,.16)}.contact-readout{position:absolute;left:50%;top:62%;transform:translate(-50%,-50%);z-index:23;padding:4px 8px;border-radius:999px;background:rgba(4,10,17,.72);border:1px solid rgba(142,225,219,.35);font-size:7px;font-weight:900;letter-spacing:.08em;color:#d9f6f3;opacity:0;transition:.18s;pointer-events:none}.contact-readout.show{opacity:1}.contact-readout.bad{border-color:rgba(255,130,145,.5);color:#ffd3d8}.contact-readout.good{border-color:rgba(142,235,212,.75);color:#d8fff3}.machine-wrap.telemetry-flash{animation:telemetryFlash .22s ease-out}@keyframes telemetryFlash{50%{filter:brightness(1.08)}}
+
+/* v240-v259: 10-stage mechanical presentation pass */
+.machine-wrap .rail-scale{position:absolute;left:8%;right:8%;top:15.4%;height:12px;z-index:4;display:flex;justify-content:space-between;pointer-events:none;opacity:.7}.rail-scale i{width:1px;height:5px;background:rgba(92,126,137,.5);position:relative}.rail-scale i:nth-child(5n+1){height:9px}.rail-scale i b{position:absolute;top:11px;left:50%;transform:translateX(-50%);font-size:7px;color:#71878a;font-weight:900}.position-reticle{position:absolute;top:18%;left:8%;width:16px;height:16px;border:1px solid rgba(255,214,112,.7);border-radius:50%;transform:translate(-50%,-50%);z-index:6;opacity:0;transition:left .12s,opacity .2s;pointer-events:none}.position-reticle.show{opacity:1}.depth-meter{position:absolute;right:12px;bottom:88px;width:10px;height:92px;border-radius:999px;background:rgba(255,255,255,.55);border:1px solid rgba(86,120,126,.2);z-index:18;opacity:0;transition:.2s;overflow:hidden}.depth-meter.show{opacity:1}.depth-meter i{position:absolute;left:2px;right:2px;bottom:2px;height:0;border-radius:999px;background:linear-gradient(#8ddfe1,#ffe07d,#ff9fc8);transition:height .18s}.depth-meter b{position:absolute;right:14px;top:3px;font-size:7px;color:#687d80;writing-mode:vertical-rl;letter-spacing:.08em}.grab-tension{position:absolute;left:50%;top:72%;transform:translate(-50%,-50%);width:92px;height:8px;padding:1px;border-radius:999px;background:rgba(255,255,255,.7);border:1px solid rgba(96,129,134,.25);z-index:20;opacity:0;transition:.2s;pointer-events:none}.grab-tension.show{opacity:1}.grab-tension i{display:block;width:0;height:100%;border-radius:999px;background:linear-gradient(90deg,#8fdde0,#ffe178,#ff7db8);transition:width .25s}.grab-tension b{position:absolute;left:50%;top:-12px;transform:translateX(-50%);font-size:7px;color:#6b7f82;white-space:nowrap}.return-marker{position:absolute;left:8%;top:20.5%;width:18px;height:18px;border:2px solid rgba(255,218,112,.75);border-radius:50%;transform:translate(-50%,-50%);z-index:6;opacity:0;pointer-events:none}.machine-wrap.return-track-on .return-marker{opacity:1;animation:returnMarkerPulse .8s ease-in-out infinite alternate}@keyframes returnMarkerPulse{to{box-shadow:0 0 16px rgba(255,218,112,.8);transform:translate(-50%,-50%) scale(1.16)}}.drop-trajectory{position:absolute;left:8%;bottom:19%;width:2px;height:20%;background:linear-gradient(180deg,rgba(255,220,110,.05),rgba(255,220,110,.8));z-index:6;opacity:0;pointer-events:none}.drop-trajectory.show{opacity:1;animation:trajectoryPulse .6s ease-in-out infinite alternate}@keyframes trajectoryPulse{to{box-shadow:0 0 12px rgba(255,220,110,.7)}}.get-reward-ring{position:absolute;left:6%;bottom:11%;width:18%;aspect-ratio:1;border-radius:50%;border:2px solid rgba(255,220,110,.8);box-shadow:0 0 0 0 rgba(255,220,110,.5);z-index:9;opacity:0;pointer-events:none}.get-reward-ring.show{animation:rewardRing .8s ease-out forwards}@keyframes rewardRing{0%{opacity:1;transform:scale(.55);box-shadow:0 0 0 0 rgba(255,220,110,.55)}100%{opacity:0;transform:scale(1.45);box-shadow:0 0 0 16px rgba(255,220,110,0)}}.control-buttons .cg-btn.pressed{filter:brightness(1.28);box-shadow:inset 0 2px 5px rgba(0,0,0,.3),0 0 12px rgba(255,216,106,.25)}
+
+
+    /* v340-v359: reference-video visual finish pass. Gameplay/state logic intentionally unchanged. */
+    body.crane-body{
+      background:
+        radial-gradient(circle at 12% 8%,rgba(255,190,224,.62),transparent 22%),
+        radial-gradient(circle at 88% 10%,rgba(132,240,238,.55),transparent 24%),
+        linear-gradient(180deg,#efe7f6 0%,#cceff0 34%,#a8d5da 72%,#91aeb5 100%);
+    }
+    .crane-shell:before,.crane-shell:after{content:"";position:fixed;pointer-events:none;z-index:-1;border-radius:50%;filter:blur(2px);opacity:.72}
+    .crane-shell:before{width:260px;height:150px;left:-70px;top:110px;background:radial-gradient(ellipse,#ffd0e6 0 38%,transparent 70%);transform:rotate(-12deg)}
+    .crane-shell:after{width:300px;height:170px;right:-80px;top:180px;background:radial-gradient(ellipse,#a9eff0 0 38%,transparent 70%);transform:rotate(12deg)}
+    .machine-wrap{
+      border-radius:34px;
+      padding:15px;
+      background:linear-gradient(145deg,#fff 0%,#fffafd 20%,#eef8f8 54%,#d5e4e7 100%);
+      border:3px solid rgba(255,255,255,.96);
+      box-shadow:0 28px 75px rgba(60,78,84,.28),inset 0 2px #fff,0 0 0 1px rgba(132,163,169,.18);
+    }
+    .machine-head{
+      height:66px;
+      border-radius:22px 22px 13px 13px;
+      background:linear-gradient(180deg,#fff 0%,#fffdfd 38%,#dce9eb 100%);
+      border:2px solid #b7c9cd;
+      box-shadow:inset 0 3px #fff,0 8px 18px rgba(53,75,81,.18);
+    }
+    .machine-head:after{content:"";position:absolute;left:5%;right:5%;bottom:5px;height:4px;border-radius:99px;background:linear-gradient(90deg,#7eeef1,#ff9fcb,#ffe37c,#9be8c4,#7eeef1);box-shadow:0 0 14px rgba(137,237,234,.75);animation:marqueeSweep 4.8s linear infinite}
+    @keyframes marqueeSweep{0%{filter:hue-rotate(0deg);opacity:.55}50%{opacity:1}100%{filter:hue-rotate(20deg);opacity:.55}}
+    .head-badge{font-size:clamp(1rem,2.8vw,1.62rem);letter-spacing:.12em;color:#667b80;text-shadow:0 2px #fff,0 0 18px rgba(255,160,207,.3)}
+    .cabinet{
+      border-radius:18px;
+      border-width:9px;
+      background:linear-gradient(180deg,#f8ffff 0%,#e7f7f5 22%,#d6e9e9 54%,#a9c0c4 100%);
+      border-color:#f9ffff;
+      box-shadow:inset 0 0 0 2px #91a8ad,inset 0 -70px 100px rgba(57,83,88,.14),0 12px 30px rgba(48,67,73,.22);
+    }
+    .cabinet:before{background:
+      radial-gradient(ellipse at 15% 13%,rgba(255,255,255,.88),transparent 20%),
+      radial-gradient(ellipse at 84% 16%,rgba(255,255,255,.7),transparent 18%),
+      linear-gradient(90deg,rgba(255,154,204,.09),transparent 20%,transparent 80%,rgba(111,231,238,.11));}
+    .cabinet:after{content:"";position:absolute;left:3.5%;right:3.5%;bottom:4%;height:11%;border-radius:0 0 12px 12px;background:linear-gradient(180deg,rgba(255,255,255,.3),rgba(92,126,132,.08));border-top:1px solid rgba(255,255,255,.65);pointer-events:none;z-index:3}
+    .glass{
+      inset:8px 8px 70px;
+      border-width:4px;
+      border-radius:16px;
+      background:
+        radial-gradient(ellipse at 50% 36%,rgba(255,255,255,.42),transparent 34%),
+        linear-gradient(180deg,#9ff1ee 0%,#c6f2e8 22%,#f7dfdf 48%,#c8dde2 74%,#a9c6cb 100%);
+      box-shadow:inset 0 0 0 1px rgba(79,123,129,.25),inset 0 0 42px rgba(255,255,255,.44),0 0 22px rgba(128,233,238,.2);
+    }
+    .glass:before{background:
+      radial-gradient(circle at 14% 20%,rgba(255,255,255,.78) 0 2%,transparent 2.5%),
+      radial-gradient(circle at 83% 17%,rgba(255,255,255,.58) 0 3%,transparent 3.5%),
+      linear-gradient(108deg,rgba(255,255,255,.34),transparent 17%,transparent 76%,rgba(255,255,255,.2));
+    }
+    .scene-decor:before{bottom:12%;height:34%;background:
+      radial-gradient(ellipse at 10% 100%,rgba(255,170,208,.82),transparent 27%),
+      radial-gradient(ellipse at 34% 100%,rgba(142,232,219,.88),transparent 31%),
+      radial-gradient(ellipse at 58% 100%,rgba(255,214,157,.8),transparent 28%),
+      radial-gradient(ellipse at 87% 100%,rgba(162,219,232,.82),transparent 29%),
+      linear-gradient(180deg,transparent,rgba(255,255,255,.18));
+    }
+    .cloud-hill{bottom:39%;width:31%;height:22%;background:linear-gradient(180deg,rgba(255,191,218,.74),rgba(245,220,229,.16));filter:blur(.7px)}
+    .cloud-hill.h2{bottom:42%;width:26%;height:17%;background:linear-gradient(180deg,rgba(255,207,191,.72),rgba(240,221,229,.14))}
+    .bubble{border-color:rgba(255,255,255,.82);box-shadow:0 0 11px rgba(255,255,255,.48)}
+    .top-rail{top:7.2%;height:14px;border-radius:12px;background:linear-gradient(#fff,#d9e8ea 45%,#92a9ae);box-shadow:0 5px 10px rgba(61,82,88,.26)}
+    .rail-light{top:6.75%;height:4px;filter:saturate(1.15)}
+    .crane-carriage{width:88px;height:58px}
+    .carriage-body{height:38px;border-radius:18px 18px 22px 22px;background:linear-gradient(180deg,#fff 0%,#efffff 35%,#b8e1df 100%);border:2px solid #86abb0;box-shadow:0 6px 12px rgba(52,78,84,.28),inset 0 2px #fff}
+    .carriage-body:before{width:24px;height:15px;top:-11px;border-radius:14px 14px 5px 5px;background:linear-gradient(#ffd0e4,#f18db6);box-shadow:0 2px 6px rgba(62,82,87,.2)}
+    .carriage-body .bot-eye{top:13px;width:7px;height:10px;background:#4d6267;box-shadow:0 0 0 2px rgba(255,255,255,.7)}
+    .carriage-body .bot-eye.left{left:29px}.carriage-body .bot-eye.right{right:29px}
+    .carriage-body .bot-mouth{top:24px;width:15px;border-bottom-width:2px}
+    .claw-ring{width:34px;height:34px;background:radial-gradient(circle at 34% 28%,#fff 0 18%,#b7eeea 42%,#5e9297 72%);box-shadow:0 0 0 2px rgba(255,255,255,.65),0 0 13px rgba(117,237,235,.5)}
+    .finger{border-width:2px;border-radius:8px;background:linear-gradient(90deg,#82999d,#f8ffff 48%,#91aaad);box-shadow:0 5px 5px rgba(47,73,78,.25)}
+    .finger:after{width:13px;height:11px;background:linear-gradient(#ffd0df,#f29abc);box-shadow:0 0 9px rgba(255,158,202,.48)}
+    .prize-bed{bottom:4.5%;height:43%;border-radius:22px 22px 9px 9px;background:
+      radial-gradient(circle at 14% 32%,rgba(255,255,255,.22) 0 2px,transparent 3px),
+      radial-gradient(circle at 76% 24%,rgba(255,255,255,.18) 0 2px,transparent 3px),
+      linear-gradient(180deg,#ffd9df 0%,#e8c2d3 16%,#acd9d5 45%,#6ea2a5 100%);
+      box-shadow:inset 0 14px 32px rgba(255,255,255,.28),inset 0 -24px 32px rgba(50,88,94,.2),0 6px 16px rgba(61,84,89,.18)
+    }
+    .prize-bed:before{height:12px;background:linear-gradient(#fff,#d7e9ea);box-shadow:0 2px 8px rgba(63,91,96,.24)}
+    .tray-ribbon{top:8px;padding:4px 14px;font-size:.55rem;background:rgba(255,255,255,.78);color:#647b7f}
+    .machine-lights{bottom:64px;height:8px;gap:6px}.machine-lights i{height:100%;border-radius:99px}
+    .control-bar{height:60px;border-radius:13px;background:linear-gradient(180deg,#fff,#f0faf9 44%,#d0e1e3);box-shadow:0 5px 14px rgba(48,69,74,.18),inset 0 2px #fff}
+    .cg-btn{border-radius:10px}.cg-btn.play{border-radius:14px;min-width:98px;box-shadow:inset 0 1px #fff,0 4px 8px rgba(112,79,21,.16)}
+    .panel-joystick .knob{width:18px;height:18px;background:radial-gradient(circle at 32% 28%,#ffd8e8,#ec91b8 62%,#b86188);box-shadow:0 4px 6px rgba(57,76,81,.26),0 0 8px rgba(255,145,193,.25)}
+    .chute-label{border-radius:10px;padding:5px 9px;background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(227,247,245,.9));box-shadow:0 4px 10px rgba(55,79,82,.16)}
+    .chute-glow{background:radial-gradient(circle,rgba(255,244,171,.98),rgba(107,235,255,.3) 42%,transparent 72%)}
+    .target-card,.finish-hud,.control-telemetry,.stage-hud-extra,.movement-meter,.depth-meter,.grab-tension,.stack-readout,.carry-readout,.return-readout{backdrop-filter:blur(5px)}
+    .target-card{box-shadow:0 5px 15px rgba(53,80,85,.12),inset 0 1px #fff}
+    .position-reticle{box-shadow:0 0 0 1px rgba(255,255,255,.35),0 0 16px rgba(255,222,121,.34)}
+    .get-reward-ring{filter:drop-shadow(0 0 8px rgba(255,224,125,.8))}
+    .win-card .win-plush{filter:drop-shadow(0 12px 10px rgba(48,72,78,.2))}
+    @media(max-width:680px){.machine-wrap{padding:9px;border-radius:25px}.machine-head{height:52px;border-radius:17px 17px 10px 10px}.cabinet{border-width:6px}.glass{inset:6px 6px 60px}.crane-carriage{width:70px}.carriage-body{height:32px}.prize-bed{height:42%}.control-bar{height:50px}.cg-btn.play{min-width:76px}.machine-head:after{bottom:4px}}
+    @media(prefers-reduced-motion:reduce){.machine-head:after{animation:none!important}}
+
+
+    /* v400-v419: user-provided Yummy visual assets */
+    .machine-wrap.visual-finish .video-backdrop{background-image:url('assets/yummy/background.png');background-size:cover;background-position:center;opacity:.94;mix-blend-mode:normal;filter:saturate(1.04) contrast(1.02);}
+    .machine-wrap.visual-finish .scene-decor{opacity:.14;}
+    .prize-slot .video-prize-art{width:100%;height:100%;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 7px 5px rgba(36,50,56,.32));}
+    .prize-slot.depth-back .video-prize-art{filter:saturate(.88) brightness(.9) drop-shadow(0 4px 4px rgba(35,54,59,.30));}
+    .prize-slot.near .video-prize-art{filter:saturate(1.08) brightness(1.05) drop-shadow(0 0 9px rgba(255,222,105,.8)) drop-shadow(0 8px 5px rgba(36,50,56,.25));}
+    /* v482: separate the crane body from the cable so vertical motion is continuous instead of swapping a pre-drawn long-cable image. */
+    .video-crane-art{position:absolute;left:50%;top:calc(var(--cable-height,72px) - 4px);width:138px;height:257px;transform:translateX(-50%);z-index:18;pointer-events:none;user-select:none;filter:drop-shadow(0 8px 5px rgba(50,70,76,.25));will-change:top;overflow:visible;}
+    .video-crane-art .crane-layer{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center top;display:block;pointer-events:none;user-select:none;will-change:transform,opacity;}
+    .video-crane-art .crane-layer.arm{transform-origin:50% 56%;}
+    .video-crane-art .crane-layer.arm{transform-origin:50% 56%;transition:opacity .16s ease;}
+    .video-crane-art .closed-arm{opacity:0;}
+    .video-crane-art .open-arm{opacity:0;}
+    .video-crane-art.arm-closed .closed-arm{opacity:1;}
+    .video-crane-art.arm-open .open-arm{opacity:1;}
+    .video-crane-art.arm-opening .closed-arm{opacity:1;transition:opacity .12s ease-out;}
+    .video-crane-art.arm-opening .open-arm{opacity:1;transition:opacity .18s ease-in;}
+    .crane-carriage.video-state{width:138px;height:340px;z-index:18;overflow:visible;}
+    .crane-carriage.video-state .carriage-body,.crane-carriage.video-state .claw{visibility:hidden;}
+    .crane-carriage.video-state .cable{visibility:visible;top:0;height:var(--cable-height,72px);z-index:16;transition:none;will-change:height;}
+    @media(max-width:680px){.video-crane-art{width:112px;height:245px}.crane-carriage.video-state{width:112px;height:300px}.prize-slot .video-prize-art{transform:scale(.92);transform-origin:center bottom;}}
+
+</style>
+<style>
+/* v230-v239: interaction polish batch */
+.aim-shadow{position:absolute;left:50%;top:62%;width:54px;height:13px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(ellipse,rgba(47,75,80,.28),rgba(47,75,80,0) 72%);filter:blur(2px);opacity:0;pointer-events:none;z-index:4;transition:left .12s ease,opacity .2s ease,transform .15s ease}.aim-shadow.show{opacity:.8}.aim-shadow.lock{transform:translate(-50%,-50%) scale(1.18);background:radial-gradient(ellipse,rgba(255,205,75,.42),rgba(255,205,75,0) 72%)}
+.contact-zone{position:absolute;left:50%;top:56%;width:90px;height:42px;transform:translate(-50%,-50%);border:1px dashed rgba(255,255,255,.35);border-radius:50%;opacity:0;pointer-events:none;z-index:5}.contact-zone.show{opacity:.42}.contact-zone.bad{border-color:rgba(255,116,136,.72);box-shadow:0 0 12px rgba(255,116,136,.18)}.contact-zone.good{border-color:rgba(93,235,215,.9);box-shadow:0 0 14px rgba(93,235,215,.22)}
+.machine-wrap.micro-shake{animation:microMachineShake .24s ease}.machine-wrap.impact-shake{animation:impactMachineShake .34s ease}@keyframes microMachineShake{25%{transform:translateX(-1px)}50%{transform:translateX(1px)}75%{transform:translateX(-.5px)}}@keyframes impactMachineShake{20%{transform:translate(1px,1px)}40%{transform:translate(-2px,-1px)}60%{transform:translate(2px,1px)}80%{transform:translate(-1px,0)}}
+.cable.tension-glow{filter:drop-shadow(0 0 5px rgba(106,232,226,.45))}.claw.jaw-tension{filter:drop-shadow(0 0 9px rgba(255,224,115,.55))}.claw.contact-flash{animation:contactFlash .28s ease}@keyframes contactFlash{50%{filter:brightness(1.55) drop-shadow(0 0 14px rgba(255,255,255,.8))}}
+.prize-slot.settle-cascade{animation:settleCascade .62s cubic-bezier(.2,.8,.25,1)}@keyframes settleCascade{0%{transform:translateX(-50%) translateY(-8px) rotate(var(--rot))}45%{transform:translateX(-50%) translateY(2px) rotate(calc(var(--rot) + 2deg))}100%{transform:translateX(-50%) translateY(0) rotate(var(--rot))}}
+.prize-counter.bump{animation:counterBump .55s ease}.collection-count.bump{animation:counterBump .55s ease}@keyframes counterBump{0%{transform:scale(1)}35%{transform:scale(1.2);filter:brightness(1.2)}100%{transform:scale(1)}}
+.remaining.queue-active{box-shadow:0 0 0 2px rgba(255,216,106,.12),0 0 18px rgba(255,216,106,.12);border-radius:999px;padding:2px 7px}.remaining.queue-active strong{animation:queueNumberPulse 1.5s ease-in-out infinite}@keyframes queueNumberPulse{50%{text-shadow:0 0 10px rgba(255,216,106,.55)}}
+.chute-glow.tracking{opacity:.95;transform:scale(1.08)}.play-progress.finish{animation:progressFinish .6s ease}@keyframes progressFinish{50%{filter:brightness(1.5);transform:scaleY(1.6)}}
+.win-card .get-total{font-size:.72rem;color:#64777b;margin-top:4px;font-weight:800}.win-card .get-total strong{color:#d58b16}.target-card.locked{box-shadow:0 0 0 2px rgba(255,215,90,.18),0 0 18px rgba(255,215,90,.22)}
+@media(max-width:680px){.aim-shadow{width:42px}.contact-zone{width:68px;height:34px}.remaining.queue-active{padding:1px 5px}}
+</style>
+
+<style>
+/* v310-v399: thirty-stage finish polish */
+.finish-hud{position:absolute;left:50%;top:6.5%;transform:translateX(-50%);display:flex;gap:5px;align-items:center;justify-content:center;flex-wrap:wrap;max-width:78%;z-index:25;pointer-events:none;opacity:.72;transition:.22s}.finish-hud span{padding:3px 7px;border-radius:999px;background:rgba(255,255,255,.74);border:1px solid rgba(89,119,125,.2);font-size:7px;font-weight:1000;letter-spacing:.06em;color:#5f777b;box-shadow:0 2px 7px rgba(43,65,71,.08)}.finish-hud .hot{background:rgba(255,229,144,.9);color:#8b6615;box-shadow:0 0 12px rgba(255,213,90,.22)}.finish-hud .good{background:rgba(160,242,225,.86);color:#286b61}.finish-hud .warn{background:rgba(255,194,190,.9);color:#9a4d4b}.finish-hud.flash{animation:hudFlash .42s ease}@keyframes hudFlash{50%{transform:translateX(-50%) scale(1.04);filter:brightness(1.3)}}
+.route-line{position:absolute;left:8%;top:20%;width:84%;height:1px;background:linear-gradient(90deg,rgba(255,218,112,.8),rgba(255,218,112,.12),rgba(255,218,112,.8));opacity:0;z-index:5;pointer-events:none}.route-line.show{opacity:.34;animation:routePulse 1.2s ease-in-out infinite alternate}@keyframes routePulse{to{opacity:.6;box-shadow:0 0 8px rgba(255,218,112,.5)}}
+.target-sweep{position:absolute;top:18%;width:28px;height:28px;border-radius:50%;border:1px solid rgba(255,221,105,.8);transform:translate(-50%,-50%) scale(.65);opacity:0;z-index:8;pointer-events:none}.target-sweep.show{opacity:.75;animation:targetSweep .7s ease-out forwards}@keyframes targetSweep{to{transform:translate(-50%,-50%) scale(2.2);opacity:0}}
+.rail-shimmer{position:absolute;left:8%;right:8%;top:15%;height:2px;border-radius:999px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.8),transparent);opacity:0;z-index:8;pointer-events:none}.rail-shimmer.show{animation:railShimmer 1.1s ease-out}@keyframes railShimmer{0%{opacity:0;transform:translateX(-35%)}30%{opacity:.7}100%{opacity:0;transform:translateX(35%)}}
+.keyboard-hint{position:absolute;left:50%;bottom:5.5%;transform:translateX(-50%);font-size:7px;font-weight:900;letter-spacing:.05em;color:#718486;background:rgba(255,255,255,.68);padding:4px 8px;border-radius:999px;border:1px solid rgba(91,116,121,.15);opacity:0;z-index:30;pointer-events:none;transition:.2s}.keyboard-hint.show{opacity:.75}.machine-wrap.finish-focus .finish-hud{opacity:1}.machine-wrap.stage-position .finish-hud span:first-child,.machine-wrap.stage-descend .finish-hud span:first-child{background:rgba(181,238,243,.9);color:#316c72}.machine-wrap.stage-grab .finish-hud span:first-child{background:rgba(255,223,157,.92);color:#805f17}.machine-wrap.stage-return .finish-hud span:first-child{background:rgba(199,215,255,.9);color:#536a98}.machine-wrap.stage-get .finish-hud span:first-child{background:rgba(255,209,231,.94);color:#9b4b73}.machine-wrap.precision-hot .target-sweep{opacity:.9}.machine-wrap.route-active .route-line{opacity:.48}.machine-wrap.payout-hot .finish-hud #payoutMeter{box-shadow:0 0 13px rgba(255,207,89,.42)}.machine-wrap.grip-hot .finish-hud #gripForecast{box-shadow:0 0 13px rgba(102,225,196,.35)}.machine-wrap.edge-alert .finish-hud #targetScore{background:rgba(255,190,187,.92);color:#934846}.machine-wrap.rail-active .rail-shimmer{opacity:1}.machine-wrap.chute-active .route-line{background:linear-gradient(90deg,rgba(255,218,112,.95),rgba(255,255,255,.25),rgba(255,218,112,.95));box-shadow:0 0 8px rgba(255,218,112,.35)}.machine-wrap.get-burst .finish-hud{animation:hudFlash .5s ease}.machine-wrap .carriage-body.finish-halo{filter:drop-shadow(0 0 9px rgba(255,224,119,.42))}.machine-wrap .cable.finish-pulse{animation:cableFinishPulse .5s ease}@keyframes cableFinishPulse{50%{filter:drop-shadow(0 0 8px rgba(255,224,119,.65))}}.machine-wrap .claw.finish-glow{filter:drop-shadow(0 0 12px rgba(255,224,119,.58))}.prize-slot.finish-target{z-index:18!important;filter:brightness(1.13) drop-shadow(0 0 6px rgba(255,221,105,.35))}.prize-slot.finish-target .target-ring{opacity:1!important;animation:targetRingPulse .65s ease-in-out infinite alternate}@keyframes targetRingPulse{to{transform:translate(-50%,-50%) scale(1.12);box-shadow:0 0 13px rgba(255,221,105,.48)}}.chute-glow.route-hot{box-shadow:0 0 28px rgba(255,220,110,.55)}.result-stamp.finish-burst{filter:drop-shadow(0 0 12px rgba(255,220,110,.55))}.play-transition.finish-sweep{filter:brightness(1.3)}.machine-wrap.attract-enhanced .finish-hud{opacity:.4}.machine-wrap.attract-enhanced .rail-shimmer{opacity:.4;animation:railShimmer 2.6s ease-in-out infinite}.machine-wrap.reduce-motion *{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}@media(prefers-reduced-motion:reduce){.machine-wrap *{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
+@media(max-width:680px){.finish-hud{top:7.5%;max-width:88%;gap:3px}.finish-hud span{font-size:6px;padding:2px 5px}.keyboard-hint{bottom:7%;font-size:6px}.route-line{top:21%}}
+</style>
+<style>
+/* v360-v399: Phase A-D visual replacement pass */
+.video-backdrop{position:absolute;inset:8% 4% 24%;z-index:0;background-image:linear-gradient(180deg,rgba(207,255,250,.32),rgba(255,232,236,.28)),url('assets/crane_backdrop.jpg');background-size:cover;background-position:center 42%;opacity:.34;filter:saturate(1.08) contrast(.94) blur(.15px);mix-blend-mode:normal;pointer-events:none;border-radius:14px}
+.video-sparkles{position:absolute;inset:9% 3% 22%;z-index:1;pointer-events:none;opacity:.62;background:radial-gradient(circle at 15% 28%,rgba(255,255,255,.92) 0 2px,transparent 3px),radial-gradient(circle at 29% 46%,rgba(255,225,243,.82) 0 2px,transparent 3px),radial-gradient(circle at 64% 20%,rgba(255,255,255,.9) 0 2px,transparent 3px),radial-gradient(circle at 82% 42%,rgba(255,245,193,.8) 0 2px,transparent 3px),radial-gradient(circle at 53% 67%,rgba(255,255,255,.76) 0 1.5px,transparent 2.5px)}
+.machine-wrap.visual-finish .video-backdrop{opacity:.46}.machine-wrap.visual-finish .video-sparkles{animation:videoSparkleDrift 6s ease-in-out infinite alternate}
+@keyframes videoSparkleDrift{from{transform:translate3d(-2px,0,0);opacity:.42}to{transform:translate3d(3px,-2px,0);opacity:.7}}
+.prize-bed{background:linear-gradient(180deg,rgba(255,211,223,.92) 0%,rgba(238,197,213,.92) 18%,rgba(164,218,211,.96) 46%,rgba(94,151,155,.98) 100%),url('assets/crane_backdrop.jpg');background-size:cover;background-position:center bottom}
+.prize-bed:before{background:linear-gradient(180deg,#fff,#dff4f2 55%,rgba(255,255,255,.45));}
+.prizes{align-items:flex-end}
+.prize-slot{width:clamp(68px,9vw,96px);height:clamp(78px,11vw,112px)}
+.prize-slot .plush{width:100%;height:100%;}
+.plush.video-plush{overflow:visible;background:transparent!important;border:0!important;filter:drop-shadow(0 8px 5px rgba(36,50,56,.34));}
+.plush.video-plush > :not(.video-prize-art){display:none!important}
+.video-prize-art{position:absolute;left:50%;bottom:0;width:100%;height:100%;object-fit:contain;object-position:center bottom;transform:translateX(-50%) scale(var(--asset-scale,1));transform-origin:center bottom;user-select:none;pointer-events:none;filter:saturate(1.06) contrast(1.02) drop-shadow(0 3px 2px rgba(255,255,255,.22));}
+.prize-slot.depth-back .video-prize-art{filter:saturate(.86) brightness(.9) drop-shadow(0 4px 4px rgba(35,54,59,.34))}
+.prize-slot.depth-front .video-prize-art{filter:saturate(1.08) drop-shadow(0 8px 5px rgba(36,50,56,.34))}
+.prize-slot.near .video-prize-art{filter:saturate(1.12) brightness(1.05) drop-shadow(0 0 9px rgba(255,222,105,.8)) drop-shadow(0 8px 5px rgba(36,50,56,.28))}
+.prize-slot.grabbed .video-prize-art{filter:saturate(1.08) drop-shadow(0 0 12px rgba(118,244,255,.8))}
+.prize-slot.fall-out .video-prize-art{filter:brightness(1.08) drop-shadow(0 0 12px rgba(255,230,130,.7))}
+.carriage-body{overflow:visible}
+.carriage-body .crane-mascot{position:absolute;left:50%;top:-18px;width:92px;height:112px;object-fit:contain;transform:translateX(-50%);z-index:4;pointer-events:none;filter:drop-shadow(0 6px 4px rgba(45,64,69,.22));}
+.carriage-body .bot-eye,.carriage-body .bot-mouth,.carriage-body .bot-fin{display:none}
+.crane-carriage{z-index:12}
+.claw-ring{background:radial-gradient(circle at 34% 26%,#fff 0 18%,#aeece8 42%,#5d8c91 72%);box-shadow:0 0 0 2px rgba(255,255,255,.75),0 0 16px rgba(255,117,188,.32),0 0 18px rgba(117,237,235,.35)}
+.finger{border-color:#aebfc1;background:linear-gradient(90deg,#748e92,#fff 48%,#8ea7aa);box-shadow:0 5px 5px rgba(47,73,78,.22)}
+.finger:after{background:linear-gradient(#ffd6e5,#f19abd);}
+.machine-wrap.visual-finish .top-rail{background:linear-gradient(90deg,#fff,#d7f7f4 30%,#ffe0eb 50%,#d8f7f4 70%,#fff);}
+.machine-wrap.visual-finish .rail-light{background:linear-gradient(90deg,transparent,#75e8df 20%,#ff9bc7 50%,#ffe16f 68%,transparent);}
+.machine-wrap.visual-finish .machine-head{background:linear-gradient(180deg,#fff,#f5fbfa 55%,#dce8ea);}
+.machine-wrap.visual-finish .machine-lights i:nth-child(1){background:#7be4e6}.machine-wrap.visual-finish .machine-lights i:nth-child(2){background:#ff9bc9}.machine-wrap.visual-finish .machine-lights i:nth-child(3){background:#ffe17c}.machine-wrap.visual-finish .machine-lights i:nth-child(4){background:#8de6a2}
+.machine-wrap.visual-finish .cabinet{box-shadow:inset 0 0 0 2px #fff,inset 0 -70px 100px rgba(255,255,255,.2),0 12px 32px rgba(52,74,79,.14),0 0 26px rgba(126,235,231,.18)}
+.machine-wrap.visual-finish .glass{background:linear-gradient(180deg,rgba(150,245,240,.72) 0%,rgba(222,249,238,.7) 23%,rgba(255,228,231,.7) 51%,rgba(201,226,230,.74) 100%);}
+.machine-wrap.visual-finish .scene-decor{opacity:.75}
+.machine-wrap.visual-finish .chute-label{background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(255,226,237,.92));color:#7e5d6c}
+.machine-wrap.visual-finish .control-bar{background:linear-gradient(180deg,#fff,#f4fbfa 45%,#d5e6e7);}
+.machine-wrap.visual-finish .panel-joystick .knob{background:radial-gradient(circle at 32% 28%,#ffe1ed,#f09abb 62%,#b85f87);}
+.win-card .win-plush.video-win{width:180px;height:190px;position:relative}.win-card .video-win .video-prize-art{width:100%;height:100%;}
+@media(max-width:680px){.video-backdrop{inset:8% 3% 25%;opacity:.32}.carriage-body .crane-mascot{width:76px;height:94px;top:-15px}.prize-slot{width:68px;height:88px}.video-prize-art{transform:translateX(-50%) scale(calc(var(--asset-scale,1)*.9))}}
+@media(prefers-reduced-motion:reduce){.machine-wrap.visual-finish .video-sparkles{animation:none}.video-prize-art{transition:none}}
+</style>
+
+
+<style id="v459-asset-precision">
+/* v459: user-supplied cleaned artwork. Preserve source colors and use a common visible prize size. */
+.prize-slot{width:78px;height:92px}
+.prize-slot .plush.video-plush{width:78px;height:92px}
+.prize-slot .video-prize-art{
+  width:78px!important;height:92px!important;
+  object-fit:fill!important;object-position:center bottom!important;
+  transform:translateX(-50%)!important;
+  filter:drop-shadow(0 6px 4px rgba(35,48,54,.30))!important;
+}
+.prize-slot.depth-back .video-prize-art{
+  filter:opacity(.82) drop-shadow(0 4px 4px rgba(35,48,54,.24))!important;
+}
+.prize-slot.depth-front .video-prize-art{
+  filter:drop-shadow(0 8px 5px rgba(35,48,54,.32))!important;
+}
+.prize-slot.near .video-prize-art{
+  filter:drop-shadow(0 0 9px rgba(255,222,105,.72)) drop-shadow(0 8px 5px rgba(35,48,54,.26))!important;
+}
+.carried-prize .prize-slot{width:78px!important;height:92px!important}
+.carried-prize .video-prize-art{width:78px!important;height:92px!important}
+/* v470-v482: normal-play HUD cleanup. Detailed telemetry remains opt-in via ?debug=1. */
+.machine-wrap:not(.debug-ui) .target-card,
+.machine-wrap:not(.debug-ui) .alignment-meter,
+.machine-wrap:not(.debug-ui) .control-telemetry,
+.machine-wrap:not(.debug-ui) .stage-progress,
+.machine-wrap:not(.debug-ui) .contact-readout,
+.machine-wrap:not(.debug-ui) .stage-hud-extra,
+.machine-wrap:not(.debug-ui) .movement-meter,
+.machine-wrap:not(.debug-ui) .aim-hint,
+.machine-wrap:not(.debug-ui) .edge-warning,
+.machine-wrap:not(.debug-ui) .stack-readout,
+.machine-wrap:not(.debug-ui) .carry-readout,
+.machine-wrap:not(.debug-ui) .return-readout,
+.machine-wrap:not(.debug-ui) .queue-timer,
+.machine-wrap:not(.debug-ui) .get-meta,
+.machine-wrap:not(.debug-ui) .finish-hud,
+.machine-wrap:not(.debug-ui) .route-line,
+.machine-wrap:not(.debug-ui) .target-sweep,
+.machine-wrap:not(.debug-ui) .rail-shimmer,
+.machine-wrap:not(.debug-ui) .depth-meter,
+.machine-wrap:not(.debug-ui) .grab-tension,
+.machine-wrap:not(.debug-ui) .play-progress,
+.machine-wrap:not(.debug-ui) .stage-counter,
+.machine-wrap:not(.debug-ui) .prize-counter,
+.machine-wrap:not(.debug-ui) .position-reticle,
+.machine-wrap:not(.debug-ui) .displayBadge,
+.machine-wrap:not(.debug-ui) .keyboard-hint { display:none !important; }
+/* Machine labels that are decorative/debug information rather than controls. */
+.machine-wrap:not(.debug-ui) .prize-display-badge,
+.machine-wrap:not(.debug-ui) .bed-count,
+.machine-wrap:not(.debug-ui) .chute-label,
+.machine-wrap:not(.debug-ui) .panel-status { opacity:0; pointer-events:none; }
+/* The only persistent instructional text in normal play is the actual control hint. */
+.machine-wrap:not(.debug-ui) .move-hint { opacity:1; }
+.debug-ui .keyboard-hint { display:block; }
+
+/* v470-v482: motion smoothing, collection readability, and clean fail-claw transparency */
+.machine-wrap:not(.debug-ui) .play-info-card{display:none!important}
+.collection-item .mini-plush{left:50%;top:15px;width:92px;height:104px;transform:translateX(-50%);transform-origin:center top;display:block;background:radial-gradient(circle at 50% 48%,rgba(255,255,255,.72),rgba(255,255,255,0) 70%);border-radius:18px}
+.collection-item .mini-plush .plush{width:92px!important;height:104px!important}
+.collection-item .mini-plush .video-prize-art{width:92px!important;height:104px!important;transform:translateX(-50%) scale(var(--asset-scale,1));}
+.collection-item .cname{left:6px;right:6px;bottom:24px;font-size:.66rem;font-weight:900;color:#40565e;text-shadow:0 1px #fff}
+.collection-item .qty{right:5px;bottom:5px;font-size:.66rem;padding:2px 6px}
+.crane-carriage{will-change:left}
+.crane-carriage.video-state{will-change:left}
+</style>
+
+<style id="v484-smooth-crane">
+/* v484: unified crane layers and smoother vertical motion */
+.video-crane-art{
+  top:calc(var(--cable-height,30px) - 23px);
+  width:138px;height:150px;
+  transform:translateX(-50%);
+  overflow:visible;
+}
+.video-crane-art .crane-layer{width:100%;height:100%;object-fit:contain;object-position:center top;}
+.video-crane-art .closed-arm{opacity:1;}
+.video-crane-art .open-arm{opacity:0;}
+.video-crane-art.arm-closed .closed-arm{opacity:1;}
+.video-crane-art.arm-closed .open-arm{opacity:0;}
+.video-crane-art.arm-open .closed-arm{opacity:0;}
+.video-crane-art.arm-open .open-arm{opacity:1;}
+.video-crane-art.arm-opening .closed-arm{opacity:1;animation:armCloseFade .28s ease forwards;}
+.video-crane-art.arm-opening .open-arm{opacity:0;animation:armOpenFade .28s ease forwards;}
+@keyframes armCloseFade{to{opacity:0}}
+@keyframes armOpenFade{to{opacity:1}}
+.crane-carriage.video-state .cable{height:var(--cable-height,30px);}
+.crane-carriage.video-state .carriage-body,.crane-carriage.video-state .claw{visibility:hidden;}
+.machine-head{height:86px!important;}
+.machine-head-logo{display:block;width:min(270px,62%);height:70px;object-fit:contain;object-position:center;}
+@media(max-width:680px){
+  .video-crane-art{width:112px;height:122px;top:calc(var(--cable-height,30px) - 19px);}
+  .machine-head{height:72px!important;}
+  .machine-head-logo{width:min(220px,70%);height:58px;}
+}
+</style>
+</head>
+<body class="crane-body">
+  <div class="crane-shell">
+    <header class="crane-top">
+      <div class="cg-logo"><img src="assets/yummy/button_logo.png" alt="PRIZE CATCHER"><small>MEDAL CRANE GAME</small></div>
+      <div class="medal-pill"><img src="assets/medal-icon.png" alt="メダル"><span>MEDAL</span><strong id="medalCount">0</strong></div>
+    </header>
+
+    <main class="cg-layout">
+      <section class="machine-wrap" aria-label="クレーンゲーム機">
+        <div class="machine-head"><img class="machine-head-logo" src="assets/yummy/button_logo.png" alt="PRIZE CATCHER"><span class="head-lights"><i></i><i></i><i></i><i></i><i></i></span></div>
+        <div class="cabinet" id="cabinet">
+          <div class="cabinet-side-decor left" aria-hidden="true"></div><div class="cabinet-side-decor right" aria-hidden="true"></div>
+          <div class="glass" id="glass">
+            <div class="scene-decor" aria-hidden="true"><i class="bubble b1"></i><i class="bubble b2"></i><i class="bubble b3"></i><i class="bubble b4"></i><i class="bubble b5"></i><i class="coral c1"></i><i class="coral c2"></i><i class="cloud-hill h1"></i><i class="cloud-hill h2"></i></div><div class="video-backdrop" aria-hidden="true"></div><div class="video-sparkles" aria-hidden="true"></div>
+            <div class="stage-lamp l" id="lampL"></div><div class="stage-lamp r" id="lampR"></div><div class="overhead-lamp" aria-hidden="true"></div><div class="glass-glare" aria-hidden="true"></div><div class="scanline" aria-hidden="true"></div><div class="aim-guide" id="aimGuide" aria-hidden="true"><span class="aim-line"></span><span class="aim-reticle"></span></div><div class="dock-indicator" id="dockIndicator" aria-hidden="true"><span></span><b>HOME</b></div><div class="prize-display-badge" id="displayBadge">PRIZE DISPLAY</div><div class="target-card" id="targetCard"><span class="target-label">TARGET</span><strong id="targetName">---</strong><small id="targetMeta">POSITION</small></div><div class="alignment-meter" id="alignmentMeter" aria-hidden="true"><i id="alignmentFill"></i><b>AIM</b></div><div class="position-reticle" id="positionReticle" aria-hidden="true"></div><div class="control-telemetry" id="controlTelemetry" aria-hidden="true">X <strong id="telemetryX">08</strong> • DEPTH <strong id="telemetryDepth">00</strong></div><div class="stage-progress" id="stageProgress" aria-hidden="true"></div><div class="contact-readout" id="contactReadout" aria-hidden="true">CONTACT</div><div class="stage-hud-extra" id="stageHudExtra" aria-hidden="true"><span id="targetDistance">DIST --</span><span id="targetRarity">RANK --</span><span id="targetDifficulty">DIFF --</span><span id="targetWeight">WT --</span></div><div class="movement-meter" id="movementMeter" aria-hidden="true"><i id="movementFill"></i><b>MOVE</b></div><div class="aim-hint" id="aimHint" aria-hidden="true">ALIGN • CENTER BONUS</div><div class="edge-warning" id="edgeWarning" aria-hidden="true">EDGE</div><div class="stack-readout" id="stackReadout" aria-hidden="true">STACK --</div><div class="carry-readout" id="carryReadout" aria-hidden="true">STABILITY --</div><div class="return-readout" id="returnReadout" aria-hidden="true">HOME ROUTE</div><div class="queue-timer" id="queueTimer" aria-hidden="true"></div><div class="get-meta" id="getMeta" aria-hidden="true"></div><div class="a11y-live" id="a11yLive" aria-live="polite"></div><div class="finish-hud" id="finishHud" aria-hidden="true">
+  <span id="phaseBadge">READY</span><span id="targetScore">TARGET --</span><span id="precisionBadge">PRECISION --</span>
+  <span id="stackPressure">STACK --</span><span id="gripForecast">GRIP --</span><span id="payoutMeter">PAYOUT --</span>
+</div><div class="route-line" id="routeLine" aria-hidden="true"></div><div class="target-sweep" id="targetSweep" aria-hidden="true"></div><div class="rail-shimmer" id="railShimmer" aria-hidden="true"></div><div class="keyboard-hint" id="keyboardHint" aria-hidden="true">← → MOVE  •  ENTER / ↓ DROP</div><div class="depth-meter" id="depthMeter" aria-hidden="true"><i id="depthFill"></i><b>DEPTH</b></div><div class="grab-tension" id="grabTension" aria-hidden="true"><i id="tensionFill"></i><b>GRIP TENSION</b></div><div class="play-progress" id="playProgress" aria-hidden="true"></div><div class="stage-counter" id="stageCounter">PLAY 01</div><div class="prize-counter" id="prizeCounter">COLLECTED 0</div>
+            <div class="top-rail"></div><div class="rail-light"></div><div class="rail-scale" id="railScale" aria-hidden="true"></div><div class="return-track" aria-hidden="true"></div><div class="return-marker" aria-hidden="true"></div><div class="drop-trajectory" id="dropTrajectory" aria-hidden="true"></div><div class="get-reward-ring" id="getRewardRing" aria-hidden="true"></div>
+            <div class="crane-carriage" id="carriage"><div id="videoCraneArt" class="video-crane-art" aria-hidden="true"><img class="crane-layer core" data-layer="core" src="assets/yummy/crane/ready_core.png" alt="" draggable="false"><img class="crane-layer arm left closed-arm" data-layer="closed-left" src="assets/yummy/crane/ready_arm_left.png" alt="" draggable="false"><img class="crane-layer arm right closed-arm" data-layer="closed-right" src="assets/yummy/crane/ready_arm_right.png" alt="" draggable="false"><img class="crane-layer arm left open-arm" data-layer="open-left" src="assets/yummy/crane/ready_arm_left.png" alt="" draggable="false"><img class="crane-layer arm right open-arm" data-layer="open-right" src="assets/yummy/crane/ready_arm_right.png" alt="" draggable="false"></div><div class="carriage-body"><img class="crane-mascot" src="assets/crane_head_cut.png" alt=""><span class="bot-eye left"></span><span class="bot-eye right"></span><span class="bot-mouth"></span><span class="bot-fin left"></span><span class="bot-fin right"></span></div><div class="cable" id="cable"></div><div class="claw" id="claw"><div class="claw-ring"></div><div class="claw-shadow" aria-hidden="true"></div><div class="finger left"></div><div class="finger right"></div></div></div>
+            <div class="move-hint" id="moveHint">← → / A D で左右移動　　↓ / S で降下</div>
+            <div class="prize-bed"><div class="bed-count" id="bedCount">PRIZES 00</div><div class="tray-ribbon" aria-hidden="true">PRIZE AREA</div><div class="prizes" id="prizes"></div><div class="drop-glow"></div><div class="chute-door" id="chuteDoor" aria-hidden="true"></div><div class="chute-label"><span>PRIZE OUT</span><small>GET ZONE</small></div></div>
+          </div>
+          <div class="machine-lights"><i></i><i></i><i></i><i></i></div>
+          <div class="control-bar"><div class="coin-slot" aria-hidden="true"><span></span><i></i></div><div class="panel-status"><span class="status-led"></span><span>READY</span></div><div class="remaining">のこり <strong id="playRemaining">0</strong></div><div class="control-buttons"><button class="cg-btn" id="leftBtn" type="button">◀ 左</button><button class="cg-btn stop" id="dropBtn" type="button">降下</button><button class="cg-btn" id="rightBtn" type="button">右 ▶</button><button class="cg-btn play" id="playBtn" type="button">100 MEDAL</button></div><div class="panel-joystick" aria-hidden="true"><span class="stick"></span><span class="knob"></span></div></div>
+        </div>
+      </section>
+
+      <aside class="side-panel">
+        <section class="cg-card play-info-card"><h2>PLAY INFO</h2><div class="cost"><span>1プレイ</span><strong>100枚</strong></div><p>左側のホーム位置から右へ移動して狙い、降下後は上昇して左側の排出口へ戻ります。内部の掴み判定は「位置・タイミング・景品難度」を組み合わせた中間方式です。</p><p class="notice">※ボタンを押すたびに100メダルを先払い。複数回押すと、その回数分を連続プレイできます。</p></section>
+        <section class="cg-card collection-card"><h2>COLLECTION <span id="collectionCount">0 / 8</span></h2><div class="collection-progress"><span id="collectionProgress"></span></div><div class="collection-grid" id="collectionGrid"></div><p class="notice">獲得数はこのブラウザに保存されます。</p><p class="reset-note">※デバッグ用: コレクションをリセット</p><button class="cg-btn" id="resetCollection" type="button">COLLECTION RESET</button></section>
+        <a class="cg-card back-button" href="index.html">← カードウルフへ戻る</a>
+      </aside>
+    </main>
+  </div>
+
+  <div class="status-toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="win-overlay" id="winOverlay"><div class="win-card"><div class="burst">GET!</div><div class="win-plush" id="winPlush"></div><div class="got" id="winText">景品を獲得しました！</div><div class="get-hold-hint">GET DISPLAY</div><button id="closeWin" type="button">コレクションを見る</button></div></div>
+
+<script>
+(() => {
+  'use strict';
+  const DEBUG_UI = new URLSearchParams(location.search).get('debug')==='1';
+  document.body.classList.toggle('debug-ui', DEBUG_UI);
+  const COST = 100;
+  const MAX_MEDALS = 99999;
+  const STORAGE_KEY = 'cardwolf.craneCollection';
+  const RECORD_KEY = 'cardwolf.matchRecord';
+  // v470-v482: user-supplied rare Mashumao asset + normal-play HUD cleanup.
+  // v400-v419: user-supplied Yummy assets. Backgrounds are removed before packaging and prize art is normalized to a common in-game size.
+  const prizes = [
+    {id:'capsy',name:'カプシー',type:'yummy',asset:'capsy',rarity:'N',difficulty:.48,assetScale:1},
+    {id:'cookie',name:'クッキィ',type:'yummy',asset:'cookie',rarity:'N',difficulty:.54,assetScale:1},
+    {id:'lolipo',name:'ロリポー',type:'yummy',asset:'lolipo',rarity:'R',difficulty:.60,assetScale:1},
+    {id:'mashumao',name:'マシュマオ',type:'yummy',asset:'mashumao',rarity:'R',difficulty:.58,assetScale:1},
+    {id:'capsy-rare',name:'カプシー【レア】',type:'yummy',asset:'capsy_rare',rarity:'SR',difficulty:.70,assetScale:1},
+    {id:'cookie-rare',name:'クッキィ【レア】',type:'yummy',asset:'cookie_rare',rarity:'SR',difficulty:.76,assetScale:1},
+    {id:'lolipo-rare',name:'ロリポー【レア】',type:'yummy',asset:'lolipo_rare',rarity:'SR',difficulty:.82,assetScale:1.14},
+    {id:'mashumao-rare',name:'マシュマオ【レア】',type:'yummy',asset:'mashumao_rare',rarity:'SR',difficulty:.84,assetScale:1}
+  ];
+  const $=id=>document.getElementById(id);
+  const shell=document.querySelector('.machine-wrap');
+  shell.classList.toggle('debug-ui', DEBUG_UI);
+  const cabinet=$('cabinet'), carriage=$('carriage'), carriageBody=carriage.querySelector('.carriage-body'), videoCraneArt=$('videoCraneArt');
+  const cable=$('cable'), claw=$('claw'), prizesEl=$('prizes'), collectionGrid=$('collectionGrid'), collectionCount=$('collectionCount');
+  const medalEl=$('medalCount'), toast=$('toast'), overlay=$('winOverlay'), winPlush=$('winPlush'), winText=$('winText'), moveHint=$('moveHint');
+  const playStatus=document.createElement('div'); playStatus.className='play-status'; cabinet.appendChild(playStatus);
+  const effectLayer=document.createElement('div'); effectLayer.className='effect-layer'; cabinet.appendChild(effectLayer);
+  const chuteGlow=document.createElement('div'); chuteGlow.className='chute-glow'; cabinet.appendChild(chuteGlow);
+  const getFlash=document.createElement('div'); getFlash.className='get-flash'; effectLayer.appendChild(getFlash);
+  const attractTarget=document.createElement('div'); attractTarget.className='attract-target'; attractTarget.innerHTML='<span>TRY</span> <strong>YOUR LUCK</strong>'; cabinet.appendChild(attractTarget);
+  const dockIndicator=$('dockIndicator'), playRemaining=$('playRemaining');
+  const glass=$('glass'), lampL=$('lampL'), lampR=$('lampR'), displayBadge=$('displayBadge'), aimGuide=$('aimGuide'), chuteDoor=$('chuteDoor'), controlBar=document.querySelector('.control-bar'), panelStatus=document.querySelector('.panel-status'), collectionProgress=$('collectionProgress');
+  const aimShadow=document.createElement('div'); aimShadow.className='aim-shadow'; glass.appendChild(aimShadow);
+  const contactZone=document.createElement('div'); contactZone.className='contact-zone'; glass.appendChild(contactZone);
+  const targetCard=$('targetCard'), targetName=$('targetName'), targetMeta=$('targetMeta'), stageCounter=$('stageCounter'), prizeCounter=$('prizeCounter'), prizeBed=document.querySelector('.prize-bed');
+  const returnTrack=document.querySelector('.return-track'), positionReticle=$('positionReticle'), depthMeter=$('depthMeter'), depthFill=$('depthFill'), grabTension=$('grabTension'), tensionFill=$('tensionFill'), dropTrajectory=$('dropTrajectory'), getRewardRing=$('getRewardRing');
+  const telemetryX=$('telemetryX'), telemetryDepth=$('telemetryDepth'), stageProgress=$('stageProgress'), contactReadout=$('contactReadout'), bedCount=$('bedCount'), joystick=$('.panel-joystick');
+  const targetDistance=$('targetDistance'), targetRarity=$('targetRarity'), targetDifficulty=$('targetDifficulty'), targetWeight=$('targetWeight'), movementMeter=$('movementMeter'), movementFill=$('movementFill'), aimHint=$('aimHint'), edgeWarning=$('edgeWarning'), stackReadout=$('stackReadout'), carryReadout=$('carryReadout'), returnReadout=$('returnReadout'), queueTimer=$('queueTimer'), getMeta=$('getMeta'), a11yLive=$('a11yLive');
+  const playTransition=document.createElement('div'); playTransition.className='play-transition'; cabinet.appendChild(playTransition);
+  const resultStamp=document.createElement('div'); resultStamp.className='result-stamp'; resultStamp.textContent='PRIZE OUT'; cabinet.appendChild(resultStamp);
+  document.getElementById('railScale').innerHTML=Array.from({length:19},(_,i)=>`<i>${i%2===0?`<b>${i*5}</b>`:''}</i>`).join('');
+  const alignmentMeter=$('alignmentMeter'), alignmentFill=$('alignmentFill'), playProgress=$('playProgress'), remainingBox=document.querySelector('.remaining');
+
+  let record=readRecord(), collection=readCollection(), x=8, state='idle', target=null, sessionSpent=false, carried=null, holdTimer=null, moveDir=0, moveRAF=0, moveVelocity=0, holderSwingEnergy=0, playCredits=0, playIndex=0;
+  function setCraneVisual(kind){
+    if(!videoCraneArt)return;
+    const map={
+      ready:{core:'ready_core',closed:'ready',open:'ready'},
+      descend:{core:'descend_core',closed:'descend',open:'descend'},
+      success:{core:'success_core',closed:'success',open:'success_drop'},
+      successDrop:{core:'success_core',closed:'success',open:'success_drop'},
+      fail:{core:'fail_core',closed:'fail',open:'fail_drop'},
+      failDrop:{core:'fail_core',closed:'fail',open:'fail_drop'}
+    };
+    const cfg=map[kind];
+    if(!cfg){videoCraneArt.style.display='none';carriage.removeAttribute('data-crane-visual');carriage.classList.remove('video-state');return;}
+    const core=videoCraneArt.querySelector('[data-layer="core"]');
+    const cl=videoCraneArt.querySelector('[data-layer="closed-left"]');
+    const cr=videoCraneArt.querySelector('[data-layer="closed-right"]');
+    const ol=videoCraneArt.querySelector('[data-layer="open-left"]');
+    const or=videoCraneArt.querySelector('[data-layer="open-right"]');
+    if(core)core.src='assets/yummy/crane/ready_core_clean.png';
+    if(cl)cl.src='assets/yummy/crane/ready_arm_left_clean.png';
+    if(cr)cr.src='assets/yummy/crane/ready_arm_right_clean.png';
+    if(ol)ol.src='assets/yummy/crane/open_arm_left_clean.png';
+    if(or)or.src='assets/yummy/crane/open_arm_right_clean.png';
+    videoCraneArt.dataset.visual=kind;
+    videoCraneArt.classList.remove('arm-open','arm-closed','arm-opening');
+    if(kind==='descend'||kind==='ready')videoCraneArt.classList.add('arm-open');
+    else videoCraneArt.classList.add('arm-closed');
+    videoCraneArt.style.display='block';
+    carriage.dataset.craneVisual=kind;
+    carriage.classList.add('video-state');
+  }
+  function openSeparatedArms(){
+    if(!videoCraneArt)return;
+    videoCraneArt.classList.remove('arm-closed','arm-open');
+    videoCraneArt.classList.add('arm-opening');
+    setTimeout(()=>{videoCraneArt.classList.remove('arm-opening');videoCraneArt.classList.add('arm-open');},190);
+  }
+  let board=[];
+  let attractTimer=null, attractIndex=0, lastParallaxX=x;
+  let lastTargetUid=null, lastQueueTimer=null, lastStatus='', lastMoveSpeed=0, lastCollectionTotal=0;
+  let audioCtx=null;
+  function tone(freq=440,duration=.07,type='sine',gain=.025){try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type;o.frequency.value=freq;g.gain.value=gain;o.connect(g);g.connect(audioCtx.destination);const t=audioCtx.currentTime;o.start(t);g.gain.exponentialRampToValueAtTime(.0001,t+duration);o.stop(t+duration);}catch{}}
+
+  function readRecord(){try{const v=JSON.parse(localStorage.getItem(RECORD_KEY)||'null');return{wins:Number(v?.wins)||0,losses:Number(v?.losses)||0,medals:Math.min(MAX_MEDALS,Math.max(0,Number(v?.medals)||0))};}catch{return{wins:0,losses:0,medals:0};}}
+  function saveRecord(){record.medals=Math.min(MAX_MEDALS,Math.max(0,Number(record.medals)||0));localStorage.setItem(RECORD_KEY,JSON.stringify(record));}
+  function readCollection(){try{const v=JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}');return Object.fromEntries(prizes.map(p=>[p.id,Math.max(0,Number(v[p.id])||0)]));}catch{return Object.fromEntries(prizes.map(p=>[p.id,0]));}}
+  function saveCollection(){localStorage.setItem(STORAGE_KEY,JSON.stringify(collection));}
+  function showToast(text){toast.textContent=text;toast.classList.add('show');if(a11yLive){a11yLive.textContent=text;}clearTimeout(showToast.t);showToast.t=setTimeout(()=>toast.classList.remove('show'),1900);}
+  function status(text,show=true){
+    playStatus.textContent=text;playStatus.setAttribute('aria-label',text||'READY');playStatus.classList.toggle('show',show);
+    panelStatus.classList.toggle('busy',!!text&&text!=='GET');panelStatus.classList.toggle('get',text==='GET');
+    if(text) panelStatus.querySelector('span:last-child').textContent=text; else panelStatus.querySelector('span:last-child').textContent='READY';
+    const stageMap={POSITION:'position',DROP:'descend',DESCEND:'descend',CONTACT:'grab',GRAB:'grab',LIFT:'grab',SLIP:'grab',MISS:'grab','RETURN TO HOME':'return','PRIZE OUT':'get',GET:'get'};
+    const stage=stageMap[text]||''; updateStageProgress(text); shell.classList.remove('stage-position','stage-descend','stage-grab','stage-return','stage-get'); carriageBody.classList.remove('stage-ready','stage-grab','stage-get');
+    if(stage)shell.classList.add('stage-'+stage); shell.classList.toggle('return-track-on',stage==='return');
+    if(stage==='position'){carriageBody.classList.add('stage-ready');motionStage('ready'); updateContactZone();} else if(stage==='grab'){motionStage('grab'); contactZone.classList.remove('show'); aimShadow.classList.remove('show');} else if(stage==='return'){motionStage('return'); contactZone.classList.remove('show'); aimShadow.classList.remove('show');} else {motionStage(null); if(!text)updateContactZone();}
+    if(stage==='grab')carriageBody.classList.add('stage-grab');
+    if(stage==='get')carriageBody.classList.add('stage-get');
+    stageCounter.textContent=text?`STAGE ${text}`:'PLAY 01';
+    if(text!==lastStatus && a11yLive){a11yLive.textContent=text||'READY'; lastStatus=text||'';}
+    updateAdvancedHud(text);
+  }
+  function updateAdvancedHud(text){
+    const d=target?Math.abs(target.x-x):null;
+    if(target){
+      targetDistance.textContent=`DIST ${d.toFixed(1)}`;
+      targetRarity.textContent=`RANK ${target.p.rarity}`;
+      targetDifficulty.textContent=`DIFF ${Math.round(target.p.difficulty*100)}`;
+      targetWeight.textContent=`WT ${prizeWeight(target).toFixed(2)}`;
+      targetDistance.classList.toggle('good',d<=2.5);
+      targetDistance.classList.toggle('warn',d>6);
+      targetRarity.dataset.rank=target.p.rarity;
+    }else{
+      targetDistance.textContent='DIST --'; targetRarity.textContent='RANK --'; targetDifficulty.textContent='DIFF --'; targetWeight.textContent='WT --';
+    }
+    const speed=Math.min(100,Math.round(Math.abs(moveVelocity)/.78*100));
+    lastMoveSpeed=speed; movementFill.style.width=speed+'%'; movementMeter.dataset.value=String(speed).padStart(2,'0');
+    movementMeter.classList.toggle('active',state==='ready'&&speed>3);
+    aimHint.classList.toggle('show',state==='ready'&&target&&d<=2.5);
+    edgeWarning.classList.toggle('show',state==='ready'&&(x<=10||x>=90));
+    if(target){
+      const stack=board.filter(b=>b.alive&&Math.abs(b.x-target.x)<7).length;
+      stackReadout.textContent=`STACK ${String(stack).padStart(2,'0')}`;
+      stackReadout.classList.toggle('dense',stack>=5);
+    }else stackReadout.textContent='STACK --';
+    if(carried){
+      const st=Math.max(0,Math.min(100,Math.round((1-holderSwingEnergy)*100)));
+      carryReadout.textContent=`STABILITY ${String(st).padStart(2,'0')}`;
+      carryReadout.classList.add('show');
+    }else carryReadout.classList.remove('show');
+    returnReadout.classList.toggle('show',text==='RETURN TO HOME');
+  }
+  function flashHud(cls='hud-pulse'){
+    [stageHudExtra,movementMeter,stackReadout].forEach(el=>{if(!el)return;el.classList.remove(cls);void el.offsetWidth;el.classList.add(cls);setTimeout(()=>el.classList.remove(cls),420);});
+  }
+  function updateQueueTimer(ms){
+    clearInterval(lastQueueTimer); lastQueueTimer=null;
+    if(!ms||playCredits<=0){queueTimer.classList.remove('show');queueTimer.textContent='';return;}
+    const end=Date.now()+ms; queueTimer.classList.add('show');
+    const tick=()=>{const left=Math.max(0,end-Date.now());queueTimer.textContent=`NEXT ${Math.ceil(left/1000)}s`;if(left<=0){clearInterval(lastQueueTimer);lastQueueTimer=null;queueTimer.classList.remove('show');}};
+    tick(); lastQueueTimer=setInterval(tick,100);
+  }
+  function updateGetMeta(prize){
+    if(!prize){getMeta.classList.remove('show');return;}
+    getMeta.innerHTML=`<b>${prize.p.name}</b><span>${prize.p.rarity} • DIFF ${Math.round(prize.p.difficulty*100)} • ×${collection[prize.p.id]}</span>`;
+    getMeta.classList.add('show');
+  }
+  function updateTelemetry(){
+    telemetryX.textContent=String(Math.round(x)).padStart(2,'0');
+    const h=parseFloat(getComputedStyle(cable).getPropertyValue('--cable-height'))||72;
+    const d=Math.max(0,Math.min(100,Math.round((h-70)/120*100)));
+    telemetryDepth.textContent=String(d).padStart(2,'0');
+    telemetryDepth.classList.toggle('deep',d>70);
+    telemetryX.classList.toggle('edge',x<14||x>86);
+    const j=Math.max(-14,Math.min(14,(x-50)*.28));
+    joystick?.style.setProperty('--joy-x',j+'px');
+    if(joystick){joystick.classList.toggle('joystick-active',state==='ready'); joystick.classList.toggle('joy-left',state==='ready'&&x<49); joystick.classList.toggle('joy-right',state==='ready'&&x>51);}
+    updateAdvancedHud(lastStatus);
+  }
+  function updateStageProgress(stage){
+    const names=['POSITION','DESCEND','CONTACT','GRAB','LIFT','RETURN TO HOME','PRIZE OUT'];
+    const aliases={position:'POSITION',descend:'DESCEND',grab:'GRAB',return:'RETURN TO HOME',get:'PRIZE OUT'};
+    const label=aliases[stage]||stage||'';
+    const idx=Math.max(0,names.indexOf(label));
+    stageProgress.innerHTML=names.map((n,i)=>`<i class="${i<=idx?'on':''} ${i===idx?'hot':''}" title="${n}" aria-label="${n}"></i>`).join('');
+    stageProgress.style.opacity=stage?'0.9':'0';
+  }
+  function showContactReadout(label,good){
+    contactReadout.textContent=label; contactReadout.classList.toggle('good',!!good); contactReadout.classList.toggle('bad',good===false); contactReadout.classList.add('show');
+    clearTimeout(showContactReadout.t); showContactReadout.t=setTimeout(()=>contactReadout.classList.remove('show'),650);
+  }
+  function updateBedCount(){
+    const n=board.filter(b=>b.alive).length; bedCount.textContent=`PRIZES ${String(n).padStart(2,'0')}`; bedCount.classList.toggle('hot',n<=8); bedCount.classList.toggle('critical',n<=4);
+  }
+  const CRANE_HOME_TOP=5.7;
+  const CRANE_DROP_TOP=15.5;
+  function setCraneTop(v){ carriage.style.top=v+'%'; }
+  function animateCraneTop(to,duration=720){
+    const from=parseFloat(getComputedStyle(carriage).top)/Math.max(1,cabinet.clientHeight)*100 || CRANE_HOME_TOP;
+    return new Promise(resolve=>{
+      const start=performance.now();
+      function frame(now){
+        const t=Math.min(1,(now-start)/duration), e=easeInOutSine(t);
+        setCraneTop(from+(to-from)*e);
+        if(t<1)requestAnimationFrame(frame);else{setCraneTop(to);resolve();}
+      }
+      requestAnimationFrame(frame);
+    });
+  }
+  function resetCraneTop(){setCraneTop(CRANE_HOME_TOP);}
+  const CRANE_CABLE_HOME=30;
+  const CRANE_CABLE_DROP=132;
+  function animateCraneVertical(to,duration=1200){
+    const from=parseFloat(getComputedStyle(cable).getPropertyValue('--cable-height'))||CRANE_CABLE_HOME;
+    return new Promise(resolve=>{
+      const start=performance.now();
+      function frame(now){
+        const t=Math.min(1,(now-start)/duration);
+        const e=easeInOutSine(t);
+        setCable(from+(to-from)*e);
+        if(t<1)requestAnimationFrame(frame);else{setCable(to);resolve();}
+      }
+      requestAnimationFrame(frame);
+    });
+  }
+  function animateXTo(to,duration=760){
+    const from=x, targetX=Math.max(8,Math.min(92,to));
+    return new Promise(resolve=>{
+      const start=performance.now();
+      function frame(now){
+        const t=Math.min(1,(now-start)/duration);
+        const e=easeInOutCubic(t);
+        setX(from+(targetX-from)*e);
+        if(t<1)requestAnimationFrame(frame);else{setX(targetX);resolve();}
+      }
+      requestAnimationFrame(frame);
+    });
+  }
+  function setX(v){
+    const next=Math.max(8,Math.min(92,v));
+    if(next!==v && state==='ready'){
+      carriageBody.classList.add('edge-bump');
+      clearTimeout(setX.edgeTimer);
+      setX.edgeTimer=setTimeout(()=>carriageBody.classList.remove('edge-bump'),150);
+    }
+    x=next;carriage.style.setProperty('--carriage-left',x+'%'); updateTelemetry(); aimGuide.style.left=x+'%'; aimShadow.style.left=x+'%'; contactZone.style.left=x+'%'; positionReticle.style.left=x+'%'; updateTargetHighlight(); updateTargetCard(); updateAimMeter(); updateContactZone();
+    shell.classList.add('parallax-active'); const dx=(x-50)/50; glass.style.setProperty('--parallax-x',(dx*1.8).toFixed(2)+'%'); const decor=glass.querySelector('.scene-decor'); if(decor)decor.style.transform=`translateX(${(-dx*1.8).toFixed(2)}%)`; const rail=glass.querySelector('.top-rail'); if(rail)rail.style.transform=`translateX(${(-dx*.55).toFixed(2)}%)`; if(prizeBed)prizeBed.style.transform=`translateX(${(dx*.32).toFixed(2)}%)`; if(Math.abs(next-8)<.6){dockIndicator.classList.add('docked')}else{dockIndicator.classList.remove('docked')}
+  }
+  function updateContactZone(){
+    if(state!=='ready' || !target){contactZone.classList.remove('show','good','bad');aimShadow.classList.remove('show','lock');return;}
+    const d=Math.abs(target.x-x), good=d<3.2;
+    contactZone.classList.add('show'); contactZone.classList.toggle('good',good); contactZone.classList.toggle('bad',d>6);
+    aimShadow.classList.add('show'); aimShadow.classList.toggle('lock',good);
+  }
+  function movementLoop(ts){
+    if(state!=='ready' || !moveDir){moveRAF=0;moveVelocity=0;carriageBody.classList.remove('moving');return;}
+    moveVelocity += moveDir * 0.055;
+    moveVelocity *= 0.86;
+    moveVelocity=Math.max(-0.78,Math.min(0.78,moveVelocity));
+    setX(x + moveVelocity);
+    updateAdvancedHud('POSITION');
+    carriageBody.classList.add('moving'); controlBar.classList.add('is-moving',moveDir<0?'left':'right'); controlBar.classList.remove(moveDir<0?'right':'left');
+    moveRAF=requestAnimationFrame(movementLoop);
+  }
+  function startHold(dir){
+    if(state!=='ready')return;
+    moveDir=dir;moveHint.classList.add('hide');
+    if(!moveRAF) moveRAF=requestAnimationFrame(movementLoop);
+  }
+  function stopHold(){
+    $('leftBtn').classList.remove('pressed');$('rightBtn').classList.remove('pressed');
+    moveDir=0;clearInterval(holdTimer);holdTimer=null;
+    if(moveRAF){cancelAnimationFrame(moveRAF);moveRAF=0;}
+    moveVelocity=0;carriageBody.classList.remove('moving'); controlBar.classList.remove('is-moving','left','right');
+  }
+  function plushMarkup(p,extra=''){const asset=p.asset?`<img class="video-prize-art" src="assets/yummy/characters/${p.asset}.png" alt="${p.name||''}" draggable="false">`:'';return `<div class="plush ${extra} ${p.asset?'video-plush':''}" data-type="${p.type}" data-asset="${p.asset||''}" style="--asset-scale:${p.assetScale||1}">${asset}<div class="ear l"></div><div class="ear r"></div><div class="body"></div><div class="face"></div><span class="eye l"></span><span class="eye r"></span><span class="mouth"></span><div class="belly"></div></div>`;}
+  function spawnBoard(){
+    const count=22; board=[];
+    // Reference-video-like loose pile: irregular spacing, mixed depths, and a few higher stacked pieces.
+    const slots=[7,12,16,20,24,29,34,38,43,47,51,56,60,64,69,73,78,82,86,90,94,97];
+    const depthPattern=[2,1,2,0,1,2,0,1,2,1,0,2,1,0,2,1,2,0,1,2,0,1];
+    for(let i=0;i<count;i++){
+      const p=prizes[(i*5+Math.floor(Math.random()*4))%prizes.length];
+      const depth=depthPattern[i];
+      const stackLift=depth===2?(7+Math.random()*8):depth===1?(3+Math.random()*5):(Math.random()*2);
+      const depthOffset=depth===0?-1.4:depth===1?0:1.5;
+      const clusterBias=(i%5===0?1.8:0)+(i%7===0?-1.2:0);
+      board.push({uid:i,p,x:Math.max(6,Math.min(97,slots[i]+(Math.random()*3.8-1.9)+depthOffset+clusterBias)),rot:-13+Math.random()*26,depth,y:stackLift,alive:true,baseY:stackLift});
+    }
+  }
+  function markIdlePrizes(){
+    prizesEl.querySelectorAll('.prize-slot').forEach((el,i)=>{el.classList.remove('idle-bob'); if(i%3===0){el.style.setProperty('--idle-delay',(i*.17)+'s');el.classList.add('idle-bob');}});
+  }
+  function previewTarget(chosen){
+    prizesEl.querySelectorAll('.target-preview').forEach(el=>el.classList.remove('target-preview'));
+    if(!chosen)return;
+    const el=prizesEl.querySelector(`[data-uid="${chosen.uid}"]`); if(el)el.classList.add('target-preview');
+  }
+  function queueTransition(){playTransition.classList.remove('show');void playTransition.offsetWidth;playTransition.classList.add('show');setTimeout(()=>playTransition.classList.remove('show'),220);}
+  function resultPulse(){resultStamp.classList.remove('show');void resultStamp.offsetWidth;resultStamp.classList.add('show');setTimeout(()=>resultStamp.classList.remove('show'),900);}
+  function renderPrizes(){
+    if(!board.length)spawnBoard();
+    const bed=prizesEl.parentElement;
+    bed.classList.add('depth-active');
+    prizesEl.innerHTML=board.filter(b=>b.alive).sort((a,b)=>a.depth-b.depth).map(b=>{
+      const px=Math.max(0,Math.min(100,((b.x-5)/90)*100));
+      const depthClass=b.depth===0?'depth-back':b.depth===1?'depth-mid':'depth-front';
+      const bottom=4+b.y;
+      return `<div class="prize-slot ${depthClass}" data-uid="${b.uid}" data-rarity="${b.p.rarity}" style="left:${px}%;bottom:${bottom}%;--base-bottom:${bottom}%;--axis-x:${b.x}%;--rot:${b.rot}deg"><span class="target-ring"></span><span class="rarity-chip">${b.p.rarity}</span>${plushMarkup(b.p)}</div>`;
+    }).join('');
+    updateTargetHighlight(); markIdlePrizes(); updateBedCount();
+  }
+  function renderCollection(){
+    const owned=prizes.filter(p=>collection[p.id]>0).length;collectionCount.textContent=`${owned} / ${prizes.length}`; collectionProgress.style.width=(owned/prizes.length*100)+'%'; prizeCounter.textContent=`COLLECTED ${owned}`; prizeCounter.classList.toggle('hot',owned>0);
+    collectionGrid.innerHTML=prizes.map(p=>`<div class="collection-item ${collection[p.id]?'':'locked'}" title="${p.name}"><span class="rarity">${p.rarity}</span><div class="mini-plush">${plushMarkup(p)}</div><div class="cname">${collection[p.id]?p.name:'???'}</div><span class="qty">×${collection[p.id]}</span></div>`).join('');
+  }
+  function pulseCollectionItem(id){const el=collectionGrid.querySelector(`.collection-item[title="${id}"]`); if(el){el.classList.remove('new-get');void el.offsetWidth;el.classList.add('new-get');setTimeout(()=>el.classList.remove('new-get'),1100);}}
+  function render(){medalEl.textContent=record.medals;renderCollection();playRemaining.textContent=String(playCredits).padStart(2,'0'); remainingBox?.classList.toggle('has-queue',playCredits>1); renderPlayProgress();}
+  function renderPlayProgress(){
+    if(!playCredits){playProgress.classList.remove('show');playProgress.innerHTML='';return;}
+    const count=Math.min(8,playCredits+1); playProgress.innerHTML=Array.from({length:count},(_,i)=>`<i class="${i===0&&state!=='idle'?'active':i<playCredits?'active':''}"></i>`).join('');
+    playProgress.setAttribute('aria-label',`残り ${playCredits} プレイ`); playProgress.classList.add('show');
+  }
+  function pulseQueue(){remainingBox.classList.remove('queue-pulse');void remainingBox.offsetWidth;remainingBox.classList.add('queue-pulse');setTimeout(()=>remainingBox.classList.remove('queue-pulse'),560)}
+  function updateAimMeter(){
+    if(state!=='ready'){alignmentMeter.classList.remove('show');return;}
+    const nearest=nearestTarget(); if(!nearest){alignmentMeter.classList.remove('show');return;}
+    const d=Math.abs(nearest.x-x); const pct=Math.max(0,Math.min(100,Math.round((1-d/7)*100)));
+    alignmentFill.style.width=pct+'%'; alignmentMeter.classList.add('show'); shell.classList.toggle('target-lock',pct>=82);
+  }
+  function motionStage(kind){
+    carriage.classList.remove('motion-ready','motion-grab','motion-return');
+    if(kind)carriage.classList.add('motion-'+kind);
+  }
+  function preContactPulse(){claw.classList.add('pre-contact');setTimeout(()=>claw.classList.remove('pre-contact'),520)}
+  function liftPulse(){claw.classList.add('lift-pulse');cable.classList.add('lift-pulse');setTimeout(()=>{claw.classList.remove('lift-pulse');cable.classList.remove('lift-pulse')},760)}
+  function homeSettle(){shell.classList.add('home-settle');setTimeout(()=>shell.classList.remove('home-settle'),620)}
+  function settleWave(){prizeBed.classList.add('settle-wave');setTimeout(()=>prizeBed.classList.remove('settle-wave'),620)}
+  function spend(){if(record.medals<COST){showToast(`メダルが足りません（必要 ${COST}枚）`);controlBar.classList.remove('medal-error');void controlBar.offsetWidth;controlBar.classList.add('medal-error');setTimeout(()=>controlBar.classList.remove('medal-error'),520);return false;}record.medals-=COST;saveRecord();render();controlBar.classList.remove('medal-spent');void controlBar.offsetWidth;controlBar.classList.add('medal-spent');setTimeout(()=>controlBar.classList.remove('medal-spent'),620);flashHud();return true;}
+  function begin(){
+    if(state!=='idle')return false;
+    if(!spend())return false;
+    playCredits++;
+    playIndex++;
+    sessionSpent=true; state='ready'; queueTransition(); tone(520,.08,'triangle',.018); clearInterval(attractTimer); shell.classList.remove('attract-sweep'); attractTarget.classList.remove('show'); tone(520,.08,'triangle',.018); target=null; carried=null; shell.classList.add('is-playing','cinematic-aim'); $('playBtn').disabled=false; $('dropBtn').disabled=false; $('leftBtn').disabled=false; $('rightBtn').disabled=false;
+    claw.classList.remove('closed','grab-close','grab-open'); claw.classList.add('open'); setCable(72); chuteDoor.classList.remove('open'); status('POSITION'); stageCounter.textContent=`STAGE POSITION • PLAY ${String(playIndex).padStart(2,'0')}`; moveHint.classList.remove('hide'); showToast(playCredits>1?`連続プレイ ${String(playCredits).padStart(2,'0')}回分をセット`:'狙う位置を決めてください'); pulseQueue(); render();
+    return true;
+  }
+  function queuePlay(){
+    if(record.medals<COST){showToast(`メダルが足りません（必要 ${COST}枚）`);controlBar.classList.remove('medal-error');void controlBar.offsetWidth;controlBar.classList.add('medal-error');setTimeout(()=>controlBar.classList.remove('medal-error'),520);return;}
+    if(state==='idle') begin();
+    else { record.medals-=COST; saveRecord(); playCredits++; playIndex++; pulseQueue(); render(); showToast(`のこり ${String(playCredits).padStart(2,'0')}回`); }
+  }
+  function nearestTarget(){
+    const live=board.filter(b=>b.alive); if(!live.length)return null;
+    return live.reduce((best,b)=>{
+      const score=Math.abs(b.x-x)+(b.depth===0?.45:b.depth===1?.18:0);
+      const bestScore=Math.abs(best.x-x)+(best.depth===0?.45:best.depth===1?.18:0);
+      return score<bestScore?b:best;
+    },live[0]);
+  }
+  function updateTargetHighlight(){
+    if(!board.length)return; const nearest=nearestTarget(); aimGuide.classList.toggle('active',state==='ready');
+    board.forEach(b=>{const el=prizesEl.querySelector(`[data-uid="${b.uid}"]`);if(el)el.classList.toggle('near',state==='ready'&&nearest&&b.uid===nearest.uid);}); updateTargetCard(); updateAimMeter();
+  }
+  function updateTargetCard(){
+    const nearest=nearestTarget();
+    if(!nearest){targetName.textContent='---';targetMeta.textContent='NO PRIZE';targetCard.classList.remove('active');return;}
+    const d=Math.abs(nearest.x-x); const align=Math.max(0,Math.round((1-d/7)*100));
+    targetName.textContent=nearest.p.name; targetMeta.textContent=`${nearest.p.rarity}  •  ALIGN ${align}%`;
+    targetCard.classList.toggle('active',state==='ready');
+  }
+  function refreshTargetSignals(){
+    updateAdvancedHud(lastStatus);
+    if(target && target.uid!==lastTargetUid){lastTargetUid=target.uid;flashHud();}
+  }
+  function setCable(h){cable.style.setProperty('--cable-height',h+'px');claw.style.setProperty('--cable-height',h+'px'); updateTelemetry(); const depth=Math.max(0,Math.min(100,Math.round((h-70)/70*100))); depthFill.style.height=depth+'%'; depthMeter.dataset.value=String(depth).padStart(2,'0'); const tension=Math.max(0,Math.min(100,Math.round(100-depth*.45))); tensionFill.style.width=tension+'%'; grabTension.dataset.value=String(tension).padStart(2,'0'); updateAdvancedHud(lastStatus);}
+  function successChance(b){
+    const distance=Math.abs(b.x-x);
+    const alignment=Math.max(0,1-distance/7);
+    const sweetSpot=distance<=2.5?0.14:0;
+    const edgePenalty=(b.x<15||b.x>85)?0.02:0;
+    const randomSwing=(Math.random()-.5)*.05;
+    // v439: ユーザー要望により、v209のバランスを崩さない範囲で獲得率を少しだけ上方調整。
+    return Math.max(.22,Math.min(.88,.25+alignment*.52+sweetSpot-randomSwing-b.p.difficulty*.19-edgePenalty));
+  }
+  function gripQuality(b){
+    const d=Math.abs(b.x-x);
+    const alignment=Math.max(0,1-d/5.5);
+    const edge=(b.x<15||b.x>85)?-.08:0;
+    return Math.max(0,Math.min(1,.18+alignment*.82+edge));
+  }
+  function prizeWeight(b){
+    return {N:.75,R:.9,SR:1.08,SSR:1.22}[b.p.rarity]||1;
+  }
+  function applyMissPhysics(chosen,quality){
+    if(!chosen)return;
+    const el=prizesEl.querySelector(`[data-uid="${chosen.uid}"]`);
+    if(!el)return;
+    const shift=(quality<.45?7:3.5)*(Math.random()<.5?-1:1);
+    el.style.setProperty('--slip-shift',shift+'px');
+    el.classList.add('slip');
+    chosen.x=Math.max(7,Math.min(94,chosen.x+shift*.18));
+    chosen.rot=Math.max(-14,Math.min(14,chosen.rot+(shift>0?2:-2)));
+    setTimeout(()=>{el.classList.remove('slip');el.style.removeProperty('--slip-shift');renderPrizes();},540);
+  }
+  // v157: cable tension follows horizontal movement and prize weight.
+  async function animateCableTension(holder, chosen, duration=900){
+    const amp=Math.min(11,2.4+holderSwingEnergy*6.5+(prizeWeight(chosen)-.75)*3);
+    const start=performance.now();
+    holder.classList.add('dynamic-sway');
+    return new Promise(resolve=>{
+      function frame(now){
+        const t=Math.min(1,(now-start)/duration);
+        const decay=1-t;
+        const angle=Math.sin(t*Math.PI*5.2)*amp*decay;
+        const xoff=Math.sin(t*Math.PI*2.6)*amp*.42*decay;
+        holder.style.transform=`translateX(calc(-50% + ${xoff}px)) rotate(${angle}deg)`;
+        if(t<1)requestAnimationFrame(frame);else{holder.style.transform='';holder.classList.remove('dynamic-sway');resolve();}
+      }
+      requestAnimationFrame(frame);
+    });
+  }
+  // v158: nearby prizes settle after contact instead of freezing in place.
+  async function settlePile(center, radius=9){
+    if(!center)return;
+    const affected=board.filter(b=>b.alive&&b.uid!==center.uid&&Math.abs(b.x-center.x)<radius);
+    affected.forEach((b,i)=>{
+      const dir=b.x>=center.x?1:-1;
+      const lift=Math.max(0,1-Math.abs(b.x-center.x)/radius);
+      b.x=Math.max(7,Math.min(94,b.x+dir*lift*(.45+Math.random()*.8)));
+      if(Math.random()<.22+lift*.28)b.y=Math.max(0,(b.y||0)-.5);
+      b.rot=Math.max(-16,Math.min(16,b.rot+(Math.random()-.5)*3));
+      const el=prizesEl.querySelector(`[data-uid="${b.uid}"]`);
+      if(el){el.style.setProperty('--settle-rot',(b.rot>0?'1':'-1')+'deg');el.classList.add('settle');setTimeout(()=>el.classList.remove('settle'),500+i*20);}
+    });
+    renderPrizes();
+    await wait(90);
+  }
+  // v162: cabinet lighting reacts to the physical phase.
+  function stageLight(name){
+    depthMeter.classList.toggle('show',name==='descend'||name==='contact'||name==='grab');
+    grabTension.classList.toggle('show',name==='contact'||name==='grab');
+    positionReticle.classList.toggle('show',name==='position');
+    dropTrajectory.classList.toggle('show',name==='return'||name==='get');
+    cabinet.classList.remove('stage-alert','stage-descend','stage-grab','stage-return','stage-get');
+    glass.classList.remove('stage-cyan','stage-pink','stage-gold');
+    lampL.classList.remove('pulse','cyan','pink','gold'); lampR.classList.remove('pulse','cyan','pink','gold');
+    const map={descend:['cyan','DESCEND'],grab:['pink','GRAB'],return:['cyan','RETURN'],get:['gold','GET']};
+    if(name){
+      if(name==='descend')tone(330,.06,'sine',.012); if(name==='grab')tone(190,.08,'triangle',.018); if(name==='get'){tone(660,.08,'sine',.025);setTimeout(()=>tone(880,.12,'sine',.02),75);}
+      cabinet.classList.add('stage-alert','stage-'+name);
+      const [lightTone,label]=map[name]||['cyan',name.toUpperCase()];
+      glass.classList.add('stage-'+lightTone); lampL.classList.add('pulse',lightTone); lampR.classList.add('pulse',lightTone);
+      displayBadge.textContent=label+' • PRIZE DISPLAY';
+      setTimeout(()=>cabinet.classList.remove('stage-alert'),560);
+    } else displayBadge.textContent='PRIZE DISPLAY';
+  }
+  function easeInOutCubic(t){return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;}
+  function easeInOutSine(t){return -(Math.cos(Math.PI*t)-1)/2;}
+  function animateCable(to,duration=520){
+    const from=parseFloat(getComputedStyle(cable).getPropertyValue('--cable-height'))||72;
+    return new Promise(resolve=>{
+      const start=performance.now();
+      function frame(now){
+        const t=Math.min(1,(now-start)/duration),e=easeInOutSine(t),h=from+(to-from)*e;
+        setCable(h);
+        if(t<1)requestAnimationFrame(frame);else resolve();
+      }
+      requestAnimationFrame(frame);
+    });
+  }
+  function fingerContact(b){
+    if(!b)return {left:0,right:0,pinch:0,graze:false,center:0};
+    const d=b.x-x;
+    const half=2.35;
+    const left=Math.max(0,Math.min(1,1-Math.abs(d+half)/2.7));
+    const right=Math.max(0,Math.min(1,1-Math.abs(d-half)/2.7));
+    const pinch=Math.min(left,right);
+    const center=Math.max(0,1-Math.abs(d)/4.8);
+    const graze=Math.max(left,right)>.35&&pinch<.22;
+    return {left,right,pinch,center,graze};
+  }
+  function pushNeighbors(chosen,contact){
+    if(!chosen)return;
+    const dir=(chosen.x-x)>=0?1:-1;
+    board.filter(b=>b.alive&&b.uid!==chosen.uid&&Math.abs(b.x-chosen.x)<6.2).forEach(b=>{
+      const el=prizesEl.querySelector(`[data-uid="${b.uid}"]`);
+      if(!el)return;
+      const push=(contact.pinch>.45?2.2:1.2)*(Math.random()<.5?-1:1);
+      b.x=Math.max(7,Math.min(94,b.x+push));
+      el.style.setProperty('--push-x',push+'px');
+      el.classList.add('pushed');
+      setTimeout(()=>{el.classList.remove('pushed');el.style.removeProperty('--push-x');},500);
+    });
+  }
+  function stackInteraction(chosen,contact){
+    if(!chosen)return 0;
+    let blocked=0;
+    board.filter(b=>b.alive&&b.uid!==chosen.uid&&Math.abs(b.x-chosen.x)<5.6).forEach(b=>{
+      const vertical=Math.abs((b.y||0)-(chosen.y||0));
+      const overlap=Math.max(0,1-Math.abs(b.x-chosen.x)/5.6);
+      const chance=Math.max(0,overlap*(vertical<5?0.85:0.35));
+      if(Math.random()<chance){
+        blocked=Math.max(blocked,chance);
+        b.x=Math.max(7,Math.min(94,b.x+(b.x>=chosen.x?1:-1)*(contact.pinch>.4?2.4:1.4)));
+        b.rot=Math.max(-14,Math.min(14,b.rot+(Math.random()<.5?-1:1)*3));
+        const el=prizesEl.querySelector(`[data-uid="${b.uid}"]`);
+        if(el){el.classList.add('pushed');el.style.setProperty('--push-x',(b.x>=chosen.x?3:-3)+'px');setTimeout(()=>{el.classList.remove('pushed');el.style.removeProperty('--push-x');},500);}
+      }
+    });
+    return blocked;
+  }
+  function carryStability(chosen,quality,contact){
+    const weight=prizeWeight(chosen);
+    const pinch=contact.pinch;
+    const center=contact.center;
+    const depthPenalty=chosen.depth===0?.05:chosen.depth===1?.02:0;
+    return Math.max(0,Math.min(1,.34+quality*.38+pinch*.28+center*.12-depthPenalty-(weight-.75)*.22));
+  }
+  function liftSlipChance(chosen,quality,contact){
+    const w=prizeWeight(chosen);
+    const swingPenalty=holderSwingEnergy;
+    const pinchBonus=contact.pinch*.22+contact.center*.08;
+    const stability=carryStability(chosen,quality,contact);
+    return Math.max(0,Math.min(.38,(1-quality)*.18+(w-0.75)*.18+swingPenalty*.10-pinchBonus+(1-stability)*.12));
+  }
+
+  async function animateClawMechanicalOpen(){
+    claw.classList.remove('mechanical-close','mechanical-open');
+    claw.classList.add('mechanical-open');
+    await wait(180);
+  }
+  async function animateClawMechanicalClose(){
+    claw.classList.remove('mechanical-open');
+    claw.classList.add('mechanical-close');
+    await wait(220);
+  }
+  function stackPushPhysics(chosen,contact){
+    if(!chosen)return;
+    const radius=contact.pinch>.42?7.4:5.8;
+    board.filter(b=>b.alive&&b.uid!==chosen.uid).forEach(b=>{
+      const dx=b.x-chosen.x;
+      if(Math.abs(dx)>radius)return;
+      const depthGap=Math.abs((b.depth||0)-(chosen.depth||0));
+      const influence=(1-Math.abs(dx)/radius)*(depthGap===0?.95:.52);
+      if(Math.random()>influence)return;
+      const dir=dx>=0?1:-1;
+      const shift=(contact.pinch>.42?2.8:1.6)*influence*dir;
+      b.x=Math.max(7,Math.min(94,b.x+shift));
+      b.rot=Math.max(-16,Math.min(16,b.rot+dir*(1.5+influence*2)));
+      if((b.y||0)<(chosen.y||0)+3 && Math.random()<.38) b.y=Math.min(16,(b.y||0)+2);
+      const el=prizesEl.querySelector(`[data-uid="${b.uid}"]`);
+      if(el){el.classList.add('neighbor-hit');el.style.setProperty('--push-x',(shift*2)+'px');setTimeout(()=>{el.classList.remove('neighbor-hit');el.style.removeProperty('--push-x');},360);}
+    });
+    renderPrizes();
+  }
+  function returnSwingPhysics(holder,chosen){
+    const offset=Math.abs(x-chosen.x);
+    holderSwingEnergy=Math.max(holderSwingEnergy,Math.min(1,offset/7+(prizeWeight(chosen)-.75)*.55));
+    const amp=Math.min(8,2.2+holderSwingEnergy*7);
+    holder.style.setProperty('--return-amp',amp+'deg');
+    holder.classList.add('return-physics');
+    let t0=performance.now();
+    return new Promise(resolve=>{
+      function frame(now){
+        const t=Math.min(1,(now-t0)/900);
+        const decay=1-t;
+        const angle=Math.sin(t*Math.PI*4.2)*amp*decay;
+        holder.style.transform=`translateX(-50%) rotate(${angle}deg)`;
+        if(t<1)requestAnimationFrame(frame);else{holder.style.transform='';holder.classList.remove('return-physics');resolve();}
+      }
+      requestAnimationFrame(frame);
+    });
+  }
+  function carryDropChance(chosen,contact){
+    const weight=prizeWeight(chosen);
+    const swing=holderSwingEnergy;
+    const pinch=contact.pinch;
+    return Math.max(0,Math.min(.28,(weight-.75)*.12+swing*.08+(1-pinch)*.08));
+  }
+  async function animateGrabClose(chosen){
+    const el=chosen&&prizesEl.querySelector(`[data-uid="${chosen.uid}"]`);
+    if(el)el.classList.add('contacting');
+    claw.classList.remove('open','grab-open');
+    claw.classList.add('contact','grab-close','closed','grip-lock');
+    await animateClawMechanicalOpen();
+    await animateClawMechanicalClose();
+    const contact=fingerContact(chosen);
+    if(contact.left>.35)claw.classList.add('finger-contact-left');
+    if(contact.right>.35)claw.classList.add('finger-contact-right');
+    if(el && contact.graze){el.classList.add('graze','partial-grip');el.style.setProperty('--graze-shift',contact.left>contact.right?'4px':'-4px');}
+    if(el && contact.pinch>.42)el.classList.add('solid-grip');
+    claw.classList.remove('contact','grab-close','grip-lock');
+    if(el)el.classList.remove('contacting');
+    return {quality:chosen?gripQuality(chosen):0,contact};
+  }
+  function animateGrabOpen(){
+    claw.classList.remove('closed','grab-close');
+    claw.classList.add('grab-open','open');
+    setTimeout(()=>claw.classList.remove('grab-open'),260);
+  }
+  function wait(ms){return new Promise(r=>setTimeout(r,ms));}
+  function burst(count=18){
+    for(let i=0;i<count;i++){const s=document.createElement('i');s.className='spark';s.style.left=(48+Math.random()*10)+'%';s.style.top=(40+Math.random()*12)+'%';s.style.setProperty('--dx',(Math.random()*180-90)+'px');s.style.setProperty('--dy',(Math.random()*150-90)+'px');effectLayer.appendChild(s);setTimeout(()=>s.remove(),720);}
+    for(let i=0;i<18;i++){const c=document.createElement('i');c.className='get-confetti';c.style.setProperty('--dx',(Math.random()*520-260)+'px');c.style.setProperty('--dy',(Math.random()*360-80)+'px');c.style.setProperty('--rot',(Math.random()*720-360)+'deg');c.style.background=['#ff9bc9','#7defff','#ffe36e','#a9e889'][i%4];effectLayer.appendChild(c);setTimeout(()=>c.remove(),1000);}
+  }
+  function servoPulse(kind='soft'){claw.classList.add('servo-active'); cable.classList.add('servo-pulse'); tone(kind==='hard'?760:520,.06,'square',.014); setTimeout(()=>{claw.classList.remove('servo-active');cable.classList.remove('servo-pulse')},kind==='hard'?520:320)}
+  function contactImpact(chosen){
+    shell.classList.remove('micro-shake','impact-shake'); void shell.offsetWidth; shell.classList.add('impact-shake'); setTimeout(()=>shell.classList.remove('impact-shake'),360);
+    claw.classList.add('contact-shock'); cable.classList.add('mechanical-tension'); if(chosen){const el=prizesEl.querySelector(`[data-uid="${chosen.uid}"]`); if(el){el.classList.add('contact-glow');setTimeout(()=>el.classList.remove('contact-glow'),620)}} tone(180,.11,'triangle',.018); setTimeout(()=>{claw.classList.remove('contact-shock');cable.classList.remove('mechanical-tension')},520);
+  }
+  function dockHome(){shell.classList.add('return-dock');dockIndicator.classList.add('docked');tone(420,.08,'sine',.012);setTimeout(()=>shell.classList.remove('return-dock'),520)}
+  function updateAttract(){
+    if(state!=='idle' || overlay.classList.contains('show')){attractTarget.classList.remove('show');return}
+    const p=prizes[attractIndex%prizes.length]; attractTarget.innerHTML=`<span>TRY</span> <strong>${p.name}</strong> <span>• ${p.rarity}</span>`; attractTarget.classList.add('show'); attractIndex++;
+  }
+  function startAttract(){clearInterval(attractTimer); shell.classList.add('attract-sweep'); updateAttract(); attractTimer=setInterval(()=>{if(state==='idle'&&!overlay.classList.contains('show'))updateAttract();},2600)}
+  render();
+  startAttract();
+  async function drop(){
+    if(state!=='ready')return;
+    stopHold(); tone(220,.08,'square',.012); state='dropping'; setCraneVisual('descend'); $('dropBtn').disabled=true; $('leftBtn').disabled=true; $('rightBtn').disabled=true; status('DROP'); moveHint.classList.add('hide');
+    const chosen=nearestTarget(); target=chosen; previewTarget(chosen); tone(330,.045,'sine',.01);
+    cabinet.classList.add('drop-ready'); claw.classList.add('dropping'); shell.classList.remove('cinematic-aim');
+    status('DROP'); await wait(90); status('DESCEND'); stageLight('descend'); servoPulse('soft');
+    setCraneTop(CRANE_HOME_TOP); setCable(CRANE_CABLE_HOME); await animateCraneVertical(CRANE_CABLE_DROP,1500);
+    await wait(55);
+    status('CONTACT'); showContactReadout('CONTACT • CHECK',true); preContactPulse(); cable.classList.add('tension-glow'); claw.classList.add('jaw-tension','contact-flash'); await wait(110); contactImpact(chosen); servoPulse('hard'); const grab=await animateGrabClose(chosen); cable.classList.remove('tension-glow'); claw.classList.remove('jaw-tension','contact-flash'); const quality=grab.quality; status('GRAB'); await wait(220);
+    if(chosen){pushNeighbors(chosen,grab.contact);stackInteraction(chosen,grab.contact);stackPushPhysics(chosen,grab.contact);}
+    const stability=chosen?carryStability(chosen,quality,grab.contact):0;
+    const won=!!chosen && Math.random()<Math.min(.86,successChance(chosen)*(0.75+quality*.12+grab.contact.pinch*.07+stability*.04));
+    if(won){await grabPrize(chosen);} else {await missPrize(chosen);}
+  }
+  async function grabPrize(chosen){
+    state='lifting'; status('LIFT'); stageLight('grab'); setCraneVisual('success'); liftPulse(); cabinet.classList.remove('drop-ready'); claw.classList.remove('dropping');
+    const el=prizesEl.querySelector(`[data-uid="${chosen.uid}"]`);
+    if(el){el.classList.add('grabbed');el.style.opacity='0';}
+    carried=chosen;
+    const contact=fingerContact(chosen);
+    holderSwingEnergy=Math.max(0,Math.min(1,Math.abs(x-chosen.x)/8 + (prizeWeight(chosen)-.75)*.5));
+    const holder=document.createElement('div');
+    holder.className='carried-prize '+(prizeWeight(chosen)>=1.08?'weight-heavy':'weight-light')+(contact.pinch>.42?' solid-carry':' partial-carry');
+    holder.innerHTML=`<div class="prize-slot"><span class="target-ring"></span>${plushMarkup(chosen.p)}</div>`;
+    carriage.appendChild(holder);
+    // Lift is one continuous motion: the captured crane rises first, then carries the closed claw all the way home.
+    holder.classList.add(Math.random()<.5?'swing-left':'swing-right');
+    await wait(90);
+    await animateCraneVertical(CRANE_CABLE_HOME,1250);
+    holder.classList.remove('swing-left','swing-right');
+    holder.classList.add('swing-return','return-swing');
+    await wait(220);
+    holder.classList.remove('swing-return');
+    const slipChance=liftSlipChance(chosen,gripQuality(chosen),contact);
+    const returnSlipChance=Math.min(.32,slipChance*.48+holderSwingEnergy*.12);
+    if(Math.random()<slipChance || Math.random()<returnSlipChance){
+      holder.classList.add('slipping');
+      status('SLIP');
+      await wait(280);
+      if(holder.parentNode)holder.remove();
+      carried=null;
+      chosen.alive=true;
+      chosen.x=Math.max(7,Math.min(94,chosen.x+(Math.random()<.5?-1:1)*(2.5+prizeWeight(chosen))));
+      chosen.y=Math.max(0,(chosen.y||0)-2);
+      chosen.depth=Math.max(0,chosen.depth-1);
+      chosen.rot=Math.max(-14,Math.min(14,chosen.rot+(Math.random()<.5?-1:1)*4));
+      renderPrizes();
+      await settlePile(chosen,7.5);
+      showToast('持ち上げ途中で景品が滑り落ちました');
+      await animateCraneVertical(CRANE_CABLE_HOME,280);
+      state='returning'; status('RETURN TO HOME'); await animateXTo(8,760); await wait(90);
+      finishSession(false);
+      return;
+    }
+    state='returning'; status('RETURN TO HOME'); stageLight('return');
+    // Keep the closed success crane visible throughout the entire return.
+    setCraneVisual('success');
+    cable.classList.add('return-sway');
+    await animateXTo(8,1040);
+    dockHome(); homeSettle();
+    await returnSwingPhysics(holder,chosen);
+    cable.classList.remove('return-sway');
+    // Only after the carriage reaches the left home position does the arm open.
+    setCraneVisual('success');
+    openSeparatedArms();
+    await wait(190);
+    const carryDrop=carryDropChance(chosen,contact);
+    if(Math.random()<carryDrop){
+      holder.classList.add('hard-swing','slipping');
+      status('SLIP');
+      await wait(260);
+      if(holder.parentNode)holder.remove();
+      carried=null; chosen.alive=true; chosen.x=Math.max(7,Math.min(94,chosen.x+(Math.random()<.5?-1:1)*(1.5+prizeWeight(chosen))));
+      chosen.y=Math.max(0,(chosen.y||0)-1); chosen.rot=Math.max(-16,Math.min(16,chosen.rot+(Math.random()<.5?-1:1)*5));
+      renderPrizes(); await settlePile(chosen,7.5); showToast('帰還中の揺れで景品が滑落しました');
+      await animateCable(72,220); finishSession(false); return;
+    }
+    state='dropping-prize'; status('PRIZE OUT'); stageLight('get'); prizeBed.classList.add('getting');
+    chuteGlow.classList.add('show','tracking'); chuteDoor.classList.add('open'); chuteDoor.classList.add('pulse'); setTimeout(()=>chuteDoor.classList.remove('pulse'),1100);
+    await wait(160); prizeBed.classList.add('chute-land'); tone(300,.08,'sine',.014); setTimeout(()=>prizeBed.classList.remove('chute-land'),620);
+    if(holder.parentNode)holder.remove();
+    chosen.alive=false;
+    collection[chosen.p.id]++;saveCollection();renderCollection();pulseCollectionItem(chosen.p.name);
+    const cc=$('collectionCount'); if(cc){cc.classList.remove('bump');void cc.offsetWidth;cc.classList.add('bump');}
+    const pc=$('prizeCounter'); if(pc){pc.classList.remove('bump');void pc.offsetWidth;pc.classList.add('bump');}
+    board.filter(b=>b.alive&&b.depth===chosen.depth).slice(0,5).forEach((b,i)=>{const e=prizesEl.querySelector(`[data-uid="${b.uid}"]`);if(e){setTimeout(()=>{e.classList.add('settle-cascade');setTimeout(()=>e.classList.remove('settle-cascade'),640)},i*55);}});
+    settleWave();
+    const exit=document.createElement('div');
+    exit.className='chute-drop-item dynamic-fall';
+    exit.innerHTML=plushMarkup(chosen.p);
+    prizesEl.appendChild(exit);
+    await wait(520);
+    exit.remove();
+    chuteGlow.classList.remove('show','tracking'); chuteDoor.classList.remove('open'); prizeBed.classList.remove('getting');
+    getFlash.classList.remove('show'); void getFlash.offsetWidth; getFlash.classList.add('show');
+    shell.classList.add('camera-pulse','telemetry-flash');setTimeout(()=>shell.classList.remove('camera-pulse','telemetry-flash'),500);
+    burst(30);
+    await wait(180);
+    state='result'; status('GET'); stageLight('get'); displayBadge.textContent='GET! • PRIZE OUT'; resultPulse();
+    winPlush.innerHTML=plushMarkup(chosen.p,'win'); winText.textContent=`${chosen.p.name} を獲得！  所持数 ×${collection[chosen.p.id]}`; updateGetMeta(chosen); let totalEl=overlay.querySelector('.get-total'); if(!totalEl){totalEl=document.createElement('div');totalEl.className='get-total';winText.insertAdjacentElement('afterend',totalEl);} totalEl.innerHTML=`今回の所持数 <strong>×${collection[chosen.p.id]}</strong> ・ のこり <strong>${String(playCredits).padStart(2,'0')}</strong>`; overlay.classList.add('show','cinematic-get');
+    showToast('GET! 景品が排出口へ');
+    finishSession(true);
+  }
+  async function missPrize(chosen){
+    state='lifting'; status('MISS'); stageLight('grab'); setCraneVisual('fail'); cabinet.classList.remove('drop-ready'); claw.classList.remove('dropping');
+    claw.classList.add('shake');
+    await wait(260);
+    claw.classList.remove('shake');
+    /* Keep the fail claw closed during the lift and the full return. */
+    // The prize is allowed to wobble rather than instantly snapping back.
+    if(chosen){
+      const el=prizesEl.querySelector(`[data-uid="${chosen.uid}"]`);
+      if(el){
+        el.classList.add('shake');
+        el.style.setProperty('--miss-shift',(Math.random()<.5?-1:1)*6+'px');
+        setTimeout(()=>{el.classList.remove('shake');el.style.removeProperty('--miss-shift');},520);
+      }
+    }
+    applyMissPhysics(chosen,chosen?gripQuality(chosen):0);
+    await animateCraneVertical(CRANE_CABLE_HOME,1000);
+    await wait(180);
+    showToast(chosen&&Math.abs(chosen.x-x)<3?'惜しい！ アームが景品を離しました':'景品を離しました');
+    await wait(180);
+    state='returning';status('RETURN TO HOME');
+    /* Same route as a successful grab: closed claw travels left, then opens at home. */
+    setCraneVisual('fail');
+    await animateXTo(8,1040);
+    await wait(90);
+    setCraneVisual('fail');
+    openSeparatedArms();
+    animateGrabOpen();
+    await wait(180);
+    finishSession(false);
+  }
+  function finishSession(won){
+    // クレーンゲームはCardWolf本編の勝敗戦績に影響させない。
+    // 連続プレイ分は100メダルを先払いし、1プレイ完了ごとに残り回数を1減らす。
+    saveRecord();
+    if(playCredits>0)playCredits--;
+    sessionSpent=false; state='idle'; target=null; carried=null; shell.classList.remove('cinematic-aim','parallax-active','return-dock','return-track-on'); $('dropBtn').disabled=true; $('leftBtn').disabled=true; $('rightBtn').disabled=true; status('',false); setCraneVisual('ready'); resetCraneTop(); controlBar.classList.remove('is-moving','left','right'); aimGuide.classList.remove('active'); alignmentMeter.classList.remove('show'); shell.classList.remove('target-lock'); claw.classList.remove('closed','finger-contact-left','finger-contact-right');claw.classList.add('open');setCable(CRANE_CABLE_HOME); setX(8); holderSwingEnergy=0;
+    if(won){renderPrizes();getRewardRing.classList.remove('show');void getRewardRing.offsetWidth;getRewardRing.classList.add('show');chuteGlow.classList.add('reward');setTimeout(()=>{getRewardRing.classList.remove('show');chuteGlow.classList.remove('reward')},850);} else updateTargetHighlight();
+    render();
+    if(playCredits>0){
+      remainingBox.classList.add('queue-active'); depthMeter.classList.remove('show'); grabTension.classList.remove('show'); positionReticle.classList.remove('show'); dropTrajectory.classList.remove('show');
+      // v209: 残り回数がある場合もGET演出をすぐ閉じず、動画のように景品獲得をしっかり見せてから次へ進む。
+      // 残り1回なら playCredits===1 のため、ここは約5.5秒後に自動で次プレイへ移行する。
+      const delay=won?5500:900;
+      updateQueueTimer(delay);
+      setTimeout(()=>{
+        if(state!=='idle'||playCredits<=0)return;
+        overlay.classList.remove('show','cinematic-get'); getMeta.classList.remove('show'); queueTransition(); beginQueuedPlay();
+      },delay);
+    } else {
+      remainingBox.classList.remove('queue-active'); updateQueueTimer(0); getMeta.classList.remove('show');
+      $('playBtn').disabled=false;
+      startAttract();
+    }
+  }
+  function beginQueuedPlay(){
+    if(state!=='idle'||playCredits<=0)return;
+    updateQueueTimer(0);
+    sessionSpent=true; state='ready'; queueTransition(); tone(520,.08,'triangle',.018); clearInterval(attractTimer); shell.classList.remove('attract-sweep'); attractTarget.classList.remove('show'); tone(520,.08,'triangle',.018); target=null; carried=null; shell.classList.add('is-playing','cinematic-aim'); $('playBtn').disabled=false; $('dropBtn').disabled=false; $('leftBtn').disabled=false; $('rightBtn').disabled=false;
+    claw.classList.remove('closed','grab-close','grab-open'); claw.classList.add('open'); setCable(72); chuteDoor.classList.remove('open'); status('POSITION'); stageCounter.textContent=`STAGE POSITION • PLAY ${String(playIndex).padStart(2,'0')}`; moveHint.classList.remove('hide'); remainingBox.classList.add('queue-active'); showToast(`のこり ${String(playCredits).padStart(2,'0')}回`); pulseQueue(); render();
+  }
+  function closeOverlay(){overlay.classList.remove('show','cinematic-get');updateQueueTimer(0);getMeta.classList.remove('show');startAttract();}
+
+  $('playBtn').addEventListener('click',queuePlay);
+  $('dropBtn').addEventListener('click',()=>{ $('dropBtn').classList.add('pressed'); setTimeout(()=>$('dropBtn').classList.remove('pressed'),160); drop(); });
+  $('leftBtn').addEventListener('pointerdown',()=>{ $('leftBtn').classList.add('pressed'); startHold(-1); }); $('rightBtn').addEventListener('pointerdown',()=>{ $('rightBtn').classList.add('pressed'); startHold(1); });
+  ['pointerup','pointercancel','pointerleave'].forEach(ev=>{ $('leftBtn').addEventListener(ev,stopHold); $('rightBtn').addEventListener(ev,stopHold); });
+  $('closeWin').addEventListener('click',closeOverlay);
+  $('resetCollection').addEventListener('click',()=>{if(confirm('クレーンゲームのコレクションをすべてリセットしますか？')){collection=Object.fromEntries(prizes.map(p=>[p.id,0]));saveCollection();renderCollection();showToast('コレクションをリセットしました');}});
+  document.addEventListener('keydown',e=>{if(['INPUT','TEXTAREA'].includes(document.activeElement?.tagName))return;const k=e.key.toLowerCase();if(k==='arrowleft'||k==='a'){e.preventDefault();startHold(-1)}else if(k==='arrowright'||k==='d'){e.preventDefault();startHold(1)}else if((k==='arrowdown'||k==='s'||e.key==='Enter')&&!e.repeat){e.preventDefault();stopHold();drop()}});
+  document.addEventListener('keyup',e=>{if(['ArrowLeft','ArrowRight','a','d','A','D'].includes(e.key))stopHold();});
+  window.addEventListener('storage',()=>{record=readRecord();render();});
+  // v310-v399: thirty-stage finish polish controller
+  const finishHud=$('finishHud'), phaseBadge=$('phaseBadge'), targetScore=$('targetScore'), precisionBadge=$('precisionBadge'), stackPressure=$('stackPressure'), gripForecast=$('gripForecast'), payoutMeter=$('payoutMeter'), routeLine=$('routeLine'), targetSweep=$('targetSweep'), railShimmer=$('railShimmer'), keyboardHint=$('keyboardHint');
+  let finishLastStage='', finishLastTarget=null, finishMotionStamp=0;
+  function finishPhase(text){
+    const map={POSITION:'POSITION',DROP:'DESCEND',DESCEND:'DESCEND',CONTACT:'CONTACT',GRAB:'GRAB',LIFT:'LIFT',SLIP:'SLIP',MISS:'MISS','RETURN TO HOME':'RETURN', 'PRIZE OUT':'PRIZE OUT',GET:'GET'};
+    phaseBadge.textContent=map[text]||'READY';
+    phaseBadge.classList.toggle('hot',['GRAB','LIFT','PRIZE OUT','GET'].includes(map[text]));
+    phaseBadge.classList.toggle('warn',['SLIP','MISS'].includes(map[text]));
+    phaseBadge.classList.toggle('good',['CONTACT','GET'].includes(map[text]));
+    if(text!==finishLastStage){finishHud.classList.remove('flash');void finishHud.offsetWidth;finishHud.classList.add('flash');finishLastStage=text||'';}
+  }
+  function updateFinishHud(text){
+    const t=target, d=t?Math.abs(t.x-x):null;
+    finishPhase(text);
+    if(t){
+      const precision=Math.max(0,Math.min(100,Math.round((1-d/7)*100)));
+      targetScore.textContent=`TARGET ${t.p.name}`;
+      precisionBadge.textContent=`PRECISION ${precision}%`;
+      precisionBadge.classList.toggle('good',precision>=82); precisionBadge.classList.toggle('hot',precision>=92); precisionBadge.classList.toggle('warn',precision<45);
+      const stack=board.filter(b=>b.alive&&Math.abs(b.x-t.x)<7).length;
+      stackPressure.textContent=`STACK ${stack} • ${stack>=5?'HIGH':'OK'}`; stackPressure.classList.toggle('warn',stack>=7); stackPressure.classList.toggle('good',stack<5);
+      const forecast=Math.max(8,Math.min(96,Math.round(successChance(t)*100)));
+      gripForecast.textContent=`GRIP ${forecast}%`; gripForecast.classList.toggle('good',forecast>=62); gripForecast.classList.toggle('warn',forecast<40);
+      const payout=Math.round((1-t.p.difficulty)*65+35);
+      payoutMeter.textContent=`PAYOUT ${payout}%`; payoutMeter.classList.toggle('hot',payout>=65);
+      if(finishLastTarget!==t.uid){finishLastTarget=t.uid;targetSweep.style.left=x+'%';targetSweep.classList.remove('show');void targetSweep.offsetWidth;targetSweep.classList.add('show');railShimmer.classList.remove('show');void railShimmer.offsetWidth;railShimmer.classList.add('show');}
+    }else{
+      targetScore.textContent='TARGET --';precisionBadge.textContent='PRECISION --';stackPressure.textContent='STACK --';gripForecast.textContent='GRIP --';payoutMeter.textContent='PAYOUT --';finishLastTarget=null;
+    }
+    const ready=state==='ready'&&!!t; const returnMode=text==='RETURN TO HOME'; const getMode=text==='GET'||text==='PRIZE OUT';
+    routeLine.classList.toggle('show',ready||returnMode||getMode); shell.classList.toggle('route-active',returnMode||getMode); shell.classList.toggle('precision-hot',ready&&t&&Math.abs(t.x-x)<=2.5); shell.classList.toggle('payout-hot',ready&&t&&t.p.difficulty<.65); shell.classList.toggle('grip-hot',text==='GRAB'||text==='CONTACT'); shell.classList.toggle('edge-alert',ready&&(x<=10||x>=90)); shell.classList.toggle('rail-active',ready); shell.classList.toggle('chute-active',getMode); shell.classList.toggle('finish-focus',!!text); shell.classList.toggle('get-burst',text==='GET');
+    carriageBody.classList.toggle('finish-halo',ready&&t&&Math.abs(t.x-x)<=2.5); cable.classList.toggle('finish-pulse',text==='CONTACT'||text==='GRAB'); claw.classList.toggle('finish-glow',text==='CONTACT'||text==='GRAB');
+    keyboardHint.classList.toggle('show',ready && !moveDir && !('ontouchstart' in window));
+    const selected=target&&prizesEl.querySelector(`[data-uid="${target.uid}"]`); prizesEl.querySelectorAll('.prize-slot.finish-target').forEach(el=>el.classList.remove('finish-target')); if(selected)selected.classList.add('finish-target');
+  }
+  function finishA11y(text){ if(!a11yLive)return; if(text==='POSITION')a11yLive.textContent=target?`${target.p.name}を狙っています`:'狙う景品を選択'; else if(text==='CONTACT')a11yLive.textContent='景品に接触しました'; else if(text==='GRAB')a11yLive.textContent='アームが景品を掴みます'; else if(text==='RETURN TO HOME')a11yLive.textContent='景品をホームへ運んでいます'; else if(text==='PRIZE OUT')a11yLive.textContent='排出口へ景品を移動しています'; }
+  // Wrap the existing lifecycle hooks so the 30-stage pass remains additive and does not alter gameplay odds.
+  const _status309=status, _setX309=setX, _renderPrizes309=renderPrizes, _finishSession309=finishSession, _beginQueuedPlay309=beginQueuedPlay, _render309=render;
+  status=function(text,show=true){_status309(text,show);updateFinishHud(text);finishA11y(text);};
+  setX=function(v){_setX309(v);if(typeof updateFinishHud==='function')updateFinishHud(lastStatus);};
+  renderPrizes=function(){_renderPrizes309();if(typeof updateFinishHud==='function')updateFinishHud(lastStatus);};
+  finishSession=function(won){_finishSession309(won);setTimeout(()=>updateFinishHud(won?'GET':''),0);};
+  beginQueuedPlay=function(){_beginQueuedPlay309();updateFinishHud('POSITION');};
+  render=function(){_render309();if(typeof updateFinishHud==='function')updateFinishHud(lastStatus);};
+  window.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight','a','d','A','D'].includes(e.key)&&state==='ready')keyboardHint.classList.remove('show');});
+  const reduceMotion=window.matchMedia?.('(prefers-reduced-motion: reduce)'); if(reduceMotion?.matches)shell.classList.add('reduce-motion'); reduceMotion?.addEventListener?.('change',e=>shell.classList.toggle('reduce-motion',e.matches));
+
+  shell.classList.add('visual-finish');
+  spawnBoard();renderPrizes();render();shell.classList.add('visual-finish');setCraneVisual('ready');setX(8); updateTelemetry(); updateStageProgress(''); updateAdvancedHud(''); $('dropBtn').disabled=true; $('leftBtn').disabled=true; $('rightBtn').disabled=true; claw.classList.add('open');
+})();
+</script>
+</body>
+</html>
