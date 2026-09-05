@@ -55,7 +55,7 @@
     .remaining{font-weight:900;font-size:.82rem;color:#d9e9f6;white-space:nowrap}.remaining strong{color:var(--cg-yellow);font-size:1.2rem;letter-spacing:.08em;min-width:2ch;display:inline-block;text-align:right}
     .control-buttons{display:flex;gap:8px}.cg-btn{min-width:76px;border:1px solid #6b8398;border-radius:8px;background:linear-gradient(#4b6379,#1b2b3d);color:#fff;font-weight:900;padding:8px 12px;cursor:pointer;box-shadow:inset 0 1px rgba(255,255,255,.18),0 3px 5px #0007}.cg-btn:hover{filter:brightness(1.15)}.cg-btn:active{transform:translateY(1px)}.cg-btn:disabled{opacity:.42;cursor:not-allowed}.cg-btn.play{background:linear-gradient(#ffd76c,#9f691b);color:#21170a;border-color:#ffe6a0}.cg-btn.stop{background:linear-gradient(#8cecff,#2e6e9a);color:#061522}
     .machine-lights{position:absolute;left:5%;right:5%;bottom:63px;height:5px;display:flex;gap:5px}.machine-lights i{flex:1;border-radius:8px;background:#4fdfff;box-shadow:0 0 12px #4fdfff;animation:blink 1.2s infinite alternate}.machine-lights i:nth-child(2){animation-delay:.25s}.machine-lights i:nth-child(3){animation-delay:.5s}.machine-lights i:nth-child(4){animation-delay:.75s}@keyframes blink{from{opacity:.25}to{opacity:1}}
-    .side-panel{display:flex;flex-direction:column;gap:12px}.cg-card{background:linear-gradient(145deg,rgba(22,34,53,.96),rgba(9,15,26,.96));border:1px solid #38516c;border-radius:18px;padding:16px;box-shadow:0 12px 35px rgba(0,0,0,.3)}.cg-card h2{font-size:1rem;margin:0 0 11px}.cg-card p{font-size:.78rem;color:#aabbd0;line-height:1.7;margin:0}.cost{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-radius:12px;background:#0a1220;border:1px solid #2c425a;margin:10px 0}.cost strong{color:var(--cg-yellow);font-size:1.3rem}.notice{font-size:.72rem;color:#8196ac;margin-top:8px}
+    .side-panel{display:flex;flex-direction:column;gap:12px}.cg-card{background:linear-gradient(145deg,rgba(22,34,53,.96),rgba(9,15,26,.96));border:1px solid #38516c;border-radius:18px;padding:16px;box-shadow:0 12px 35px rgba(0,0,0,.3)}.cg-card h2{font-size:1rem;margin:0 0 11px}.cg-card p{font-size:.78rem;color:#aabbd0;line-height:1.7;margin:0}.owned-medals{display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.72);border:1px solid #c4d4d6;margin:0 0 10px;color:#536c71;font-weight:900}.owned-medals img{width:28px;height:28px;object-fit:contain}.owned-medals strong{margin-left:auto;color:#c78617;font-size:1.25rem}.cost{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-radius:12px;background:#0a1220;border:1px solid #2c425a;margin:10px 0}.cost strong{color:var(--cg-yellow);font-size:1.3rem}.notice{font-size:.72rem;color:#8196ac;margin-top:8px}
     .collection-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.collection-item{position:relative;min-width:0;aspect-ratio:.83;border-radius:10px;background:#0a1220;border:1px solid #2d4158;overflow:hidden;cursor:pointer}.collection-item.locked{opacity:.38;filter:grayscale(1)}.collection-item .mini-plush{transform:scale(.52);transform-origin:center top;position:absolute;left:50%;top:2px}.collection-item .qty{position:absolute;right:4px;bottom:4px;background:#15253a;border-radius:8px;padding:2px 5px;font-size:.62rem;font-weight:900;color:#fff}.collection-item .rarity{position:absolute;left:4px;top:4px;font-size:.52rem;color:#b8c9d9}.collection-item .cname{position:absolute;left:3px;right:3px;bottom:23px;text-align:center;font-size:.56rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .back-button{width:100%;display:flex;justify-content:center;text-decoration:none}.reset-note{font-size:.65rem!important;color:#697e96!important;margin-top:10px!important}
     .status-toast{position:fixed;left:50%;bottom:25px;transform:translate(-50%,20px);padding:11px 16px;border-radius:999px;background:rgba(4,9,17,.95);border:1px solid #5d7690;box-shadow:0 10px 35px #0009;opacity:0;pointer-events:none;transition:.25s;z-index:50;font-weight:900}.status-toast.show{opacity:1;transform:translate(-50%,0)}
@@ -567,6 +567,9 @@
     .prize-slot.near .video-prize-art{filter:saturate(1.08) brightness(1.05) drop-shadow(0 0 9px rgba(255,222,105,.8)) drop-shadow(0 8px 5px rgba(36,50,56,.25));}
     /* v482: separate the crane body from the cable so vertical motion is continuous instead of swapping a pre-drawn long-cable image. */
     .video-crane-art{position:absolute;left:50%;top:calc(var(--cable-height,72px) - 4px);width:138px;height:257px;transform:translateX(-50%);z-index:18;pointer-events:none;user-select:none;filter:drop-shadow(0 8px 5px rgba(50,70,76,.25));will-change:top;overflow:visible;}
+.crane-carriage{--cable-height:30px;}
+.crane-carriage.video-state .video-crane-art{top:calc(var(--cable-height,30px) - 4px);}
+.crane-carriage.video-state .cable{top:0;}
     .video-crane-art .crane-layer{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center top;display:block;pointer-events:none;user-select:none;will-change:transform,opacity;}
     .video-crane-art .crane-layer.arm{transform-origin:50% 56%;}
     .video-crane-art .crane-layer.arm{transform-origin:50% 56%;transition:opacity .16s ease;}
@@ -705,7 +708,6 @@
 .debug-ui .keyboard-hint { display:block; }
 
 /* v470-v482: motion smoothing, collection readability, and clean fail-claw transparency */
-.machine-wrap:not(.debug-ui) .play-info-card{display:none!important}
 .collection-item .mini-plush{left:50%;top:15px;width:92px;height:104px;transform:translateX(-50%);transform-origin:center top;display:block;background:radial-gradient(circle at 50% 48%,rgba(255,255,255,.72),rgba(255,255,255,0) 70%);border-radius:18px}
 .collection-item .mini-plush .plush{width:92px!important;height:104px!important}
 .collection-item .mini-plush .video-prize-art{width:92px!important;height:104px!important;transform:translateX(-50%) scale(var(--asset-scale,1));}
@@ -736,22 +738,17 @@
 @keyframes armOpenFade{to{opacity:1}}
 .crane-carriage.video-state .cable{height:var(--cable-height,30px);}
 .crane-carriage.video-state .carriage-body,.crane-carriage.video-state .claw{visibility:hidden;}
-.machine-head{height:86px!important;}
-.machine-head-logo{display:block;width:min(270px,62%);height:70px;object-fit:contain;object-position:center;}
+.machine-head{height:128px!important;}
+.machine-head-logo{display:block;width:min(420px,82%);height:112px;object-fit:contain;object-position:center;}
 @media(max-width:680px){
-  .video-crane-art{width:112px;height:122px;top:calc(var(--cable-height,30px) - 19px);}
-  .machine-head{height:72px!important;}
-  .machine-head-logo{width:min(220px,70%);height:58px;}
+  .video-crane-art{width:112px;height:245px;top:calc(var(--cable-height,30px) - 19px);}
+  .machine-head{height:92px!important;}
+  .machine-head-logo{width:min(300px,82%);height:80px;}
 }
 </style>
 </head>
 <body class="crane-body">
   <div class="crane-shell">
-    <header class="crane-top">
-      <div class="cg-logo"><img src="assets/yummy/button_logo.png" alt="PRIZE CATCHER"><small>MEDAL CRANE GAME</small></div>
-      <div class="medal-pill"><img src="assets/medal-icon.png" alt="メダル"><span>MEDAL</span><strong id="medalCount">0</strong></div>
-    </header>
-
     <main class="cg-layout">
       <section class="machine-wrap" aria-label="クレーンゲーム機">
         <div class="machine-head"><img class="machine-head-logo" src="assets/yummy/button_logo.png" alt="PRIZE CATCHER"><span class="head-lights"><i></i><i></i><i></i><i></i><i></i></span></div>
@@ -774,7 +771,7 @@
       </section>
 
       <aside class="side-panel">
-        <section class="cg-card play-info-card"><h2>PLAY INFO</h2><div class="cost"><span>1プレイ</span><strong>100枚</strong></div><p>左側のホーム位置から右へ移動して狙い、降下後は上昇して左側の排出口へ戻ります。内部の掴み判定は「位置・タイミング・景品難度」を組み合わせた中間方式です。</p><p class="notice">※ボタンを押すたびに100メダルを先払い。複数回押すと、その回数分を連続プレイできます。</p></section>
+        <section class="cg-card play-info-card"><h2>PLAY INFO</h2><div class="owned-medals"><img src="assets/medal-icon.png" alt="メダル"><span>所持メダル</span><strong id="medalCount">0</strong></div><div class="cost"><span>1プレイ</span><strong>100枚</strong></div><p>左側のホーム位置から右へ移動して狙い、降下後は上昇して左側の排出口へ戻ります。内部の掴み判定は「位置・タイミング・景品難度」を組み合わせた中間方式です。</p><p class="notice">※ボタンを押すたびに100メダルを先払い。複数回押すと、その回数分を連続プレイできます。</p></section>
         <section class="cg-card collection-card"><h2>COLLECTION <span id="collectionCount">0 / 8</span></h2><div class="collection-progress"><span id="collectionProgress"></span></div><div class="collection-grid" id="collectionGrid"></div><p class="notice">獲得数はこのブラウザに保存されます。</p><p class="reset-note">※デバッグ用: コレクションをリセット</p><button class="cg-btn" id="resetCollection" type="button">COLLECTION RESET</button></section>
         <a class="cg-card back-button" href="index.html">← カードウルフへ戻る</a>
       </aside>
@@ -1150,7 +1147,7 @@
     updateAdvancedHud(lastStatus);
     if(target && target.uid!==lastTargetUid){lastTargetUid=target.uid;flashHud();}
   }
-  function setCable(h){cable.style.setProperty('--cable-height',h+'px');claw.style.setProperty('--cable-height',h+'px'); updateTelemetry(); const depth=Math.max(0,Math.min(100,Math.round((h-70)/70*100))); depthFill.style.height=depth+'%'; depthMeter.dataset.value=String(depth).padStart(2,'0'); const tension=Math.max(0,Math.min(100,Math.round(100-depth*.45))); tensionFill.style.width=tension+'%'; grabTension.dataset.value=String(tension).padStart(2,'0'); updateAdvancedHud(lastStatus);}
+  function setCable(h){const px=h+'px'; cable.style.setProperty('--cable-height',px); claw.style.setProperty('--cable-height',px); carriage.style.setProperty('--cable-height',px); updateTelemetry(); const depth=Math.max(0,Math.min(100,Math.round((h-70)/70*100))); depthFill.style.height=depth+'%'; depthMeter.dataset.value=String(depth).padStart(2,'0'); const tension=Math.max(0,Math.min(100,Math.round(100-depth*.45))); tensionFill.style.width=tension+'%'; grabTension.dataset.value=String(tension).padStart(2,'0'); updateAdvancedHud(lastStatus);}
   function successChance(b){
     const distance=Math.abs(b.x-x);
     const alignment=Math.max(0,1-distance/7);
