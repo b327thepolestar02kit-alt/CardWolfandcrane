@@ -20,7 +20,7 @@ for c in cards:
     if not str(c.get("image","")).startswith("images/"): errors.append(f"bad image path: {c.get('image')}")
 idx=text("index.html")
 if 'src="data/cards.js"' not in idx: errors.append("index.html does not load data/cards.js")
-for req in ["data/cards.js","data/cards.config.json","images/.gitkeep","prepare_cards.cmd","prepare_cards.ps1","verify-build.py","crane.html"]:
+for req in ["data/cards.js","data/cards.config.json","prepare_cards.cmd","prepare_cards.ps1","verify-build.py","crane.html"]:
     if not (ROOT/req).exists(): errors.append(f"missing required: {req}")
 cr=text("crane.html")
 for asset in ["ready_core_clean.png","success_core.png","success_drop_core.png","fail_core.png","fail_drop_core.png"]:

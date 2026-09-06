@@ -123,7 +123,7 @@
     .claw.open .finger.left{transform:rotate(18deg)}.claw.open .finger.right{transform:rotate(-18deg)}
     .claw.closed .finger.left{transform:rotate(1deg) translateX(9px)}.claw.closed .finger.right{transform:rotate(-1deg) translateX(-9px)}
     .claw.shake{animation:clawShake .32s ease}@keyframes clawShake{0%,100%{margin-left:0}25%{margin-left:-7px}75%{margin-left:7px}}
-    .carried-prize{position:absolute;left:50%;top:55px;transform:translateX(-50%);z-index:6;pointer-events:none}.carried-prize .prize-slot{position:relative;left:0!important;bottom:auto;width:78px;height:92px;transform:translateX(-50%)}
+    .carried-prize{position:absolute;left:50%;top:154px;transform:translateX(-50%);z-index:19;pointer-events:none}.carried-prize .prize-slot{position:relative;left:0!important;bottom:auto;width:78px;height:92px;transform:none!important}
     .effect-layer{position:absolute;inset:0;z-index:30;pointer-events:none;overflow:hidden}.spark{position:absolute;width:7px;height:7px;border-radius:50%;background:#fff;box-shadow:0 0 12px #fff;animation:sparkFly .7s ease-out forwards}@keyframes sparkFly{0%{transform:translate(0,0) scale(.5);opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(0);opacity:0}}
     .control-bar .cg-btn.active{filter:brightness(1.3);box-shadow:0 0 0 2px rgba(118,244,255,.35),inset 0 1px rgba(255,255,255,.2)}
     /* v146: unified glass-axis mapping for edge accuracy */
@@ -429,8 +429,7 @@
     .prize-bed.settle-wave .prize-slot{animation:settleWave .5s ease-out}.prize-bed.settle-wave .prize-slot:nth-child(2n){animation-delay:.04s}.prize-bed.settle-wave .prize-slot:nth-child(3n){animation-delay:.08s}
     @keyframes settleWave{45%{transform:translateY(-3px) rotate(1deg)}100%{transform:translateY(0) rotate(0)}}
     .play-progress{position:absolute;left:50%;bottom:67px;transform:translateX(-50%);display:flex;gap:4px;padding:4px 7px;border-radius:999px;background:rgba(255,255,255,.72);border:1px solid rgba(104,139,143,.25);z-index:20;opacity:0;pointer-events:none;transition:.25s}.play-progress.show{opacity:1}.play-progress i{width:6px;height:6px;border-radius:50%;background:#d7e4e5;box-shadow:inset 0 1px #fff}.play-progress i.active{background:#ffe06e;box-shadow:0 0 7px #ffe06e}.play-progress i.done{background:#8edfd1}
-    .queue-pulse{animation:queuePulse .55s ease-out}.remaining.queue-pulse strong{transform:scale(1.18);color:#d48a18}@keyframes queuePulse{50%{filter:brightness(1.2)}}
-    .get-hold-hint{position:absolute;left:50%;bottom:16%;transform:translateX(-50%);padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.88);border:1px solid rgba(106,140,145,.24);color:#5e7479;font-size:.48rem;font-weight:900;letter-spacing:.08em;z-index:25;opacity:0;pointer-events:none}.win-overlay.cinematic-get .get-hold-hint{opacity:1;animation:hintFloat 1.3s ease-in-out infinite alternate}@keyframes hintFloat{to{transform:translateX(-50%) translateY(-3px)}}
+    .queue-pulse{animation:queuePulse .55s ease-out}.remaining.queue-pulse strong{transform:scale(1.18);color:#d48a18}@keyframes queuePulse{50%{filter:brightness(1.2)}}}
     .machine-wrap.attract-sweep .play-progress{display:none}
     @media(max-width:680px){.alignment-meter{top:59px;width:108px}.play-progress{bottom:60px;transform:translateX(-50%) scale(.88)}}
 
@@ -565,6 +564,7 @@
     .prize-slot .video-prize-art{width:100%;height:100%;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 7px 5px rgba(36,50,56,.32));}
     .prize-slot.depth-back .video-prize-art{filter:saturate(.88) brightness(.9) drop-shadow(0 4px 4px rgba(35,54,59,.30));}
     .prize-slot.near .video-prize-art{filter:saturate(1.08) brightness(1.05) drop-shadow(0 0 9px rgba(255,222,105,.8)) drop-shadow(0 8px 5px rgba(36,50,56,.25));}
+    /* v489: visual edge clamp, unified drop artwork, and carried-prize alignment. */
     /* v482: separate the crane body from the cable so vertical motion is continuous instead of swapping a pre-drawn long-cable image. */
     .video-crane-art{position:absolute;left:50%;top:calc(var(--cable-height,72px) - 4px);width:138px;height:257px;transform:translateX(-50%);z-index:18;pointer-events:none;user-select:none;filter:drop-shadow(0 8px 5px rgba(50,70,76,.25));will-change:top;overflow:visible;}
 .crane-carriage{--cable-height:30px;}
@@ -573,8 +573,15 @@
     .video-crane-art .crane-layer{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center top;display:block;pointer-events:none;user-select:none;will-change:transform,opacity;}
     .video-crane-art .crane-layer.arm{transform-origin:50% 56%;}
     .video-crane-art .crane-layer.arm{transform-origin:50% 56%;transition:opacity .16s ease;}
+    .video-crane-art .ready-full{opacity:0!important;transition:opacity .12s ease;}
+    .video-crane-art.ready-full-mode{top:0!important;}
+    .video-crane-art.ready-full-mode .ready-full{opacity:1!important;}
+    .video-crane-art.ready-full-mode .core,.video-crane-art.ready-full-mode .arm,.video-crane-art.ready-full-mode .drop-full{opacity:0!important;}
     .video-crane-art .closed-arm{opacity:0;}
     .video-crane-art .open-arm{opacity:0;}
+    .video-crane-art .drop-full{opacity:0!important;transition:opacity .12s ease;}
+    .video-crane-art.drop-full .drop-full{opacity:1!important;}
+    .video-crane-art.drop-full .core,.video-crane-art.drop-full .arm{opacity:0!important;}
     .video-crane-art.arm-closed .closed-arm{opacity:1;}
     .video-crane-art.arm-open .open-arm{opacity:1;}
     .video-crane-art.arm-opening .closed-arm{opacity:1;transition:opacity .12s ease-out;}
@@ -582,8 +589,27 @@
     .crane-carriage.video-state{width:138px;height:340px;z-index:18;overflow:visible;}
     .crane-carriage.video-state .carriage-body,.crane-carriage.video-state .claw{visibility:hidden;}
     .crane-carriage.video-state .cable{visibility:visible;top:0;height:var(--cable-height,72px);z-index:16;transition:none;will-change:height;}
+    .crane-carriage.ready-display .cable{visibility:hidden;}
     @media(max-width:680px){.video-crane-art{width:112px;height:245px}.crane-carriage.video-state{width:112px;height:300px}.prize-slot .video-prize-art{transform:scale(.92);transform-origin:center bottom;}}
 
+
+/* v491: ready/side-move pulley safety.  Keep the yellow pulley fully inside
+   the glass and keep the cable visually anchored to its center axis. */
+.video-crane-art.ready-full-mode .ready-full{
+  transform:translateY(12px) !important;
+}
+
+
+.video-crane-art .fail-full{opacity:0!important;transition:opacity .06s linear;}
+.video-crane-art.fail-full-mode .fail-full{opacity:1!important;}
+.video-crane-art.fail-full-mode .core,
+.video-crane-art.fail-full-mode .arm,
+.video-crane-art.fail-full-mode .drop-full,
+.video-crane-art.fail-full-mode .ready-full{opacity:0!important;}
+
+<style>
+/* v492: failure arms, carried-prize placement, and queued-credit controls */
+</style>
 </style>
 <style>
 /* v230-v239: interaction polish batch */
@@ -768,7 +794,8 @@
   <span id="stackPressure">STACK --</span><span id="gripForecast">GRIP --</span><span id="payoutMeter">PAYOUT --</span>
 </div><div class="route-line" id="routeLine" aria-hidden="true"></div><div class="target-sweep" id="targetSweep" aria-hidden="true"></div><div class="rail-shimmer" id="railShimmer" aria-hidden="true"></div><div class="keyboard-hint" id="keyboardHint" aria-hidden="true">← → MOVE  •  ENTER / ↓ DROP</div><div class="depth-meter" id="depthMeter" aria-hidden="true"><i id="depthFill"></i><b>DEPTH</b></div><div class="grab-tension" id="grabTension" aria-hidden="true"><i id="tensionFill"></i><b>GRIP TENSION</b></div><div class="play-progress" id="playProgress" aria-hidden="true"></div><div class="stage-counter" id="stageCounter">PLAY 01</div><div class="prize-counter" id="prizeCounter">COLLECTED 0</div>
             <div class="top-rail"></div><div class="rail-light"></div><div class="rail-scale" id="railScale" aria-hidden="true"></div><div class="return-track" aria-hidden="true"></div><div class="return-marker" aria-hidden="true"></div><div class="drop-trajectory" id="dropTrajectory" aria-hidden="true"></div><div class="get-reward-ring" id="getRewardRing" aria-hidden="true"></div>
-            <div class="crane-carriage" id="carriage"><div id="videoCraneArt" class="video-crane-art" aria-hidden="true"><img class="crane-layer core" data-layer="core" src="assets/yummy/crane/ready_core.png" alt="" draggable="false"><img class="crane-layer arm left closed-arm" data-layer="closed-left" src="assets/yummy/crane/ready_arm_left.png" alt="" draggable="false"><img class="crane-layer arm right closed-arm" data-layer="closed-right" src="assets/yummy/crane/ready_arm_right.png" alt="" draggable="false"><img class="crane-layer arm left open-arm" data-layer="open-left" src="assets/yummy/crane/ready_arm_left.png" alt="" draggable="false"><img class="crane-layer arm right open-arm" data-layer="open-right" src="assets/yummy/crane/ready_arm_right.png" alt="" draggable="false"></div><div class="carriage-body"><img class="crane-mascot" src="assets/crane_head_cut.png" alt=""><span class="bot-eye left"></span><span class="bot-eye right"></span><span class="bot-mouth"></span><span class="bot-fin left"></span><span class="bot-fin right"></span></div><div class="cable" id="cable"></div><div class="claw" id="claw"><div class="claw-ring"></div><div class="claw-shadow" aria-hidden="true"></div><div class="finger left"></div><div class="finger right"></div></div></div>
+            <div class="crane-carriage" id="carriage"><div id="videoCraneArt" class="video-crane-art" aria-hidden="true"><img class="crane-layer ready-full" data-layer="ready-full" src="assets/yummy/crane/ready_full.png" alt="" draggable="false">
+<img class="crane-layer fail-full" data-layer="fail-full" src="assets/yummy/crane/fail_core.png" alt="" draggable="false"><img class="crane-layer core" data-layer="core" src="assets/yummy/crane/ready_core.png" alt="" draggable="false"><img class="crane-layer arm left closed-arm" data-layer="closed-left" src="assets/yummy/crane/ready_arm_left.png" alt="" draggable="false"><img class="crane-layer arm right closed-arm" data-layer="closed-right" src="assets/yummy/crane/ready_arm_right.png" alt="" draggable="false"><img class="crane-layer arm left open-arm" data-layer="open-left" src="assets/yummy/crane/ready_arm_left.png" alt="" draggable="false"><img class="crane-layer arm right open-arm" data-layer="open-right" src="assets/yummy/crane/ready_arm_right.png" alt="" draggable="false"><img class="crane-layer drop-full" data-layer="drop-full" src="assets/yummy/crane/success_drop.png" alt="" draggable="false"></div><div class="carriage-body"><img class="crane-mascot" src="assets/crane_head_cut.png" alt=""><span class="bot-eye left"></span><span class="bot-eye right"></span><span class="bot-mouth"></span><span class="bot-fin left"></span><span class="bot-fin right"></span></div><div class="cable" id="cable"></div><div class="claw" id="claw"><div class="claw-ring"></div><div class="claw-shadow" aria-hidden="true"></div><div class="finger left"></div><div class="finger right"></div></div></div>
             <div class="move-hint" id="moveHint">← → / A D で左右移動　　↓ / S で降下</div>
             <div class="prize-bed"><div class="bed-count" id="bedCount">PRIZES 00</div><div class="tray-ribbon" aria-hidden="true">PRIZE AREA</div><div class="prizes" id="prizes"></div><div class="drop-glow"></div><div class="chute-door" id="chuteDoor" aria-hidden="true"></div><div class="chute-label"><span>PRIZE OUT</span><small>GET ZONE</small></div></div>
           </div>
@@ -787,7 +814,7 @@
 
   <div class="status-toast" id="toast" role="status" aria-live="polite"></div>
   <div class="crane-result-overlay" id="craneResultOverlay" aria-hidden="true"><div class="crane-result-card"><img id="craneResultImage" src="" alt="クレーン結果"></div></div>
-  <div class="win-overlay" id="winOverlay"><div class="win-card"><div class="burst">GET!</div><div class="win-plush" id="winPlush"></div><div class="got" id="winText">景品を獲得しました！</div><div class="get-hold-hint">GET DISPLAY</div><button id="closeWin" type="button">コレクションを見る</button></div></div>
+  <div class="win-overlay" id="winOverlay"><div class="win-card"><div class="burst">GET!</div><div class="win-plush" id="winPlush"></div><div class="got" id="winText">景品を獲得しました！</div><button id="closeWin" type="button">コレクションを見る</button></div></div>
 
 <script>
 (() => {
@@ -839,12 +866,12 @@
   function setCraneVisual(kind){
     if(!videoCraneArt)return;
     const map={
-      ready:{core:'ready_core_clean.png',closedLeft:'ready_arm_left_clean.png',closedRight:'ready_arm_right_clean.png',openLeft:'open_arm_left_clean.png',openRight:'open_arm_right_clean.png',open:true},
+      ready:{core:'ready_core_clean.png',closedLeft:'ready_arm_left_clean.png',closedRight:'ready_arm_right_clean.png',openLeft:'open_arm_left_clean.png',openRight:'open_arm_right_clean.png',open:true,readyFull:'ready_full.png'},
       descend:{core:'descend_core.png',closedLeft:'descend_arm_left.png',closedRight:'descend_arm_right.png',openLeft:'descend_arm_left.png',openRight:'descend_arm_right.png',open:true},
       success:{core:'success_core.png',closedLeft:'success_arm_left.png',closedRight:'success_arm_right.png',openLeft:'success_drop_arm_left.png',openRight:'success_drop_arm_right.png',open:false},
-      successDrop:{core:'success_drop_core.png',closedLeft:'success_drop_arm_left.png',closedRight:'success_drop_arm_right.png',openLeft:'success_drop_arm_left.png',openRight:'success_drop_arm_right.png',open:true},
+      successDrop:{core:'success_drop_core.png',closedLeft:'success_drop_arm_left.png',closedRight:'success_drop_arm_right.png',openLeft:'success_drop_arm_left.png',openRight:'success_drop_arm_right.png',open:true,dropFull:'success_drop.png'},
       fail:{core:'fail_core.png',closedLeft:'fail_arm_left.png',closedRight:'fail_arm_right.png',openLeft:'fail_drop_arm_left.png',openRight:'fail_drop_arm_right.png',open:false},
-      failDrop:{core:'fail_drop_core.png',closedLeft:'fail_drop_arm_left.png',closedRight:'fail_drop_arm_right.png',openLeft:'fail_drop_arm_left.png',openRight:'fail_drop_arm_right.png',open:true}
+      failDrop:{core:'fail_drop_core.png',closedLeft:'fail_drop_arm_left.png',closedRight:'fail_drop_arm_right.png',openLeft:'fail_drop_arm_left.png',openRight:'fail_drop_arm_right.png',open:true,dropFull:'fail_drop_clean.png'}
     };
     const cfg=map[kind];
     if(!cfg){
@@ -858,15 +885,24 @@
     const cr=videoCraneArt.querySelector('[data-layer="closed-right"]');
     const ol=videoCraneArt.querySelector('[data-layer="open-left"]');
     const or=videoCraneArt.querySelector('[data-layer="open-right"]');
+    const dropFull=videoCraneArt.querySelector('[data-layer="drop-full"]');
+    const readyFull=videoCraneArt.querySelector('[data-layer="ready-full"]');
+    const failFull=videoCraneArt.querySelector('[data-layer="fail-full"]');
     const base='assets/yummy/crane/';
     if(core)core.src=base+cfg.core;
     if(cl)cl.src=base+cfg.closedLeft;
     if(cr)cr.src=base+cfg.closedRight;
     if(ol)ol.src=base+cfg.openLeft;
     if(or)or.src=base+cfg.openRight;
+    if(dropFull && cfg.dropFull)dropFull.src=base+cfg.dropFull;
+    if(readyFull && cfg.readyFull)readyFull.src=base+cfg.readyFull;
+    if(failFull && cfg.failFull)failFull.src=base+cfg.failFull;
     videoCraneArt.dataset.visual=kind;
-    videoCraneArt.classList.remove('arm-open','arm-closed','arm-opening');
-    videoCraneArt.classList.add(cfg.open?'arm-open':'arm-closed');
+    videoCraneArt.classList.remove('arm-open','arm-closed','arm-opening','drop-full','ready-full-mode','fail-full-mode'); carriage.classList.remove('ready-display');
+    if(cfg.readyFull){videoCraneArt.classList.add('ready-full-mode'); carriage.classList.add('ready-display');}
+    else if(cfg.failFull){videoCraneArt.classList.add('fail-full-mode');}
+    else if(cfg.dropFull)videoCraneArt.classList.add('drop-full');
+    else videoCraneArt.classList.add(cfg.open?'arm-open':'arm-closed');
     videoCraneArt.style.display='block';
     carriage.dataset.craneVisual=kind;
     carriage.classList.add('video-state');
@@ -877,6 +913,24 @@
     videoCraneArt.classList.add('arm-opening');
     setTimeout(()=>{videoCraneArt.classList.remove('arm-opening');videoCraneArt.classList.add('arm-open');},190);
   }
+
+  // v491: preload all crane-state images before gameplay so state changes are visual-immediate.
+  function preloadCraneVisuals(){
+    const base='assets/yummy/crane/';
+    const names=[
+      'ready_full.png','ready_core_clean.png','ready_arm_left_clean.png','ready_arm_right_clean.png',
+      'open_arm_left_clean.png','open_arm_right_clean.png',
+      'descend_core.png','descend_arm_left.png','descend_arm_right.png',
+      'success_core.png','success_arm_left.png','success_arm_right.png',
+      'success_drop_core.png','success_drop_arm_left.png','success_drop_arm_right.png',
+      'fail_core.png','fail_arm_left.png','fail_arm_right.png',
+      'fail_drop_core.png','fail_drop_arm_left.png','fail_drop_arm_right.png',
+      'fail_drop_clean.png','success_drop.png'
+    ];
+    names.forEach(name=>{const im=new Image();im.src=base+name;});
+  }
+
+  preloadCraneVisuals();
   let board=[];
   let attractTimer=null, attractIndex=0, lastParallaxX=x;
   let lastTargetUid=null, lastQueueTimer=null, lastStatus='', lastMoveSpeed=0, lastCollectionTotal=0;
@@ -1025,7 +1079,7 @@
       clearTimeout(setX.edgeTimer);
       setX.edgeTimer=setTimeout(()=>carriageBody.classList.remove('edge-bump'),150);
     }
-    x=next;carriage.style.setProperty('--carriage-left',x+'%'); updateTelemetry(); aimGuide.style.left=x+'%'; aimShadow.style.left=x+'%'; contactZone.style.left=x+'%'; positionReticle.style.left=x+'%'; updateTargetHighlight(); updateTargetCard(); updateAimMeter(); updateContactZone();
+    x=next; const visualX=Math.max(13.5,Math.min(86.5,next)); carriage.style.setProperty('--carriage-left',visualX+'%'); updateTelemetry(); aimGuide.style.left=x+'%'; aimShadow.style.left=x+'%'; contactZone.style.left=x+'%'; positionReticle.style.left=x+'%'; updateTargetHighlight(); updateTargetCard(); updateAimMeter(); updateContactZone();
     shell.classList.add('parallax-active'); const dx=(x-50)/50; glass.style.setProperty('--parallax-x',(dx*1.8).toFixed(2)+'%'); const decor=glass.querySelector('.scene-decor'); if(decor)decor.style.transform=`translateX(${(-dx*1.8).toFixed(2)}%)`; const rail=glass.querySelector('.top-rail'); if(rail)rail.style.transform=`translateX(${(-dx*.55).toFixed(2)}%)`; if(prizeBed)prizeBed.style.transform=`translateX(${(dx*.32).toFixed(2)}%)`; if(Math.abs(next-8)<.6){dockIndicator.classList.add('docked')}else{dockIndicator.classList.remove('docked')}
   }
   function updateContactZone(){
@@ -1045,6 +1099,9 @@
     moveRAF=requestAnimationFrame(movementLoop);
   }
   function startHold(dir){
+    if(state==='idle' && playCredits>0){
+      beginQueuedPlay();
+    }
     if(state!=='ready')return;
     moveDir=dir;moveHint.classList.add('hide');
     if(!moveRAF) moveRAF=requestAnimationFrame(movementLoop);
@@ -1087,11 +1144,21 @@
     craneResultOverlay.setAttribute('aria-hidden','false');
     void craneResultOverlay.offsetWidth;
     craneResultOverlay.classList.add('show');
-    return new Promise(resolve=>setTimeout(()=>{
-      craneResultOverlay.classList.remove('show');
-      craneResultOverlay.setAttribute('aria-hidden','true');
-      setTimeout(resolve,170);
-    },2000));
+    return new Promise(resolve=>{
+      let done=false;
+      let timer=0;
+      const finish=()=>{
+        if(done)return;
+        done=true;
+        clearTimeout(timer);
+        craneResultOverlay.removeEventListener('pointerdown',finish);
+        craneResultOverlay.classList.remove('show');
+        craneResultOverlay.setAttribute('aria-hidden','true');
+        setTimeout(resolve,60);
+      };
+      craneResultOverlay.addEventListener('pointerdown',finish);
+      timer=setTimeout(finish,2000);
+    });
   }
 
   function renderPrizes(){
@@ -1111,7 +1178,18 @@
     collectionGrid.innerHTML=prizes.map(p=>`<div class="collection-item ${collection[p.id]?'':'locked'}" title="${p.name}"><span class="rarity">${p.rarity}</span><div class="mini-plush">${plushMarkup(p)}</div><div class="cname">${collection[p.id]?p.name:'???'}</div><span class="qty">×${collection[p.id]}</span></div>`).join('');
   }
   function pulseCollectionItem(id){const el=collectionGrid.querySelector(`.collection-item[title="${id}"]`); if(el){el.classList.remove('new-get');void el.offsetWidth;el.classList.add('new-get');setTimeout(()=>el.classList.remove('new-get'),1100);}}
-  function render(){medalEl.textContent=record.medals;renderCollection();playRemaining.textContent=String(playCredits).padStart(2,'0'); remainingBox?.classList.toggle('has-queue',playCredits>1); renderPlayProgress();}
+  function render(){
+    medalEl.textContent=record.medals;
+    renderCollection();
+    playRemaining.textContent=String(playCredits).padStart(2,'0');
+    remainingBox?.classList.toggle('has-queue',playCredits>1);
+    const controlsReady=(state==='ready') || (state==='idle' && playCredits>0);
+    $('leftBtn').disabled=!controlsReady;
+    $('rightBtn').disabled=!controlsReady;
+    $('dropBtn').disabled=!controlsReady;
+    $('playBtn').disabled=(state!=='idle' || record.medals<COST);
+    renderPlayProgress();
+  }
   function renderPlayProgress(){
     if(!playCredits){playProgress.classList.remove('show');playProgress.innerHTML='';return;}
     const count=Math.min(8,playCredits+1); playProgress.innerHTML=Array.from({length:count},(_,i)=>`<i class="${i===0&&state!=='idle'?'active':i<playCredits?'active':''}"></i>`).join('');
@@ -1170,7 +1248,20 @@
     updateAdvancedHud(lastStatus);
     if(target && target.uid!==lastTargetUid){lastTargetUid=target.uid;flashHud();}
   }
-  function setCable(h){const px=h+'px'; cable.style.setProperty('--cable-height',px); claw.style.setProperty('--cable-height',px); carriage.style.setProperty('--cable-height',px); updateTelemetry(); const depth=Math.max(0,Math.min(100,Math.round((h-70)/70*100))); depthFill.style.height=depth+'%'; depthMeter.dataset.value=String(depth).padStart(2,'0'); const tension=Math.max(0,Math.min(100,Math.round(100-depth*.45))); tensionFill.style.width=tension+'%'; grabTension.dataset.value=String(tension).padStart(2,'0'); updateAdvancedHud(lastStatus);}
+  function setCable(h){
+    const px=h+'px';
+    cable.style.setProperty('--cable-height',px);
+    claw.style.setProperty('--cable-height',px);
+    carriage.style.setProperty('--cable-height',px);
+    /* v491: the carried prize is attached to the same vertical coordinate as
+       the claw/cable, eliminating the stepped/fragmented lift animation. */
+    if(carried){
+      const holder=document.querySelector('.carried-prize');
+      // The claw fingers sit well below the cable anchor. Keep the plush centered
+      // in the gap between the two closed arms instead of near the mascot face.
+      if(holder) holder.style.top=Math.max(0,h+122)+'px';
+    }
+    updateTelemetry(); const depth=Math.max(0,Math.min(100,Math.round((h-70)/70*100))); depthFill.style.height=depth+'%'; depthMeter.dataset.value=String(depth).padStart(2,'0'); const tension=Math.max(0,Math.min(100,Math.round(100-depth*.45))); tensionFill.style.width=tension+'%'; grabTension.dataset.value=String(tension).padStart(2,'0'); updateAdvancedHud(lastStatus);}
   function successChance(b){
     const distance=Math.abs(b.x-x);
     const alignment=Math.max(0,1-distance/7);
@@ -1415,6 +1506,9 @@
   render();
   startAttract();
   async function drop(){
+    if(state==='idle' && playCredits>0){
+      beginQueuedPlay();
+    }
     if(state!=='ready')return;
     stopHold(); tone(220,.08,'square',.012); state='dropping'; setCraneVisual('descend'); $('dropBtn').disabled=true; $('leftBtn').disabled=true; $('rightBtn').disabled=true; status('DROP'); moveHint.classList.add('hide');
     const chosen=nearestTarget(); target=chosen; previewTarget(chosen); tone(330,.045,'sine',.01);
@@ -1439,6 +1533,7 @@
     holder.className='carried-prize '+(prizeWeight(chosen)>=1.08?'weight-heavy':'weight-light')+(contact.pinch>.42?' solid-carry':' partial-carry');
     holder.innerHTML=`<div class="prize-slot"><span class="target-ring"></span>${plushMarkup(chosen.p)}</div>`;
     carriage.appendChild(holder);
+    holder.style.top=Math.max(0,(parseFloat(getComputedStyle(cable).getPropertyValue('--cable-height'))||CRANE_CABLE_HOME)+122)+'px';
     // Lift is one continuous motion: the captured crane rises first, then carries the closed claw all the way home.
     holder.classList.add(Math.random()<.5?'swing-left':'swing-right');
     await wait(90);
@@ -1450,8 +1545,11 @@
     const slipChance=liftSlipChance(chosen,gripQuality(chosen),contact);
     const returnSlipChance=Math.min(.32,slipChance*.48+holderSwingEnergy*.12);
     if(Math.random()<slipChance || Math.random()<returnSlipChance){
+      // The prize is already visually falling, so the crane must become the
+      // failure face at the same moment rather than remaining in the success face.
       holder.classList.add('slipping');
       status('SLIP');
+      setCraneVisual('fail');
       await wait(280);
       if(holder.parentNode)holder.remove();
       carried=null;
@@ -1470,28 +1568,41 @@
       return;
     }
     state='returning'; status('RETURN TO HOME'); stageLight('return');
-    // Keep the closed success crane visible throughout the entire return.
+    // Keep the closed success crane visible throughout the return.
     setCraneVisual('success');
     cable.classList.add('return-sway');
+    const carryDrop=Math.random()<carryDropChance(chosen,contact);
+    if(carryDrop && x>10){
+      // If the prize slips during the leftward return, switch the crane to the fail face at the exact drop moment.
+      const dropProgress=.35+Math.random()*.30;
+      const dropX=Math.max(8,x-(x-8)*dropProgress);
+      await animateXTo(dropX,Math.max(260,1040*dropProgress));
+      holder.classList.add('hard-swing','slipping');
+      status('SLIP');
+      /* v491: the visual state changes before the falling animation starts. */
+      setCraneVisual('fail');
+      tone(180,.1,'triangle',.018);
+      await new Promise(resolve=>requestAnimationFrame(resolve));
+      await wait(320);
+      if(holder.parentNode)holder.remove();
+      carried=null; chosen.alive=true; chosen.x=Math.max(7,Math.min(94,chosen.x+(Math.random()<.5?-1:1)*(1.5+prizeWeight(chosen))));
+      chosen.y=Math.max(0,(chosen.y||0)-1); chosen.rot=Math.max(-16,Math.min(16,chosen.rot+(Math.random()<.5?-1:1)*5));
+      renderPrizes(); await settlePile(chosen,7.5); showToast('帰還中に景品が滑落しました');
+      await animateXTo(8,Math.max(260,1040*(1-dropProgress)));
+      cable.classList.remove('return-sway');
+      dockHome(); homeSettle();
+      setCraneVisual('failDrop');
+      await wait(120);
+      await showCraneResult('fail'); finishSession(false); return;
+    }
     await animateXTo(8,1040);
     dockHome(); homeSettle();
     await returnSwingPhysics(holder,chosen);
     cable.classList.remove('return-sway');
     // Only after the carriage reaches the left home position does the arm open.
-    setCraneVisual('success');
-    openSeparatedArms();
-    await wait(190);
-    const carryDrop=carryDropChance(chosen,contact);
-    if(Math.random()<carryDrop){
-      holder.classList.add('hard-swing','slipping');
-      status('SLIP');
-      await wait(260);
-      if(holder.parentNode)holder.remove();
-      carried=null; chosen.alive=true; chosen.x=Math.max(7,Math.min(94,chosen.x+(Math.random()<.5?-1:1)*(1.5+prizeWeight(chosen))));
-      chosen.y=Math.max(0,(chosen.y||0)-1); chosen.rot=Math.max(-16,Math.min(16,chosen.rot+(Math.random()<.5?-1:1)*5));
-      renderPrizes(); await settlePile(chosen,7.5); showToast('帰還中の揺れで景品が滑落しました');
-      await animateCable(CRANE_CABLE_HOME,220); await showCraneResult('fail'); finishSession(false); return;
-    }
+    // Use the original unified drop artwork here so the mouth/body/arms stay perfectly registered.
+    setCraneVisual('successDrop');
+    await wait(120);
     state='dropping-prize'; status('PRIZE OUT'); stageLight('get'); prizeBed.classList.add('getting');
     chuteGlow.classList.add('show','tracking'); chuteDoor.classList.add('open'); chuteDoor.classList.add('pulse'); setTimeout(()=>chuteDoor.classList.remove('pulse'),1100);
     await wait(160); prizeBed.classList.add('chute-land'); tone(300,.08,'sine',.014); setTimeout(()=>prizeBed.classList.remove('chute-land'),620);
@@ -1515,7 +1626,7 @@
     burst(30);
     await wait(180);
     state='result'; status('GET'); stageLight('get'); displayBadge.textContent='GET! • PRIZE OUT'; resultPulse();
-    winPlush.innerHTML=plushMarkup(chosen.p,'win'); winText.textContent=`${chosen.p.name} を獲得！  所持数 ×${collection[chosen.p.id]}`; updateGetMeta(chosen); let totalEl=overlay.querySelector('.get-total'); if(!totalEl){totalEl=document.createElement('div');totalEl.className='get-total';winText.insertAdjacentElement('afterend',totalEl);} totalEl.innerHTML=`今回の所持数 <strong>×${collection[chosen.p.id]}</strong> ・ のこり <strong>${String(playCredits).padStart(2,'0')}</strong>`; overlay.classList.add('show','cinematic-get');
+    winPlush.innerHTML=plushMarkup(chosen.p,'win'); winText.textContent=`${chosen.p.name} を獲得！  所持数 ×${collection[chosen.p.id]}`; updateGetMeta(chosen); let totalEl=overlay.querySelector('.get-total'); if(!totalEl){totalEl=document.createElement('div');totalEl.className='get-total';winText.insertAdjacentElement('afterend',totalEl);} const remainingAfterThis=Math.max(0,playCredits-1); totalEl.innerHTML=`今回の所持数 <strong>×${collection[chosen.p.id]}</strong> ・ のこり <strong>${String(remainingAfterThis).padStart(2,'0')}</strong>`; overlay.classList.add('show','cinematic-get');
     showToast('GET! 景品が排出口へ');
     finishSession(true);
   }
@@ -1544,9 +1655,8 @@
     setCraneVisual('fail');
     await animateXTo(8,1040);
     await wait(90);
-    setCraneVisual('fail');
-    openSeparatedArms();
-    animateGrabOpen();
+    // At the home position use the unified fail-drop artwork so the mouth/body/arms stay registered.
+    setCraneVisual('failDrop');
     await wait(180);
     await showCraneResult('fail');
     finishSession(false);
@@ -1556,7 +1666,7 @@
     // 連続プレイ分は100メダルを先払いし、1プレイ完了ごとに残り回数を1減らす。
     saveRecord();
     if(playCredits>0)playCredits--;
-    sessionSpent=false; state='idle'; target=null; carried=null; shell.classList.remove('cinematic-aim','parallax-active','return-dock','return-track-on'); $('dropBtn').disabled=true; $('leftBtn').disabled=true; $('rightBtn').disabled=true; status('',false); setCraneVisual('ready'); resetCraneTop(); controlBar.classList.remove('is-moving','left','right'); aimGuide.classList.remove('active'); alignmentMeter.classList.remove('show'); shell.classList.remove('target-lock'); claw.classList.remove('closed','finger-contact-left','finger-contact-right');claw.classList.add('open');setCable(CRANE_CABLE_HOME); setX(8); holderSwingEnergy=0;
+    sessionSpent=false; state='idle'; target=null; carried=null; shell.classList.remove('cinematic-aim','parallax-active','return-dock','return-track-on'); status('',false); setCraneVisual('ready'); resetCraneTop(); controlBar.classList.remove('is-moving','left','right'); aimGuide.classList.remove('active'); alignmentMeter.classList.remove('show'); shell.classList.remove('target-lock'); claw.classList.remove('closed','finger-contact-left','finger-contact-right');claw.classList.add('open');setCable(CRANE_CABLE_HOME); setX(8); holderSwingEnergy=0;
     if(won){renderPrizes();getRewardRing.classList.remove('show');void getRewardRing.offsetWidth;getRewardRing.classList.add('show');chuteGlow.classList.add('reward');setTimeout(()=>{getRewardRing.classList.remove('show');chuteGlow.classList.remove('reward')},850);} else updateTargetHighlight();
     render();
     if(playCredits>0){

@@ -30,3 +30,11 @@ Commands:
   prepare_cards.cmd
 
 prepare_cards.cmd requires network access to the YGOPRODeck API.
+
+
+## v490 クレーン修正
+- 待機・左右移動時は、耳・アーム・ケーブルを一体化した `ready_full.png` を使用し、左端・右端でのクリッピングを抑制。
+- 失敗時のホーム到達後は `fail_drop_clean.png` を使用し、本体の口周りとアームの位置を一体表示。
+- 成功運搬中の滑落が発生した場合、滑落地点で即座に失敗表情へ切り替え、そのまま左端へ戻る。
+
+[v492] The distributable ZIP intentionally omits the images/ directory. prepare_cards.cmd recreates it when card images are needed.
