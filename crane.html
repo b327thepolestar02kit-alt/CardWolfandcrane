@@ -738,13 +738,20 @@
 @keyframes armOpenFade{to{opacity:1}}
 .crane-carriage.video-state .cable{height:var(--cable-height,30px);}
 .crane-carriage.video-state .carriage-body,.crane-carriage.video-state .claw{visibility:hidden;}
-.machine-head{height:128px!important;}
-.machine-head-logo{display:block;width:min(420px,82%);height:112px;object-fit:contain;object-position:center;}
+.machine-head{height:154px!important;}
+.machine-head-logo{display:block;width:min(520px,90%);height:138px;object-fit:contain;object-position:center;}
 @media(max-width:680px){
   .video-crane-art{width:112px;height:245px;top:calc(var(--cable-height,30px) - 19px);}
-  .machine-head{height:92px!important;}
-  .machine-head-logo{width:min(300px,82%);height:80px;}
+  .machine-head{height:112px!important;}
+  .machine-head-logo{width:min(360px,90%);height:96px;}
 }
+
+.crane-result-overlay{position:fixed;inset:0;display:grid;place-items:center;background:rgba(8,14,20,.72);backdrop-filter:blur(3px);opacity:0;pointer-events:none;z-index:60;transition:opacity .16s ease;}
+.crane-result-overlay.show{opacity:1;pointer-events:auto;}
+.crane-result-card{width:min(900px,92vw);max-height:88vh;display:grid;place-items:center;transform:scale(.94);transition:transform .22s cubic-bezier(.2,.9,.2,1);}
+.crane-result-overlay.show .crane-result-card{transform:scale(1);}
+.crane-result-card img{display:block;max-width:100%;max-height:82vh;width:auto;height:auto;object-fit:contain;border-radius:18px;box-shadow:0 18px 60px rgba(0,0,0,.48);}
+@media(max-width:680px){.crane-result-card{width:94vw}.crane-result-card img{max-height:76vh;border-radius:14px;}}
 </style>
 </head>
 <body class="crane-body">
@@ -779,6 +786,7 @@
   </div>
 
   <div class="status-toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="crane-result-overlay" id="craneResultOverlay" aria-hidden="true"><div class="crane-result-card"><img id="craneResultImage" src="" alt="クレーン結果"></div></div>
   <div class="win-overlay" id="winOverlay"><div class="win-card"><div class="burst">GET!</div><div class="win-plush" id="winPlush"></div><div class="got" id="winText">景品を獲得しました！</div><div class="get-hold-hint">GET DISPLAY</div><button id="closeWin" type="button">コレクションを見る</button></div></div>
 
 <script>
@@ -808,6 +816,7 @@
   const cabinet=$('cabinet'), carriage=$('carriage'), carriageBody=carriage.querySelector('.carriage-body'), videoCraneArt=$('videoCraneArt');
   const cable=$('cable'), claw=$('claw'), prizesEl=$('prizes'), collectionGrid=$('collectionGrid'), collectionCount=$('collectionCount');
   const medalEl=$('medalCount'), toast=$('toast'), overlay=$('winOverlay'), winPlush=$('winPlush'), winText=$('winText'), moveHint=$('moveHint');
+  const craneResultOverlay=$('craneResultOverlay'), craneResultImage=$('craneResultImage');
   const playStatus=document.createElement('div'); playStatus.className='play-status'; cabinet.appendChild(playStatus);
   const effectLayer=document.createElement('div'); effectLayer.className='effect-layer'; cabinet.appendChild(effectLayer);
   const chuteGlow=document.createElement('div'); chuteGlow.className='chute-glow'; cabinet.appendChild(chuteGlow);
@@ -1071,6 +1080,20 @@
   }
   function queueTransition(){playTransition.classList.remove('show');void playTransition.offsetWidth;playTransition.classList.add('show');setTimeout(()=>playTransition.classList.remove('show'),220);}
   function resultPulse(){resultStamp.classList.remove('show');void resultStamp.offsetWidth;resultStamp.classList.add('show');setTimeout(()=>resultStamp.classList.remove('show'),900);}
+  function showCraneResult(kind){
+    const src=kind==='success'?'assets/yummy/crane/result_success.png':'assets/yummy/crane/result_fail.png';
+    craneResultImage.src=src;
+    craneResultOverlay.classList.remove('show');
+    craneResultOverlay.setAttribute('aria-hidden','false');
+    void craneResultOverlay.offsetWidth;
+    craneResultOverlay.classList.add('show');
+    return new Promise(resolve=>setTimeout(()=>{
+      craneResultOverlay.classList.remove('show');
+      craneResultOverlay.setAttribute('aria-hidden','true');
+      setTimeout(resolve,170);
+    },2000));
+  }
+
   function renderPrizes(){
     if(!board.length)spawnBoard();
     const bed=prizesEl.parentElement;
@@ -1116,7 +1139,7 @@
     playCredits++;
     playIndex++;
     sessionSpent=true; state='ready'; queueTransition(); tone(520,.08,'triangle',.018); clearInterval(attractTimer); shell.classList.remove('attract-sweep'); attractTarget.classList.remove('show'); tone(520,.08,'triangle',.018); target=null; carried=null; shell.classList.add('is-playing','cinematic-aim'); $('playBtn').disabled=false; $('dropBtn').disabled=false; $('leftBtn').disabled=false; $('rightBtn').disabled=false;
-    claw.classList.remove('closed','grab-close','grab-open'); claw.classList.add('open'); setCable(72); chuteDoor.classList.remove('open'); status('POSITION'); stageCounter.textContent=`STAGE POSITION • PLAY ${String(playIndex).padStart(2,'0')}`; moveHint.classList.remove('hide'); showToast(playCredits>1?`連続プレイ ${String(playCredits).padStart(2,'0')}回分をセット`:'狙う位置を決めてください'); pulseQueue(); render();
+    claw.classList.remove('closed','grab-close','grab-open'); claw.classList.add('open'); resetCraneTop(); setCable(CRANE_CABLE_HOME); setX(8); chuteDoor.classList.remove('open'); status('POSITION'); stageCounter.textContent=`STAGE POSITION • PLAY ${String(playIndex).padStart(2,'0')}`; moveHint.classList.remove('hide'); showToast(playCredits>1?`連続プレイ ${String(playCredits).padStart(2,'0')}回分をセット`:'狙う位置を決めてください'); pulseQueue(); render();
     return true;
   }
   function queuePlay(){
@@ -1442,6 +1465,7 @@
       showToast('持ち上げ途中で景品が滑り落ちました');
       await animateCraneVertical(CRANE_CABLE_HOME,280);
       state='returning'; status('RETURN TO HOME'); await animateXTo(8,760); await wait(90);
+      await showCraneResult('fail');
       finishSession(false);
       return;
     }
@@ -1466,7 +1490,7 @@
       carried=null; chosen.alive=true; chosen.x=Math.max(7,Math.min(94,chosen.x+(Math.random()<.5?-1:1)*(1.5+prizeWeight(chosen))));
       chosen.y=Math.max(0,(chosen.y||0)-1); chosen.rot=Math.max(-16,Math.min(16,chosen.rot+(Math.random()<.5?-1:1)*5));
       renderPrizes(); await settlePile(chosen,7.5); showToast('帰還中の揺れで景品が滑落しました');
-      await animateCable(72,220); finishSession(false); return;
+      await animateCable(CRANE_CABLE_HOME,220); await showCraneResult('fail'); finishSession(false); return;
     }
     state='dropping-prize'; status('PRIZE OUT'); stageLight('get'); prizeBed.classList.add('getting');
     chuteGlow.classList.add('show','tracking'); chuteDoor.classList.add('open'); chuteDoor.classList.add('pulse'); setTimeout(()=>chuteDoor.classList.remove('pulse'),1100);
@@ -1485,6 +1509,7 @@
     await wait(520);
     exit.remove();
     chuteGlow.classList.remove('show','tracking'); chuteDoor.classList.remove('open'); prizeBed.classList.remove('getting');
+    await showCraneResult('success');
     getFlash.classList.remove('show'); void getFlash.offsetWidth; getFlash.classList.add('show');
     shell.classList.add('camera-pulse','telemetry-flash');setTimeout(()=>shell.classList.remove('camera-pulse','telemetry-flash'),500);
     burst(30);
@@ -1523,6 +1548,7 @@
     openSeparatedArms();
     animateGrabOpen();
     await wait(180);
+    await showCraneResult('fail');
     finishSession(false);
   }
   function finishSession(won){
@@ -1553,7 +1579,7 @@
     if(state!=='idle'||playCredits<=0)return;
     updateQueueTimer(0);
     sessionSpent=true; state='ready'; queueTransition(); tone(520,.08,'triangle',.018); clearInterval(attractTimer); shell.classList.remove('attract-sweep'); attractTarget.classList.remove('show'); tone(520,.08,'triangle',.018); target=null; carried=null; shell.classList.add('is-playing','cinematic-aim'); $('playBtn').disabled=false; $('dropBtn').disabled=false; $('leftBtn').disabled=false; $('rightBtn').disabled=false;
-    claw.classList.remove('closed','grab-close','grab-open'); claw.classList.add('open'); setCable(72); chuteDoor.classList.remove('open'); status('POSITION'); stageCounter.textContent=`STAGE POSITION • PLAY ${String(playIndex).padStart(2,'0')}`; moveHint.classList.remove('hide'); remainingBox.classList.add('queue-active'); showToast(`のこり ${String(playCredits).padStart(2,'0')}回`); pulseQueue(); render();
+    claw.classList.remove('closed','grab-close','grab-open'); claw.classList.add('open'); resetCraneTop(); setCable(CRANE_CABLE_HOME); setX(8); chuteDoor.classList.remove('open'); status('POSITION'); stageCounter.textContent=`STAGE POSITION • PLAY ${String(playIndex).padStart(2,'0')}`; moveHint.classList.remove('hide'); remainingBox.classList.add('queue-active'); showToast(`のこり ${String(playCredits).padStart(2,'0')}回`); pulseQueue(); render();
   }
   function closeOverlay(){overlay.classList.remove('show','cinematic-get');updateQueueTimer(0);getMeta.classList.remove('show');startAttract();}
 
