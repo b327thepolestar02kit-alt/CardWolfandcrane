@@ -3756,5 +3756,10 @@ html[data-free-matched-room="true"] #onlineDialog .room-code-card{display:none!i
 @media(max-width:680px){.crane-game-logo-image{max-height:78px}.cg-logo img{width:min(190px,50vw);max-height:46px}.machine-head-logo{width:62%;height:36px}}
 
 /* v494: crane entry is below CardWolf controls */
-.crane-entry-after-cardwolf{margin-top:18px;width:100%;}
-.crane-entry-after-cardwolf .crane-game-button-hero{width:100%;}
+.crane-entry-mobile{display:none;}
+.crane-entry-desktop{display:block;}
+@media(max-width:760px){
+  .crane-entry-desktop{display:none!important;}
+  .crane-entry-mobile{display:block;width:100%;margin:4px 0 18px;}
+  .crane-entry-mobile .crane-game-button-hero{width:100%;margin:0!important;}
+}

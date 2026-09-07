@@ -123,7 +123,7 @@
     .claw.open .finger.left{transform:rotate(18deg)}.claw.open .finger.right{transform:rotate(-18deg)}
     .claw.closed .finger.left{transform:rotate(1deg) translateX(9px)}.claw.closed .finger.right{transform:rotate(-1deg) translateX(-9px)}
     .claw.shake{animation:clawShake .32s ease}@keyframes clawShake{0%,100%{margin-left:0}25%{margin-left:-7px}75%{margin-left:7px}}
-    .carried-prize{position:absolute;left:50%;top:154px;transform:translateX(-50%);z-index:19;pointer-events:none}.carried-prize .prize-slot{position:relative;left:0!important;bottom:auto;width:78px;height:92px;transform:none!important}
+    .carried-prize{position:absolute;left:calc(50% - 10px);top:154px;transform:translateX(-50%);z-index:19;pointer-events:none}.carried-prize .prize-slot{position:relative;left:0!important;bottom:auto;width:78px;height:92px;transform:none!important}
     .effect-layer{position:absolute;inset:0;z-index:30;pointer-events:none;overflow:hidden}.spark{position:absolute;width:7px;height:7px;border-radius:50%;background:#fff;box-shadow:0 0 12px #fff;animation:sparkFly .7s ease-out forwards}@keyframes sparkFly{0%{transform:translate(0,0) scale(.5);opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(0);opacity:0}}
     .control-bar .cg-btn.active{filter:brightness(1.3);box-shadow:0 0 0 2px rgba(118,244,255,.35),inset 0 1px rgba(255,255,255,.2)}
     /* v146: unified glass-axis mapping for edge accuracy */
@@ -813,6 +813,28 @@
   .win-card .got{padding:0 10px;}
 }
 
+
+/* v495: iPhone crane spacing, lighter mobile rendering, cleaner playfield, and collection/GET alignment. */
+@media(max-width:680px){
+  .cabinet{height:clamp(390px,110vw,470px)!important;min-height:0!important;aspect-ratio:auto!important;}
+  .glass{inset:5px 5px 56px!important;}
+  .prize-bed{height:32%!important;bottom:4.5%!important;}
+  .prizes{height:86%!important;bottom:2%!important;gap:0!important;}
+  .cable{--cable-height:86px!important;}
+  .video-crane-art{width:84px!important;height:175px!important;top:calc(var(--cable-height,86px) - 14px)!important;}
+  .crane-carriage.video-state{width:84px!important;height:220px!important;}
+  .carried-prize{left:calc(50% - 10px)!important;}
+  .machine-wrap .target-card,.machine-wrap .rail-scale,.machine-wrap .stage-counter,.machine-wrap .prize-counter,.machine-wrap .finish-hud,.machine-wrap .control-telemetry,.machine-wrap .stage-hud-extra,.machine-wrap .movement-meter,.machine-wrap .aim-hint,.machine-wrap .edge-warning,.machine-wrap .stack-readout,.machine-wrap .carry-readout,.machine-wrap .return-readout,.machine-wrap .queue-timer,.machine-wrap .get-meta,.machine-wrap .position-reticle,.machine-wrap .alignment-meter,.machine-wrap .depth-meter,.machine-wrap .grab-tension,.machine-wrap .contact-readout,.machine-wrap .stage-progress,.machine-wrap .route-line,.machine-wrap .target-sweep,.machine-wrap .rail-shimmer,.machine-wrap .displayBadge,.machine-wrap .prize-display-badge,.machine-wrap .bed-count,.machine-wrap .tray-ribbon{display:none!important;opacity:0!important;}
+  .video-sparkles,.scene-decor,.glass-glare,.scanline,.overhead-lamp,.head-lights,.machine-lights,.rail-light,.aim-guide,.dock-indicator,.return-track,.return-marker,.drop-trajectory,.get-reward-ring,.chute-glow,.effect-layer{display:none!important;}
+  .machine-head:after,.machine-wrap *{animation-duration:.001ms!important;animation-iteration-count:1!important;}
+  .machine-wrap{box-shadow:0 12px 28px rgba(0,0,0,.22)!important;}
+  .cabinet{box-shadow:inset 0 0 0 2px rgba(109,137,160,.55)!important;}
+  .video-backdrop{filter:none!important;opacity:.24!important;}
+  .win-overlay{backdrop-filter:none!important;}
+  .win-card .win-plush.video-win{display:block!important;position:relative!important;left:50%!important;margin-left:0!important;margin-right:0!important;transform:translateX(-50%) scale(1.55)!important;}
+  .win-card .video-win .video-prize-art{left:50%!important;transform:translateX(-50%)!important;}
+  .collection-item.item-lolipo .mini-plush,.collection-item.item-lolipo-rare .mini-plush{top:0!important;}
+}
 </style>
 </head>
 <body class="crane-body">
@@ -1210,7 +1232,7 @@
   }
   function renderCollection(){
     const owned=prizes.filter(p=>collection[p.id]>0).length;collectionCount.textContent=`${owned} / ${prizes.length}`; collectionProgress.style.width=(owned/prizes.length*100)+'%'; prizeCounter.textContent=`COLLECTED ${owned}`; prizeCounter.classList.toggle('hot',owned>0);
-    collectionGrid.innerHTML=prizes.map(p=>`<div class="collection-item ${collection[p.id]?'':'locked'}" title="${p.name}"><span class="rarity">${p.rarity}</span><div class="mini-plush">${plushMarkup(p)}</div><div class="cname">${collection[p.id]?p.name:'???'}</div><span class="qty">×${collection[p.id]}</span></div>`).join('');
+    collectionGrid.innerHTML=prizes.map(p=>`<div class="collection-item item-${p.id} ${collection[p.id]?'':'locked'}" title="${p.name}"><span class="rarity">${p.rarity}</span><div class="mini-plush">${plushMarkup(p)}</div><div class="cname">${collection[p.id]?p.name:'???'}</div><span class="qty">×${collection[p.id]}</span></div>`).join('');
   }
   function pulseCollectionItem(id){const el=collectionGrid.querySelector(`.collection-item[title="${id}"]`); if(el){el.classList.remove('new-get');void el.offsetWidth;el.classList.add('new-get');setTimeout(()=>el.classList.remove('new-get'),1100);}}
   function render(){
