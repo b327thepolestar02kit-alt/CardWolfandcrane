@@ -778,6 +778,41 @@
 .crane-result-overlay.show .crane-result-card{transform:scale(1);}
 .crane-result-card img{display:block;max-width:100%;max-height:82vh;width:auto;height:auto;object-fit:contain;border-radius:18px;box-shadow:0 18px 60px rgba(0,0,0,.48);}
 @media(max-width:680px){.crane-result-card{width:94vw}.crane-result-card img{max-height:76vh;border-radius:14px;}}
+
+/* v494: iPhone/mobile layout + native text-selection suppression */
+.crane-body, .crane-body *{
+  -webkit-tap-highlight-color:transparent;
+}
+.cg-btn{
+  -webkit-user-select:none;user-select:none;
+  -webkit-touch-callout:none;
+  touch-action:none;
+  -webkit-user-drag:none;
+}
+@media(max-width:680px){
+  .crane-shell{width:100%;max-width:100vw;overflow-x:hidden;padding-left:4px;padding-right:4px;}
+  .cg-layout{width:100%;max-width:100%;min-width:0;display:block;}
+  .machine-wrap{width:100%;max-width:100%;min-width:0;padding:7px;border-radius:18px;overflow:visible;}
+  .cabinet{width:100%;min-width:0;min-height:0;aspect-ratio:16/9;border-width:5px;}
+  .glass{inset:5px 5px 56px;}
+  .machine-head{height:72px!important;}
+  .machine-head-logo{width:min(250px,82vw);height:64px;}
+  .video-crane-art{width:88px;height:190px;top:calc(var(--cable-height,30px) - 14px);}
+  .crane-carriage.video-state{width:88px;height:225px;}
+  .crane-carriage.ready-display .video-crane-art.ready-full-mode{top:-2px!important;}
+  .control-bar{left:3%;right:3%;height:48px;bottom:6px;gap:3px;padding:5px 5px;}
+  .remaining{font-size:.58rem;}
+  .remaining strong{font-size:.9rem;}
+  .control-buttons{gap:3px;min-width:0;}
+  .cg-btn{min-width:0;width:auto;padding:7px 7px;font-size:.64rem;white-space:nowrap;}
+  .cg-btn.play{min-width:72px;}
+  .panel-joystick{display:none;}
+  .coin-slot{display:none;}
+  .win-card{width:94vw;max-width:94vw;}
+  .win-card .win-plush.video-win{width:150px;height:160px;margin-left:auto;margin-right:auto;}
+  .win-card .got{padding:0 10px;}
+}
+
 </style>
 </head>
 <body class="crane-body">
@@ -1187,7 +1222,7 @@
     $('leftBtn').disabled=!controlsReady;
     $('rightBtn').disabled=!controlsReady;
     $('dropBtn').disabled=!controlsReady;
-    $('playBtn').disabled=(state!=='idle' || record.medals<COST);
+    $('playBtn').disabled=(record.medals<COST);
     renderPlayProgress();
   }
   function renderPlayProgress(){
@@ -1259,7 +1294,7 @@
       const holder=document.querySelector('.carried-prize');
       // The claw fingers sit well below the cable anchor. Keep the plush centered
       // in the gap between the two closed arms instead of near the mascot face.
-      if(holder) holder.style.top=Math.max(0,h+122)+'px';
+      if(holder) holder.style.top=Math.max(0,h+110)+'px';
     }
     updateTelemetry(); const depth=Math.max(0,Math.min(100,Math.round((h-70)/70*100))); depthFill.style.height=depth+'%'; depthMeter.dataset.value=String(depth).padStart(2,'0'); const tension=Math.max(0,Math.min(100,Math.round(100-depth*.45))); tensionFill.style.width=tension+'%'; grabTension.dataset.value=String(tension).padStart(2,'0'); updateAdvancedHud(lastStatus);}
   function successChance(b){
@@ -1533,7 +1568,7 @@
     holder.className='carried-prize '+(prizeWeight(chosen)>=1.08?'weight-heavy':'weight-light')+(contact.pinch>.42?' solid-carry':' partial-carry');
     holder.innerHTML=`<div class="prize-slot"><span class="target-ring"></span>${plushMarkup(chosen.p)}</div>`;
     carriage.appendChild(holder);
-    holder.style.top=Math.max(0,(parseFloat(getComputedStyle(cable).getPropertyValue('--cable-height'))||CRANE_CABLE_HOME)+122)+'px';
+    holder.style.top=Math.max(0,(parseFloat(getComputedStyle(cable).getPropertyValue('--cable-height'))||CRANE_CABLE_HOME)+110)+'px';
     // Lift is one continuous motion: the captured crane rises first, then carries the closed claw all the way home.
     holder.classList.add(Math.random()<.5?'swing-left':'swing-right');
     await wait(90);
@@ -1692,6 +1727,12 @@
     claw.classList.remove('closed','grab-close','grab-open'); claw.classList.add('open'); resetCraneTop(); setCable(CRANE_CABLE_HOME); setX(8); chuteDoor.classList.remove('open'); status('POSITION'); stageCounter.textContent=`STAGE POSITION • PLAY ${String(playIndex).padStart(2,'0')}`; moveHint.classList.remove('hide'); remainingBox.classList.add('queue-active'); showToast(`のこり ${String(playCredits).padStart(2,'0')}回`); pulseQueue(); render();
   }
   function closeOverlay(){overlay.classList.remove('show','cinematic-get');updateQueueTimer(0);getMeta.classList.remove('show');startAttract();}
+
+  document.querySelectorAll('.cg-btn').forEach(btn=>{
+    btn.addEventListener('selectstart',e=>e.preventDefault());
+    btn.addEventListener('dragstart',e=>e.preventDefault());
+    btn.addEventListener('contextmenu',e=>e.preventDefault());
+  });
 
   $('playBtn').addEventListener('click',queuePlay);
   $('dropBtn').addEventListener('click',()=>{ $('dropBtn').classList.add('pressed'); setTimeout(()=>$('dropBtn').classList.remove('pressed'),160); drop(); });

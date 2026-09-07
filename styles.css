@@ -3754,3 +3754,7 @@ html[data-free-matched-room="true"] #onlineDialog .room-code-card{display:none!i
 .prize-slot.depth-mid .video-prize-art{filter:brightness(.99) drop-shadow(0 6px 5px rgba(35,54,59,.28));}
 .prize-slot.depth-front .video-prize-art{filter:brightness(1.02) drop-shadow(0 8px 5px rgba(36,50,56,.28));}
 @media(max-width:680px){.crane-game-logo-image{max-height:78px}.cg-logo img{width:min(190px,50vw);max-height:46px}.machine-head-logo{width:62%;height:36px}}
+
+/* v494: crane entry is below CardWolf controls */
+.crane-entry-after-cardwolf{margin-top:18px;width:100%;}
+.crane-entry-after-cardwolf .crane-game-button-hero{width:100%;}
