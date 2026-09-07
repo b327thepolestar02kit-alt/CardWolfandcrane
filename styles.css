@@ -3755,11 +3755,20 @@ html[data-free-matched-room="true"] #onlineDialog .room-code-card{display:none!i
 .prize-slot.depth-front .video-prize-art{filter:brightness(1.02) drop-shadow(0 8px 5px rgba(36,50,56,.28));}
 @media(max-width:680px){.crane-game-logo-image{max-height:78px}.cg-logo img{width:min(190px,50vw);max-height:46px}.machine-head-logo{width:62%;height:36px}}
 
-/* v494: crane entry is below CardWolf controls */
+
+/* v498: crane entry note and button alignment. */
+.crane-entry-note{margin:0;color:#f0f4f9;font-weight:800;letter-spacing:.05em;text-shadow:0 2px 14px rgba(0,0,0,.55);}
+.crane-entry-note-desktop{margin-top:2.1em;margin-bottom:0;font-size:clamp(.82rem,1vw,1rem);}
+.crane-entry-desktop{margin-top:10px!important;}
 .crane-entry-mobile{display:none;}
-.crane-entry-desktop{display:block;}
 @media(max-width:760px){
   .crane-entry-desktop{display:none!important;}
   .crane-entry-mobile{display:block;width:100%;margin:4px 0 18px;}
+  .crane-entry-mobile .crane-entry-note{margin:0 0 10px;text-align:center;color:#5b6f73;text-shadow:none;font-size:.9rem;line-height:1.6;}
   .crane-entry-mobile .crane-game-button-hero{width:100%;margin:0!important;}
+  .crane-entry-note-desktop{display:none;}
+}
+@media(min-width:761px){
+  .crane-entry-desktop.crane-game-button-hero{width:min(520px,100%);}
+  .crane-entry-desktop .crane-game-logo-image{width:100%;max-width:100%;margin-inline:auto;}
 }
