@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=v482">
+  <link rel="stylesheet" href="styles.css?v=v499">
   <style>
     :root{--cg-bg:#070b15;--cg-panel:#111827;--cg-panel2:#182338;--cg-line:#334155;--cg-blue:#45b8ff;--cg-cyan:#76f4ff;--cg-yellow:#ffd86a;--cg-pink:#ff78b7;--cg-green:#67e8a5}
     *{box-sizing:border-box}
@@ -866,7 +866,7 @@
             <div class="prize-bed"><div class="bed-count" id="bedCount">PRIZES 00</div><div class="tray-ribbon" aria-hidden="true">PRIZE AREA</div><div class="prizes" id="prizes"></div><div class="drop-glow"></div><div class="chute-door" id="chuteDoor" aria-hidden="true"></div><div class="chute-label"><span>PRIZE OUT</span><small>GET ZONE</small></div></div>
           </div>
           <div class="machine-lights"><i></i><i></i><i></i><i></i></div>
-          <div class="control-bar"><div class="coin-slot" aria-hidden="true"><span></span><i></i></div><div class="panel-status"><span class="status-led"></span><span>READY</span></div><div class="remaining">のこり <strong id="playRemaining">0</strong></div><div class="control-buttons"><button class="cg-btn" id="leftBtn" type="button">◀ 左</button><button class="cg-btn stop" id="dropBtn" type="button">降下</button><button class="cg-btn" id="rightBtn" type="button">右 ▶</button><button class="cg-btn play" id="playBtn" type="button">100 MEDAL</button></div><div class="panel-joystick" aria-hidden="true"><span class="stick"></span><span class="knob"></span></div></div>
+          <div class="control-bar"><div class="coin-slot" aria-hidden="true"><span></span><i></i></div><div class="panel-status"><span class="status-led"></span><span>READY</span></div><div class="remaining"><span id="remainingLabel">のこり</span> <strong id="playRemaining">0</strong></div><div class="control-buttons"><button class="cg-btn" id="leftBtn" type="button">◀ 左</button><button class="cg-btn stop" id="dropBtn" type="button">降下</button><button class="cg-btn" id="rightBtn" type="button">右 ▶</button><button class="cg-btn play" id="playBtn" type="button">100 MEDAL</button><button class="cg-btn free-play" id="freePlayBtn" type="button">FREE PLAY</button></div><div class="panel-joystick" aria-hidden="true"><span class="stick"></span><span class="knob"></span></div></div>
         </div>
       </section>
 
@@ -927,9 +927,9 @@
   const playTransition=document.createElement('div'); playTransition.className='play-transition'; cabinet.appendChild(playTransition);
   const resultStamp=document.createElement('div'); resultStamp.className='result-stamp'; resultStamp.textContent='PRIZE OUT'; cabinet.appendChild(resultStamp);
   document.getElementById('railScale').innerHTML=Array.from({length:19},(_,i)=>`<i>${i%2===0?`<b>${i*5}</b>`:''}</i>`).join('');
-  const alignmentMeter=$('alignmentMeter'), alignmentFill=$('alignmentFill'), playProgress=$('playProgress'), remainingBox=document.querySelector('.remaining');
+  const alignmentMeter=$('alignmentMeter'), alignmentFill=$('alignmentFill'), playProgress=$('playProgress'), remainingBox=document.querySelector('.remaining'), remainingLabel=$('remainingLabel');
 
-  let record=readRecord(), collection=readCollection(), x=8, state='idle', target=null, sessionSpent=false, carried=null, holdTimer=null, moveDir=0, moveRAF=0, moveVelocity=0, holderSwingEnergy=0, playCredits=0, playIndex=0;
+  let record=readRecord(), collection=readCollection(), x=8, state='idle', target=null, sessionSpent=false, carried=null, holdTimer=null, moveDir=0, moveRAF=0, moveVelocity=0, holderSwingEnergy=0, playCredits=0, playIndex=0, freePlayActive=false;
   function setCraneVisual(kind){
     if(!videoCraneArt)return;
     const map={
@@ -1249,12 +1249,15 @@
     medalEl.textContent=record.medals;
     renderCollection();
     playRemaining.textContent=String(playCredits).padStart(2,'0');
+    if(remainingLabel) remainingLabel.textContent=freePlayActive?'FREE':'のこり';
     remainingBox?.classList.toggle('has-queue',playCredits>1);
+    remainingBox?.classList.toggle('free-active',freePlayActive);
     const controlsReady=(state==='ready') || (state==='idle' && playCredits>0);
     $('leftBtn').disabled=!controlsReady;
     $('rightBtn').disabled=!controlsReady;
     $('dropBtn').disabled=!controlsReady;
-    $('playBtn').disabled=(record.medals<COST);
+    $('playBtn').disabled=(record.medals<COST)||freePlayActive;
+    const freeBtn=$('freePlayBtn'); if(freeBtn) freeBtn.disabled=freePlayActive||playCredits>0;
     renderPlayProgress();
   }
   function renderPlayProgress(){
@@ -1287,7 +1290,21 @@
     claw.classList.remove('closed','grab-close','grab-open'); claw.classList.add('open'); resetCraneTop(); setCable(CRANE_CABLE_HOME); setX(8); chuteDoor.classList.remove('open'); status('POSITION'); stageCounter.textContent=`STAGE POSITION • PLAY ${String(playIndex).padStart(2,'0')}`; moveHint.classList.remove('hide'); showToast(playCredits>1?`連続プレイ ${String(playCredits).padStart(2,'0')}回分をセット`:'狙う位置を決めてください'); pulseQueue(); render();
     return true;
   }
+  function beginFreePlay(){
+    if(state!=='idle'||playCredits>0||freePlayActive)return false;
+    freePlayActive=true;
+    playCredits=1;
+    playIndex++;
+    sessionSpent=false; state='ready'; queueTransition(); tone(520,.08,'triangle',.018); clearInterval(attractTimer); shell.classList.remove('attract-sweep'); attractTarget.classList.remove('show'); target=null; carried=null; shell.classList.add('is-playing','cinematic-aim');
+    claw.classList.remove('closed','grab-close','grab-open'); claw.classList.add('open'); resetCraneTop(); setCable(CRANE_CABLE_HOME); setX(8); chuteDoor.classList.remove('open'); status('POSITION'); stageCounter.textContent=`STAGE POSITION • FREE PLAY`; moveHint.classList.remove('hide'); showToast('FREE PLAY：メダル消費なし・コレクション対象外'); pulseQueue(); render();
+    return true;
+  }
+  function freePlay(){
+    if(state!=='idle'||playCredits>0||freePlayActive)return;
+    beginFreePlay();
+  }
   function queuePlay(){
+    if(freePlayActive||playCredits>0&&freePlayActive)return;
     if(record.medals<COST){showToast(`メダルが足りません（必要 ${COST}枚）`);controlBar.classList.remove('medal-error');void controlBar.offsetWidth;controlBar.classList.add('medal-error');setTimeout(()=>controlBar.classList.remove('medal-error'),520);return;}
     if(state==='idle') begin();
     else { record.medals-=COST; saveRecord(); playCredits++; playIndex++; pulseQueue(); render(); showToast(`のこり ${String(playCredits).padStart(2,'0')}回`); }
@@ -1684,9 +1701,12 @@
     await wait(160); prizeBed.classList.add('chute-land'); tone(300,.08,'sine',.014); setTimeout(()=>prizeBed.classList.remove('chute-land'),620);
     if(holder.parentNode)holder.remove();
     chosen.alive=false;
-    collection[chosen.p.id]++;saveCollection();renderCollection();pulseCollectionItem(chosen.p.name);
-    const cc=$('collectionCount'); if(cc){cc.classList.remove('bump');void cc.offsetWidth;cc.classList.add('bump');}
-    const pc=$('prizeCounter'); if(pc){pc.classList.remove('bump');void pc.offsetWidth;pc.classList.add('bump');}
+    const isFreeWin=freePlayActive;
+    if(!isFreeWin){
+      collection[chosen.p.id]++;saveCollection();renderCollection();pulseCollectionItem(chosen.p.name);
+      const cc=$('collectionCount'); if(cc){cc.classList.remove('bump');void cc.offsetWidth;cc.classList.add('bump');}
+      const pc=$('prizeCounter'); if(pc){pc.classList.remove('bump');void pc.offsetWidth;pc.classList.add('bump');}
+    }
     board.filter(b=>b.alive&&b.depth===chosen.depth).slice(0,5).forEach((b,i)=>{const e=prizesEl.querySelector(`[data-uid="${b.uid}"]`);if(e){setTimeout(()=>{e.classList.add('settle-cascade');setTimeout(()=>e.classList.remove('settle-cascade'),640)},i*55);}});
     settleWave();
     const exit=document.createElement('div');
@@ -1702,7 +1722,7 @@
     burst(30);
     await wait(180);
     state='result'; status('GET'); stageLight('get'); displayBadge.textContent='GET! • PRIZE OUT'; resultPulse();
-    winPlush.innerHTML=plushMarkup(chosen.p,'win'); winText.textContent=`${chosen.p.name} を獲得！  所持数 ×${collection[chosen.p.id]}`; updateGetMeta(chosen); let totalEl=overlay.querySelector('.get-total'); if(!totalEl){totalEl=document.createElement('div');totalEl.className='get-total';winText.insertAdjacentElement('afterend',totalEl);} const remainingAfterThis=Math.max(0,playCredits-1); totalEl.innerHTML=`今回の所持数 <strong>×${collection[chosen.p.id]}</strong> ・ のこり <strong>${String(remainingAfterThis).padStart(2,'0')}</strong>`; overlay.classList.add('show','cinematic-get');
+    winPlush.innerHTML=plushMarkup(chosen.p,'win'); winText.textContent=isFreeWin?`${chosen.p.name} を獲得！  FREE PLAY（コレクションには追加されません）`:`${chosen.p.name} を獲得！  所持数 ×${collection[chosen.p.id]}`; updateGetMeta(isFreeWin?null:chosen); let totalEl=overlay.querySelector('.get-total'); if(!totalEl){totalEl=document.createElement('div');totalEl.className='get-total';winText.insertAdjacentElement('afterend',totalEl);} const remainingAfterThis=Math.max(0,playCredits-1); totalEl.innerHTML=isFreeWin?`FREE PLAY ・ メダル消費なし ・ のこり <strong>00</strong>`:`今回の所持数 <strong>×${collection[chosen.p.id]}</strong> ・ のこり <strong>${String(remainingAfterThis).padStart(2,'0')}</strong>`; overlay.classList.add('show','cinematic-get');
     showToast('GET! 景品が排出口へ');
     finishSession(true);
   }
@@ -1738,11 +1758,12 @@
     finishSession(false);
   }
   function finishSession(won){
+    const wasFreePlay=freePlayActive;
     // クレーンゲームはCardWolf本編の勝敗戦績に影響させない。
     // 連続プレイ分は100メダルを先払いし、1プレイ完了ごとに残り回数を1減らす。
     saveRecord();
     if(playCredits>0)playCredits--;
-    sessionSpent=false; state='idle'; target=null; carried=null; shell.classList.remove('cinematic-aim','parallax-active','return-dock','return-track-on'); status('',false); setCraneVisual('ready'); resetCraneTop(); controlBar.classList.remove('is-moving','left','right'); aimGuide.classList.remove('active'); alignmentMeter.classList.remove('show'); shell.classList.remove('target-lock'); claw.classList.remove('closed','finger-contact-left','finger-contact-right');claw.classList.add('open');setCable(CRANE_CABLE_HOME); setX(8); holderSwingEnergy=0;
+    sessionSpent=false; state='idle'; freePlayActive=false; target=null; carried=null; shell.classList.remove('cinematic-aim','parallax-active','return-dock','return-track-on'); status('',false); setCraneVisual('ready'); resetCraneTop(); controlBar.classList.remove('is-moving','left','right'); aimGuide.classList.remove('active'); alignmentMeter.classList.remove('show'); shell.classList.remove('target-lock'); claw.classList.remove('closed','finger-contact-left','finger-contact-right');claw.classList.add('open');setCable(CRANE_CABLE_HOME); setX(8); holderSwingEnergy=0;
     if(won){renderPrizes();getRewardRing.classList.remove('show');void getRewardRing.offsetWidth;getRewardRing.classList.add('show');chuteGlow.classList.add('reward');setTimeout(()=>{getRewardRing.classList.remove('show');chuteGlow.classList.remove('reward')},850);} else updateTargetHighlight();
     render();
     if(playCredits>0){
@@ -1776,6 +1797,7 @@
   });
 
   $('playBtn').addEventListener('click',queuePlay);
+  $('freePlayBtn').addEventListener('click',freePlay);
   $('dropBtn').addEventListener('click',()=>{ $('dropBtn').classList.add('pressed'); setTimeout(()=>$('dropBtn').classList.remove('pressed'),160); drop(); });
   $('leftBtn').addEventListener('pointerdown',()=>{ $('leftBtn').classList.add('pressed'); startHold(-1); }); $('rightBtn').addEventListener('pointerdown',()=>{ $('rightBtn').classList.add('pressed'); startHold(1); });
   ['pointerup','pointercancel','pointerleave'].forEach(ev=>{ $('leftBtn').addEventListener(ev,stopHold); $('rightBtn').addEventListener(ev,stopHold); });

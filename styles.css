@@ -3772,3 +3772,14 @@ html[data-free-matched-room="true"] #onlineDialog .room-code-card{display:none!i
   .crane-entry-desktop.crane-game-button-hero{width:min(520px,100%);}
   .crane-entry-desktop .crane-game-logo-image{width:100%;max-width:100%;margin-inline:auto;}
 }
+
+/* v499: FREE PLAY control sits beside the normal 100 MEDAL button and is mutually exclusive with queued medal plays. */
+.control-buttons .cg-btn.free-play{background:linear-gradient(#d8f7ff,#5a9fb0);color:#06202a;border-color:#b6f0fa;}
+.control-buttons .cg-btn.free-play:disabled{filter:none;}
+.remaining.free-active{color:#1e5660;}
+.remaining.free-active strong{color:#0c8c98;}
+@media(max-width:680px){
+  .control-buttons{gap:2px!important;}
+  .control-buttons .cg-btn{padding-left:5px!important;padding-right:5px!important;font-size:.59rem!important;}
+  .control-buttons .cg-btn.play,.control-buttons .cg-btn.free-play{min-width:68px!important;}
+}
