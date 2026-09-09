@@ -849,6 +849,15 @@
   .win-card .win-plush.video-win{transform:scale(1.55)!important;}
   .win-card .video-win .video-prize-art{left:50%!important;right:auto!important;width:100%!important;height:100%!important;object-position:center bottom!important;transform:translateX(-50%) scale(var(--asset-scale,1))!important;}
 }
+
+/* v502: mobile captured-prize grip alignment and GET visual centering. */
+@media(max-width:680px){
+  /* Keep the prize visually between the closed arms; desktop keeps its original offset. */
+  .carried-prize{left:50%!important;}
+  .win-card .win-plush{display:block!important;margin-left:auto!important;margin-right:auto!important;}
+  .win-card .win-plush .video-plush{display:block!important;margin-left:auto!important;margin-right:auto!important;}
+  .win-card .win-plush .video-prize-art{left:50%!important;right:auto!important;width:100%!important;height:100%!important;object-fit:contain!important;object-position:center bottom!important;transform:translateX(-50%) scale(var(--asset-scale,1))!important;}
+}
 </style>
 </head>
 <body class="crane-body">
@@ -1348,7 +1357,7 @@
       const holder=document.querySelector('.carried-prize');
       // The claw fingers sit well below the cable anchor. Keep the plush centered
       // in the gap between the two closed arms instead of near the mascot face.
-      if(holder) holder.style.top=Math.max(0,h+(window.matchMedia('(max-width:680px)').matches?78:110))+'px';
+      if(holder) holder.style.top=Math.max(0,h+(window.matchMedia('(max-width:680px)').matches?22:110))+'px';
     }
     updateTelemetry(); const depth=Math.max(0,Math.min(100,Math.round((h-70)/70*100))); depthFill.style.height=depth+'%'; depthMeter.dataset.value=String(depth).padStart(2,'0'); const tension=Math.max(0,Math.min(100,Math.round(100-depth*.45))); tensionFill.style.width=tension+'%'; grabTension.dataset.value=String(tension).padStart(2,'0'); updateAdvancedHud(lastStatus);}
   function successChance(b){
@@ -1622,7 +1631,7 @@
     holder.className='carried-prize '+(prizeWeight(chosen)>=1.08?'weight-heavy':'weight-light')+(contact.pinch>.42?' solid-carry':' partial-carry');
     holder.innerHTML=`<div class="prize-slot"><span class="target-ring"></span>${plushMarkup(chosen.p)}</div>`;
     carriage.appendChild(holder);
-    holder.style.top=Math.max(0,(parseFloat(getComputedStyle(cable).getPropertyValue('--cable-height'))||CRANE_CABLE_HOME)+(window.matchMedia('(max-width:680px)').matches?78:110))+'px';
+    holder.style.top=Math.max(0,(parseFloat(getComputedStyle(cable).getPropertyValue('--cable-height'))||CRANE_CABLE_HOME)+(window.matchMedia('(max-width:680px)').matches?22:110))+'px';
     // Lift is one continuous motion: the captured crane rises first, then carries the closed claw all the way home.
     holder.classList.add(Math.random()<.5?'swing-left':'swing-right');
     await wait(90);
@@ -1865,12 +1874,3 @@
 </body>
 </html>
 
-<style>
-/* v501: mobile carried-prize grip alignment + centered GET character. */
-@media(max-width:680px){
-  /* The captured prize follows the claw more tightly on mobile; desktop keeps v500 coordinates. */
-  .carried-prize{left:50%!important;}
-  .win-card .win-plush.video-win{left:0!important;margin-left:auto!important;margin-right:auto!important;}
-  .win-card .win-plush.video-win .video-prize-art{left:50%!important;right:auto!important;width:100%!important;height:100%!important;object-position:center bottom!important;transform:translateX(-50%) scale(var(--asset-scale,1))!important;}
-}
-</style>
