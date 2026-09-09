@@ -850,7 +850,21 @@
   .win-card .video-win .video-prize-art{left:50%!important;right:auto!important;width:100%!important;height:100%!important;object-position:center bottom!important;transform:translateX(-50%) scale(var(--asset-scale,1))!important;}
 }
 
-/* v502: mobile captured-prize grip alignment and GET visual centering. */
+
+/* v503 UI cleanup: collection names occupy the former rarity-label position. */
+.collection-item .rarity{display:none!important;}
+.collection-item .cname{left:4px!important;right:4px!important;top:4px!important;bottom:auto!important;text-align:left!important;font-size:.58rem!important;font-weight:900!important;z-index:4;}
+
+/* v503: make the prize outlet read as a cylindrical drop opening and shift it left. */
+.chute-door{left:2.2%;bottom:1%;width:18%;height:11%;border-radius:50% / 38%;background:linear-gradient(180deg,#ffffff 0%,#d8ebea 30%,#9dbabd 62%,#6d8f93 100%);border:2px solid rgba(255,255,255,.92);box-shadow:inset 0 3px 4px rgba(255,255,255,.95),inset 0 -6px 10px rgba(58,89,94,.38),0 3px 9px rgba(48,72,76,.18);overflow:hidden;transform-origin:center bottom;}
+.chute-door:before{content:"";position:absolute;left:12%;right:12%;top:18%;bottom:18%;border-radius:50%;background:radial-gradient(ellipse at 50% 42%,#1a2830 0 36%,#334b54 58%,#718f92 78%,#d9e8e8 100%);box-shadow:inset 0 2px 4px rgba(0,0,0,.45),0 1px 0 rgba(255,255,255,.75);}
+.chute-door.open{transform:perspective(90px) rotateX(52deg) translateY(2px);}
+@media(max-width:680px){.chute-door{left:1.5%;width:21%;height:10%;}}
+
+/* v503: never reveal the previous result artwork while the next image is loading. */
+#craneResultImage{visibility:hidden;}
+
+/* v503: mobile captured-prize grip alignment and GET visual centering. */
 @media(max-width:680px){
   /* Keep the prize visually between the closed arms; desktop keeps its original offset. */
   .carried-prize{left:50%!important;}
@@ -1218,10 +1232,36 @@
   }
   function queueTransition(){playTransition.classList.remove('show');void playTransition.offsetWidth;playTransition.classList.add('show');setTimeout(()=>playTransition.classList.remove('show'),220);}
   function resultPulse(){resultStamp.classList.remove('show');void resultStamp.offsetWidth;resultStamp.classList.add('show');setTimeout(()=>resultStamp.classList.remove('show'),900);}
-  function showCraneResult(kind){
+  const resultAssets={success:new Image(),fail:new Image()};
+  resultAssets.success.src='assets/yummy/crane/result_success.png';
+  resultAssets.fail.src='assets/yummy/crane/result_fail.png';
+  let resultSequence=0;
+  let resultFinish=null;
+  async function waitForResultAsset(kind){
+    const im=resultAssets[kind];
+    if(!im)return;
+    if(im.complete && im.naturalWidth>0){try{await im.decode();}catch{};return;}
+    await new Promise(resolve=>{
+      let settled=false;
+      const done=()=>{if(settled)return;settled=true;im.removeEventListener('load',done);im.removeEventListener('error',done);resolve();};
+      im.addEventListener('load',done,{once:true});
+      im.addEventListener('error',done,{once:true});
+      setTimeout(done,1800);
+    });
+  }
+  async function showCraneResult(kind){
+    const seq=++resultSequence;
+    if(resultFinish){resultFinish();resultFinish=null;}
+    craneResultOverlay.classList.remove('show');
+    craneResultOverlay.setAttribute('aria-hidden','true');
+    craneResultImage.style.visibility='hidden';
+    await waitForResultAsset(kind);
+    if(seq!==resultSequence)return;
     const src=kind==='success'?'assets/yummy/crane/result_success.png':'assets/yummy/crane/result_fail.png';
     craneResultImage.src=src;
-    craneResultOverlay.classList.remove('show');
+    try{if(craneResultImage.decode)await craneResultImage.decode();}catch{}
+    if(seq!==resultSequence)return;
+    craneResultImage.style.visibility='visible';
     craneResultOverlay.setAttribute('aria-hidden','false');
     void craneResultOverlay.offsetWidth;
     craneResultOverlay.classList.add('show');
@@ -1233,10 +1273,13 @@
         done=true;
         clearTimeout(timer);
         craneResultOverlay.removeEventListener('pointerdown',finish);
+        if(resultFinish===finish)resultFinish=null;
         craneResultOverlay.classList.remove('show');
         craneResultOverlay.setAttribute('aria-hidden','true');
+        craneResultImage.style.visibility='hidden';
         setTimeout(resolve,60);
       };
+      resultFinish=finish;
       craneResultOverlay.addEventListener('pointerdown',finish);
       timer=setTimeout(finish,2000);
     });
