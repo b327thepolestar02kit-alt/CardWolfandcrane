@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=v505">
+  <link rel="stylesheet" href="styles.css?v=v506">
   <style>
     :root{--cg-bg:#070b15;--cg-panel:#111827;--cg-panel2:#182338;--cg-line:#334155;--cg-blue:#45b8ff;--cg-cyan:#76f4ff;--cg-yellow:#ffd86a;--cg-pink:#ff78b7;--cg-green:#67e8a5}
     *{box-sizing:border-box}
@@ -876,10 +876,10 @@
   .win-card .win-plush .video-prize-art{left:50%!important;right:auto!important;width:100%!important;height:100%!important;object-fit:contain!important;object-position:center bottom!important;transform:translateX(-50%) scale(var(--asset-scale,1))!important;}
 }
 
-    /* v505: user-supplied prize outlet banner displayed below the crane game. */
-    .crane-outlet-banner{width:min(834px,100%);margin:14px auto 0;display:flex;justify-content:center;align-items:center;}
-    .crane-outlet-banner img{display:block;width:100%;height:auto;max-width:834px;object-fit:contain;}
-    @media(max-width:680px){.crane-outlet-banner{margin-top:10px;padding:0 2px}.crane-outlet-banner img{width:100%;}}
+    /* v506: place the user-supplied prize outlet banner directly below the crane controls. */
+    .crane-outlet-banner{width:100%;margin:10px 0 0;display:flex;justify-content:center;align-items:center;}
+    .crane-outlet-banner img{display:block;width:min(834px,100%);height:auto;max-width:834px;object-fit:contain;}
+    @media(max-width:680px){.crane-outlet-banner{margin-top:8px;padding:0}.crane-outlet-banner img{width:100%;}}
 </style>
 </head>
 <body class="crane-body">
@@ -904,6 +904,9 @@
           <div class="machine-lights"><i></i><i></i><i></i><i></i></div>
           <div class="control-bar"><div class="coin-slot" aria-hidden="true"><span></span><i></i></div><div class="panel-status"><span class="status-led"></span><span>READY</span></div><div class="remaining"><span id="remainingLabel">のこり</span> <strong id="playRemaining">0</strong></div><div class="control-buttons"><button class="cg-btn" id="leftBtn" type="button">◀ 左</button><button class="cg-btn stop" id="dropBtn" type="button">降下</button><button class="cg-btn" id="rightBtn" type="button">右 ▶</button><button class="cg-btn play" id="playBtn" type="button">100 MEDAL</button><button class="cg-btn free-play" id="freePlayBtn" type="button">FREE PLAY</button></div><div class="panel-joystick" aria-hidden="true"><span class="stick"></span><span class="knob"></span></div></div>
         </div>
+        <div class="crane-outlet-banner" aria-label="PRIZE OUT案内">
+          <img src="assets/yummy/crane_outlet_banner.png" alt="PRIZE OUT" draggable="false">
+        </div>
       </section>
 
       <aside class="side-panel">
@@ -912,9 +915,6 @@
         <a class="cg-card back-button" href="index.html">← カードウルフへ戻る</a>
       </aside>
     </main>
-    <div class="crane-outlet-banner" aria-label="PRIZE OUT案内">
-      <img src="assets/yummy/crane_outlet_banner.png" alt="PRIZE OUT" draggable="false">
-    </div>
   </div>
 
   <div class="status-toast" id="toast" role="status" aria-live="polite"></div>
