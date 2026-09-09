@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=v506">
+  <link rel="stylesheet" href="styles.css?v=v507">
   <style>
     :root{--cg-bg:#070b15;--cg-panel:#111827;--cg-panel2:#182338;--cg-line:#334155;--cg-blue:#45b8ff;--cg-cyan:#76f4ff;--cg-yellow:#ffd86a;--cg-pink:#ff78b7;--cg-green:#67e8a5}
     *{box-sizing:border-box}
@@ -768,12 +768,12 @@
 @keyframes armOpenFade{to{opacity:1}}
 .crane-carriage.video-state .cable{height:var(--cable-height,30px);}
 .crane-carriage.video-state .carriage-body,.crane-carriage.video-state .claw{visibility:hidden;}
-.machine-head{height:154px!important;}
-.machine-head-logo{display:block;width:min(520px,90%);height:138px;object-fit:contain;object-position:center;}
+.machine-head{height:190px!important;}
+.machine-head-logo{display:block;width:min(650px,94%);height:auto;max-height:170px;object-fit:contain;object-position:center;}
 @media(max-width:680px){
   .video-crane-art{width:112px;height:245px;top:calc(var(--cable-height,30px) - 19px);}
-  .machine-head{height:112px!important;}
-  .machine-head-logo{width:min(360px,90%);height:96px;}
+  .machine-head{height:132px!important;}
+  .machine-head-logo{width:min(440px,92%);height:auto;max-height:116px;}
 }
 
 .crane-result-overlay{position:fixed;inset:0;display:grid;place-items:center;background:rgba(8,14,20,.72);backdrop-filter:blur(3px);opacity:0;pointer-events:none;z-index:60;transition:opacity .16s ease;}
@@ -799,8 +799,8 @@
   .machine-wrap{width:100%;max-width:100%;min-width:0;padding:7px;border-radius:18px;overflow:visible;}
   .cabinet{width:100%;min-width:0;min-height:0;aspect-ratio:16/9;border-width:5px;}
   .glass{inset:5px 5px 56px;}
-  .machine-head{height:72px!important;}
-  .machine-head-logo{width:min(250px,82vw);height:64px;}
+  .machine-head{height:92px!important;}
+  .machine-head-logo{width:min(310px,88vw);height:auto;max-height:82px;}
   .video-crane-art{width:88px;height:190px;top:calc(var(--cable-height,30px) - 14px);}
   .crane-carriage.video-state{width:88px;height:225px;}
   .crane-carriage.ready-display .video-crane-art.ready-full-mode{top:10px!important;}
@@ -876,10 +876,11 @@
   .win-card .win-plush .video-prize-art{left:50%!important;right:auto!important;width:100%!important;height:100%!important;object-fit:contain!important;object-position:center bottom!important;transform:translateX(-50%) scale(var(--asset-scale,1))!important;}
 }
 
-    /* v506: place the user-supplied prize outlet banner directly below the crane controls. */
+    /* v507: place the user-supplied prize outlet banner directly below the crane controls. */
     .crane-outlet-banner{width:100%;margin:10px 0 0;display:flex;justify-content:center;align-items:center;}
     .crane-outlet-banner img{display:block;width:min(834px,100%);height:auto;max-width:834px;object-fit:contain;}
     @media(max-width:680px){.crane-outlet-banner{margin-top:8px;padding:0}.crane-outlet-banner img{width:100%;}}
+/* v507: enlarge the machine-head button_logo to match the decorative horizontal rainbow line width. */
 </style>
 </head>
 <body class="crane-body">
