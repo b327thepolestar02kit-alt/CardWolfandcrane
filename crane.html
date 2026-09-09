@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=v508">
+  <link rel="stylesheet" href="styles.css?v=v509">
   <style>
     :root{--cg-bg:#070b15;--cg-panel:#111827;--cg-panel2:#182338;--cg-line:#334155;--cg-blue:#45b8ff;--cg-cyan:#76f4ff;--cg-yellow:#ffd86a;--cg-pink:#ff78b7;--cg-green:#67e8a5}
     *{box-sizing:border-box}
@@ -877,11 +877,21 @@
   .win-card .win-plush .video-prize-art{left:50%!important;right:auto!important;width:100%!important;height:100%!important;object-fit:contain!important;object-position:center bottom!important;transform:translateX(-50%) scale(var(--asset-scale,1))!important;}
 }
 
-    /* v508: place the user-supplied prize outlet banner directly below the crane controls. */
+    /* v509: place the user-supplied prize outlet banner directly below the crane controls. */
     .crane-outlet-banner{width:100%;margin:10px 0 0;display:flex;justify-content:center;align-items:center;}
     .crane-outlet-banner img{display:block;width:min(834px,100%);height:auto;max-width:834px;object-fit:contain;}
     @media(max-width:680px){.crane-outlet-banner{margin-top:8px;padding:0}.crane-outlet-banner img{width:100%;}}
-/* v508: enlarge the machine-head button_logo to match the decorative horizontal rainbow line width. */
+/* v509: enlarge the machine-head button_logo to match the decorative horizontal rainbow line width. */
+</style>
+
+<style id="v509-pc-taller-cabinet-and-remove-scene-decor">
+/* v509: PC版のみ筐体内部を縦長化。クレーンの下降量も連動して調整。 */
+@media (min-width:681px){
+  .cabinet{aspect-ratio:4 / 3;}
+}
+/* v509: ピンク・水色の草原風装飾（scene-decor）は不要のため非表示。
+   背景画像 .video-backdrop や景品画像には影響しない。 */
+.scene-decor{display:none!important;}
 </style>
 </head>
 <body class="crane-body">
@@ -1153,7 +1163,7 @@
   }
   function resetCraneTop(){setCraneTop(CRANE_HOME_TOP);}
   const CRANE_CABLE_HOME=30;
-  const CRANE_CABLE_DROP=window.matchMedia('(max-width:680px)').matches ? 145 : 132;
+  const CRANE_CABLE_DROP=window.matchMedia('(max-width:680px)').matches ? 145 : 204;
   function animateCraneVertical(to,duration=1200){
     const from=parseFloat(getComputedStyle(cable).getPropertyValue('--cable-height'))||CRANE_CABLE_HOME;
     return new Promise(resolve=>{
