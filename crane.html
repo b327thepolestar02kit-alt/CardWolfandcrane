@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=v499">
+  <link rel="stylesheet" href="styles.css?v=v500">
   <style>
     :root{--cg-bg:#070b15;--cg-panel:#111827;--cg-panel2:#182338;--cg-line:#334155;--cg-blue:#45b8ff;--cg-cyan:#76f4ff;--cg-yellow:#ffd86a;--cg-pink:#ff78b7;--cg-green:#67e8a5}
     *{box-sizing:border-box}
@@ -594,6 +594,11 @@
     @media(max-width:680px){.video-crane-art{width:112px;height:245px}.crane-carriage.video-state{width:112px;height:300px}.prize-slot .video-prize-art{transform:scale(.92);transform-origin:center bottom;}}
 
 
+/* v500: remove decorative HOME / TRY / in-machine rarity labels. */
+.dock-indicator,.attract-target{display:none!important;opacity:0!important;pointer-events:none!important;}
+.prize-slot .rarity-chip{display:none!important;}
+@media(max-width:680px){.move-hint,.keyboard-hint{display:none!important;opacity:0!important;}}
+
 /* v498: use the user-corrected ready_full artwork at its original position. */
 
 
@@ -817,8 +822,8 @@
   .glass{inset:5px 5px 56px!important;}
   .prize-bed{height:39%!important;bottom:4.5%!important;}
   .prizes{height:86%!important;bottom:2%!important;gap:0!important;}
-  .cable{--cable-height:82px!important;}
-  .video-crane-art{width:84px!important;height:175px!important;top:calc(var(--cable-height,82px) - 14px)!important;}
+  /* v500: mobile drop depth is controlled by JS so the cable can reach the prize bed. */
+  .video-crane-art{width:84px!important;height:175px!important;top:calc(var(--cable-height,30px) - 2px)!important;}
   .crane-carriage.video-state{width:84px!important;height:220px!important;}
   .carried-prize{left:50%!important;}
   .machine-wrap .target-card,.machine-wrap .rail-scale,.machine-wrap .stage-counter,.machine-wrap .prize-counter,.machine-wrap .finish-hud,.machine-wrap .control-telemetry,.machine-wrap .stage-hud-extra,.machine-wrap .movement-meter,.machine-wrap .aim-hint,.machine-wrap .edge-warning,.machine-wrap .stack-readout,.machine-wrap .carry-readout,.machine-wrap .return-readout,.machine-wrap .queue-timer,.machine-wrap .get-meta,.machine-wrap .position-reticle,.machine-wrap .alignment-meter,.machine-wrap .depth-meter,.machine-wrap .grab-tension,.machine-wrap .contact-readout,.machine-wrap .stage-progress,.machine-wrap .route-line,.machine-wrap .target-sweep,.machine-wrap .rail-shimmer,.machine-wrap .displayBadge,.machine-wrap .prize-display-badge,.machine-wrap .bed-count,.machine-wrap .tray-ribbon{display:none!important;opacity:0!important;}
@@ -836,7 +841,7 @@
 /* v496: cleaner playfield labels and corrected crane/prize alignment. */
 .play-status,.target-card,.prize-display-badge,.tray-ribbon{display:none!important;opacity:0!important;}
 
-/* v499: mobile crane spacing tuned from iPhone gameplay captures; status messages stay inside the cabinet. */
+/* v500: mobile crane spacing tuned from iPhone gameplay captures; status messages stay inside the cabinet. */
 .mobile-cabinet-toast{display:none;}
 @media(max-width:680px){
   .mobile-cabinet-toast{position:absolute;left:50%;bottom:64px;transform:translate(-50%,10px);width:min(78%,300px);padding:10px 16px;border-radius:18px;background:rgba(255,255,255,.94);border:1px solid rgba(102,137,142,.35);box-shadow:0 8px 22px rgba(49,76,80,.18);color:#536c70;font-size:.78rem;font-weight:900;line-height:1.35;text-align:center;opacity:0;pointer-events:none;z-index:34;transition:opacity .18s ease,transform .18s ease;}
@@ -1112,7 +1117,7 @@
   }
   function resetCraneTop(){setCraneTop(CRANE_HOME_TOP);}
   const CRANE_CABLE_HOME=30;
-  const CRANE_CABLE_DROP=132;
+  const CRANE_CABLE_DROP=window.matchMedia('(max-width:680px)').matches ? 145 : 132;
   function animateCraneVertical(to,duration=1200){
     const from=parseFloat(getComputedStyle(cable).getPropertyValue('--cable-height'))||CRANE_CABLE_HOME;
     return new Promise(resolve=>{
