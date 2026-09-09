@@ -186,6 +186,8 @@
     @keyframes stackLift{0%,100%{bottom:var(--base-bottom,4%)}50%{bottom:calc(var(--base-bottom,4%) + 8px)}}
     .carried-prize.return-physics{transition:transform .08s linear;will-change:transform}
 .carried-prize.return-carry-left{left:calc(50% - 24px)!important;}
+.carried-prize.home-drop-fall{animation:homeDropFall .62s cubic-bezier(.2,.78,.28,1) forwards!important;}
+@keyframes homeDropFall{0%{opacity:1;transform:translateX(-50%) translateY(0) rotate(0deg) scale(1)}35%{opacity:1;transform:translateX(calc(-50% - 3px)) translateY(18px) rotate(-4deg) scale(1.01)}72%{opacity:.58;transform:translateX(calc(-50% + 6px)) translateY(52px) rotate(9deg) scale(.96)}100%{opacity:0;transform:translateX(calc(-50% + 10px)) translateY(82px) rotate(16deg) scale(.86)}}
     .carried-prize.return-physics .prize-slot{filter:drop-shadow(0 12px 8px #0009)}
     .carried-prize.hard-swing .prize-slot{filter:drop-shadow(0 0 12px rgba(255,216,106,.8))}
     .cable.return-sway{animation:returnCableSway .8s ease-in-out}
@@ -638,11 +640,11 @@
 </style>
 <style>
 /* v360-v399: Phase A-D visual replacement pass */
-.video-backdrop{position:absolute;inset:8% 4% 24%;z-index:0;background-image:linear-gradient(180deg,rgba(207,255,250,.32),rgba(255,232,236,.28)),url('assets/crane_backdrop.jpg');background-size:cover;background-position:center 42%;opacity:.34;filter:saturate(1.08) contrast(.94) blur(.15px);mix-blend-mode:normal;pointer-events:none;border-radius:14px}
+.video-backdrop{position:absolute;inset:5% 4% 12%;z-index:0;background-image:linear-gradient(180deg,rgba(207,255,250,.32),rgba(255,232,236,.28)),url('assets/crane_backdrop.jpg');background-size:cover;background-position:center 54%;opacity:.34;filter:saturate(1.08) contrast(.94) blur(.15px);mix-blend-mode:normal;pointer-events:none;border-radius:14px}
 .video-sparkles{position:absolute;inset:9% 3% 22%;z-index:1;pointer-events:none;opacity:.62;background:radial-gradient(circle at 15% 28%,rgba(255,255,255,.92) 0 2px,transparent 3px),radial-gradient(circle at 29% 46%,rgba(255,225,243,.82) 0 2px,transparent 3px),radial-gradient(circle at 64% 20%,rgba(255,255,255,.9) 0 2px,transparent 3px),radial-gradient(circle at 82% 42%,rgba(255,245,193,.8) 0 2px,transparent 3px),radial-gradient(circle at 53% 67%,rgba(255,255,255,.76) 0 1.5px,transparent 2.5px)}
 .machine-wrap.visual-finish .video-backdrop{opacity:.46}.machine-wrap.visual-finish .video-sparkles{animation:videoSparkleDrift 6s ease-in-out infinite alternate}
 @keyframes videoSparkleDrift{from{transform:translate3d(-2px,0,0);opacity:.42}to{transform:translate3d(3px,-2px,0);opacity:.7}}
-.prize-bed{background:linear-gradient(180deg,rgba(255,211,223,.92) 0%,rgba(238,197,213,.92) 18%,rgba(164,218,211,.96) 46%,rgba(94,151,155,.98) 100%),url('assets/crane_backdrop.jpg');background-size:cover;background-position:center bottom}
+.prize-bed{background:linear-gradient(180deg,rgba(255,211,223,.92) 0%,rgba(238,197,213,.92) 18%,rgba(164,218,211,.96) 46%,rgba(94,151,155,.98) 100%),url('assets/crane_backdrop.jpg');background-size:cover;background-position:center 60%}
 .prize-bed:before{background:linear-gradient(180deg,#fff,#dff4f2 55%,rgba(255,255,255,.45));}
 .prizes{align-items:flex-end}
 .prize-slot{width:clamp(68px,9vw,96px);height:clamp(78px,11vw,112px)}
@@ -836,6 +838,7 @@
   .win-card .win-plush.video-win{display:block!important;position:relative!important;left:auto!important;margin-left:auto!important;margin-right:auto!important;transform:scale(1.55)!important;}
   .win-card .video-win .video-prize-art{left:0!important;right:0!important;width:100%!important;transform:none!important;}
   .collection-item.item-lolipo .mini-plush,.collection-item.item-lolipo-rare .mini-plush{top:-12px!important;}
+  .video-backdrop{inset:5% 4% 10%!important;background-position:center 58%!important;}
 }
 
 /* v496: cleaner playfield labels and corrected crane/prize alignment. */
@@ -856,7 +859,7 @@
 .collection-item .cname{left:4px!important;right:4px!important;top:4px!important;bottom:auto!important;text-align:left!important;font-size:.58rem!important;font-weight:900!important;z-index:4;}
 
 /* v503: make the prize outlet read as a cylindrical drop opening and shift it left. */
-.chute-door{left:2.2%;bottom:1%;width:18%;height:11%;border-radius:50% / 38%;background:linear-gradient(180deg,#ffffff 0%,#d8ebea 30%,#9dbabd 62%,#6d8f93 100%);border:2px solid rgba(255,255,255,.92);box-shadow:inset 0 3px 4px rgba(255,255,255,.95),inset 0 -6px 10px rgba(58,89,94,.38),0 3px 9px rgba(48,72,76,.18);overflow:hidden;transform-origin:center bottom;}
+.chute-door{left:.8%;bottom:1%;width:20%;height:18%;border-radius:50% / 38%;background:linear-gradient(180deg,#ffffff 0%,#d8ebea 30%,#9dbabd 62%,#6d8f93 100%);border:2px solid rgba(255,255,255,.92);box-shadow:inset 0 3px 4px rgba(255,255,255,.95),inset 0 -6px 10px rgba(58,89,94,.38),0 3px 9px rgba(48,72,76,.18);overflow:hidden;transform-origin:center bottom;}
 .chute-door:before{content:"";position:absolute;left:12%;right:12%;top:18%;bottom:18%;border-radius:50%;background:radial-gradient(ellipse at 50% 42%,#1a2830 0 36%,#334b54 58%,#718f92 78%,#d9e8e8 100%);box-shadow:inset 0 2px 4px rgba(0,0,0,.45),0 1px 0 rgba(255,255,255,.75);}
 .chute-door.open{transform:perspective(90px) rotateX(52deg) translateY(2px);}
 @media(max-width:680px){.chute-door{left:1.5%;width:21%;height:10%;}}
@@ -900,7 +903,7 @@
 
       <aside class="side-panel">
         <section class="cg-card play-info-card"><h2>PLAY INFO</h2><div class="owned-medals"><img src="assets/medal-icon.png" alt="メダル"><span>所持メダル</span><strong id="medalCount">0</strong></div><div class="cost"><span>1プレイ</span><strong>100枚</strong></div><p>左側のホーム位置から右へ移動して狙い、降下後は上昇して左側の排出口へ戻ります。内部の掴み判定は「位置・タイミング・景品難度」を組み合わせた中間方式です。</p><p class="notice">※ボタンを押すたびに100メダルを先払い。複数回押すと、その回数分を連続プレイできます。</p></section>
-        <section class="cg-card collection-card"><h2>COLLECTION <span id="collectionCount">0 / 8</span></h2><div class="collection-progress"><span id="collectionProgress"></span></div><div class="collection-grid" id="collectionGrid"></div><p class="notice">獲得数はこのブラウザに保存されます。</p><p class="reset-note">※デバッグ用: コレクションをリセット</p><button class="cg-btn" id="resetCollection" type="button">COLLECTION RESET</button></section>
+        <section class="cg-card collection-card"><h2>COLLECTION <span id="collectionCount">0 / 8</span></h2><div class="collection-progress"><span id="collectionProgress"></span></div><div class="collection-grid" id="collectionGrid"></div><p class="notice">獲得数はこのブラウザに保存されます。</p><p class="reset-note">コレクションをリセット</p><button class="cg-btn" id="resetCollection" type="button">COLLECTION RESET</button></section>
         <a class="cg-card back-button" href="index.html">← カードウルフへ戻る</a>
       </aside>
     </main>
@@ -1753,6 +1756,11 @@
     // Use the original unified drop artwork here so the mouth/body/arms stay perfectly registered.
     setCraneVisual('successDrop');
     await wait(120);
+    if(holder.parentNode){
+      holder.classList.add('home-drop-fall');
+      await wait(620);
+      if(holder.parentNode)holder.remove();
+    }
     state='dropping-prize'; status('PRIZE OUT'); stageLight('get'); prizeBed.classList.add('getting');
     chuteGlow.classList.add('show','tracking'); chuteDoor.classList.add('open'); chuteDoor.classList.add('pulse'); setTimeout(()=>chuteDoor.classList.remove('pulse'),1100);
     await wait(160); prizeBed.classList.add('chute-land'); tone(300,.08,'sine',.014); setTimeout(()=>prizeBed.classList.remove('chute-land'),620);
