@@ -917,21 +917,21 @@
   color:#6e5518!important;
 }
 </style>
-<style id="v518-crane-fixes">
+<style id="v519-crane-fixes">
 @media(max-width:680px){
   .win-card .win-plush.video-win{position:relative!important;top:0!important;transform:translateY(24px) scale(1.55)!important;margin-top:6px!important;}
   .collection-item.item-cookie .mini-plush,.collection-item.item-mashumao .mini-plush{top:-10px!important;}
 }
-/* v518: extend the visible cable into the crane artwork so it remains continuous during return/open-arm motion. */
+/* v519: extend the visible cable into the crane artwork so it remains continuous during return/open-arm motion. */
 .crane-carriage.video-state .cable{z-index:20!important;}
 .crane-carriage.video-state .cable:after{content:"";position:absolute;left:0;top:calc(100% - 1px);width:100%;height:14px;background:linear-gradient(90deg,#73898d,#fff,#8ba2a6);box-shadow:0 0 2px rgba(255,255,255,.55);pointer-events:none;}
-/* v518: crane-game sound is OFF by default; the small button toggles it. */
+/* v519: crane-game sound is OFF by default; the small button toggles it. */
 .sound-toggle{position:absolute;right:18px;top:18px;width:28px;height:28px;padding:0;border:1px solid rgba(91,116,121,.24);border-radius:50%;background:rgba(255,255,255,.68);color:#65797d;font-size:13px;line-height:26px;text-align:center;z-index:50;cursor:pointer;opacity:.72;box-shadow:0 2px 6px rgba(48,72,76,.12);}
 .sound-toggle:hover{opacity:.95;}.sound-toggle:active{transform:scale(.94);}.sound-toggle.is-on{color:#8b6615;background:rgba(255,239,170,.8);}
 @media(max-width:680px){.sound-toggle{right:9px;top:10px;width:25px;height:25px;font-size:12px;line-height:23px;opacity:.62;}}
 </style>
-<style id="v518-crane-fixes">
-/* v518: mobile GET prize is positioned by the win-card box itself; avoid transform-only movement. */
+<style id="v519-crane-fixes">
+/* v519: mobile GET prize is positioned by the win-card box itself; avoid transform-only movement. */
 @media(max-width:680px){
   .win-card .win-plush.video-win{
     top:20px!important;
@@ -941,33 +941,33 @@
   .collection-item.item-cookie .mini-plush,
   .collection-item.item-mashumao .mini-plush{top:-4px!important;}
 }
-/* v518: keep the crane cable behind the crane artwork/body. */
+/* v519: keep the crane cable behind the crane artwork/body. */
 .crane-carriage.video-state .cable{z-index:10!important;}
 .crane-carriage.video-state .video-crane-art{z-index:18!important;}
-/* v518: volume button belongs to the upper-right of PLAY INFO. */
+/* v519: volume button belongs to the upper-right of PLAY INFO. */
 .play-info-card{position:relative!important;}
 .play-info-card .sound-toggle{right:8px!important;top:8px!important;}
 </style>
 
-<style id="v518-crane-adjustments">
-/* v518: mobile GET prize lower */
+<style id="v519-crane-adjustments">
+/* v519: mobile GET prize lower */
 @media(max-width:680px){
   .win-card .win-plush.video-win{top:35px!important;margin-top:6px!important;margin-bottom:53px!important;}
   .collection-item.item-cookie .mini-plush,
   .collection-item.item-mashumao .mini-plush{top:4px!important;}
   .collection-item.item-lolipo-rare .mini-plush{top:-4px!important;}
 }
-/* v518: lower the maximum descent slightly on both desktop and mobile. */
-</style><style id="v518-cable-layer-fix">
-/* v518: crane body/artwork must remain in front of the cable. */
+/* v519: lower the maximum descent slightly on both desktop and mobile. */
+</style><style id="v519-cable-layer-fix">
+/* v519: crane body/artwork must remain in front of the cable. */
 .crane-carriage.video-state .cable{z-index:10!important;}
 .crane-carriage.video-state .cable:after{z-index:10!important;}
 .crane-carriage.video-state .video-crane-art{position:relative!important;z-index:30!important;}
-</style><style id="v518-crane-position-final">
-/* v518: final mobile GET/collection positioning and deeper crane descent. */
+</style><style id="v519-crane-position-final">
+/* v519: final mobile GET/collection positioning and deeper crane descent. */
 @media(max-width:680px){
   /* GET景品: win-plush自身のbounce animationがtransformを上書きするため、
-     v518では専用アニメーションで「下方向の移動」とバウンスを同時に管理する。 */
+     v519では専用アニメーションで「下方向の移動」とバウンスを同時に管理する。 */
   .win-card .win-plush.video-win{
     animation:winPlushBounceMobileV518 .9s ease-in-out infinite alternate!important;
     position:relative!important;
@@ -984,8 +984,25 @@
   .collection-item.item-mashumao .mini-plush{top:10px!important;}
   .collection-item.item-lolipo-rare .mini-plush{top:2px!important;}
 }
-/* v518: lower the actual JS-controlled cable endpoint on both desktop/mobile. */
-</style></head>
+/* v519: lower the actual JS-controlled cable endpoint on both desktop/mobile. */
+</style>
+<style id="v519-mobile-get-and-collection-fix">
+/* v519: mobile GET prize position. Disable the existing bounce animation so
+   its transform cannot overwrite the requested downward position. */
+@media(max-width:680px){
+  .win-card .win-plush.video-win{
+    animation:none!important;
+    position:relative!important;
+    top:0!important;
+    margin-top:0!important;
+    margin-bottom:0!important;
+    transform:translateY(35px) scale(1.55)!important;
+  }
+  /* Normal Lolipo: move slightly downward from the previous -12px position. */
+  .collection-item.item-lolipo .mini-plush{top:0px!important;}
+}
+</style>
+</head>
 <body class="crane-body">
   <div class="crane-shell">
     <main class="cg-layout">
