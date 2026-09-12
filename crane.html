@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=v511">
+  <link rel="stylesheet" href="styles.css?v=v513">
   <style>
     :root{--cg-bg:#070b15;--cg-panel:#111827;--cg-panel2:#182338;--cg-line:#334155;--cg-blue:#45b8ff;--cg-cyan:#76f4ff;--cg-yellow:#ffd86a;--cg-pink:#ff78b7;--cg-green:#67e8a5}
     *{box-sizing:border-box}
@@ -877,44 +877,19 @@
   .win-card .win-plush .video-prize-art{left:50%!important;right:auto!important;width:100%!important;height:100%!important;object-fit:contain!important;object-position:center bottom!important;transform:translateX(-50%) scale(var(--asset-scale,1))!important;}
 }
 
-    /* v511: place the user-supplied prize outlet banner directly below the crane controls. */
+    /* v513: place the user-supplied prize outlet banner directly below the crane controls. */
     .crane-outlet-banner{width:100%;margin:10px 0 0;display:flex;justify-content:center;align-items:center;}
     .crane-outlet-banner img{display:block;width:min(834px,100%);height:auto;max-width:834px;object-fit:contain;}
     @media(max-width:680px){.crane-outlet-banner{margin-top:8px;padding:0}.crane-outlet-banner img{width:100%;}}
-@media(max-width:680px){
-  /* v511: move the GET character slightly downward on mobile only. */
-  .win-card .win-plush.video-win{top:8px!important;}
-  /* v511: raise the normal Cookie and Mashumao collection art slightly on mobile. */
-  .collection-item.item-cookie .mini-plush,
-  .collection-item.item-mashumao .mini-plush{top:7px!important;}
-}
-
-/* v511: rare Yummy characters are highlighted by a pale gold collection tile. */
-.collection-item.item-capsy-rare,
-.collection-item.item-cookie-rare,
-.collection-item.item-lolipo-rare,
-.collection-item.item-mashumao-rare{
-  background:linear-gradient(145deg,#fff9dc 0%,#fff1b4 55%,#f5dc82 100%)!important;
-  border-color:rgba(196,151,38,.55)!important;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.65),0 3px 10px rgba(190,145,40,.12);
-}
-.collection-item.item-capsy-rare .qty,
-.collection-item.item-cookie-rare .qty,
-.collection-item.item-lolipo-rare .qty,
-.collection-item.item-mashumao-rare .qty{
-  background:#f1d77d!important;
-  color:#6e5518!important;
-}
-
-/* v511: enlarge the machine-head button_logo to match the decorative horizontal rainbow line width. */
+/* v513: enlarge the machine-head button_logo to match the decorative horizontal rainbow line width. */
 </style>
 
-<style id="v511-pc-taller-cabinet-and-remove-scene-decor">
-/* v511: PC版のみ筐体内部を縦長化。クレーンの下降量も連動して調整。 */
+<style id="v513-pc-taller-cabinet-and-remove-scene-decor">
+/* v513: PC版のみ筐体内部を縦長化。クレーンの下降量も連動して調整。 */
 @media (min-width:681px){
   .cabinet{aspect-ratio:4 / 3;}
 }
-/* v511: ピンク・水色の草原風装飾（scene-decor）は不要のため非表示。
+/* v513: ピンク・水色の草原風装飾（scene-decor）は不要のため非表示。
    背景画像 .video-backdrop や景品画像には影響しない。 */
 .scene-decor{display:none!important;}
 </style>
@@ -974,10 +949,10 @@
     {id:'cookie',name:'クッキィ',type:'yummy',asset:'cookie',rarity:'N',difficulty:.54,assetScale:1},
     {id:'lolipo',name:'ロリポー',type:'yummy',asset:'lolipo',rarity:'R',difficulty:.60,assetScale:1},
     {id:'mashumao',name:'マシュマオ',type:'yummy',asset:'mashumao',rarity:'R',difficulty:.58,assetScale:1},
-    {id:'capsy-rare',name:'カプシー',type:'yummy',asset:'capsy_rare',rarity:'SR',difficulty:.70,assetScale:1},
-    {id:'cookie-rare',name:'クッキィ',type:'yummy',asset:'cookie_rare',rarity:'SR',difficulty:.76,assetScale:1},
-    {id:'lolipo-rare',name:'ロリポー',type:'yummy',asset:'lolipo_rare',rarity:'SR',difficulty:.82,assetScale:1.14},
-    {id:'mashumao-rare',name:'マシュマオ',type:'yummy',asset:'mashumao_rare',rarity:'SR',difficulty:.84,assetScale:1}
+    {id:'capsy-rare',name:'カプシー【レア】',type:'yummy',asset:'capsy_rare',rarity:'SR',difficulty:.70,assetScale:1},
+    {id:'cookie-rare',name:'クッキィ【レア】',type:'yummy',asset:'cookie_rare',rarity:'SR',difficulty:.76,assetScale:1},
+    {id:'lolipo-rare',name:'ロリポー【レア】',type:'yummy',asset:'lolipo_rare',rarity:'SR',difficulty:.82,assetScale:1.14},
+    {id:'mashumao-rare',name:'マシュマオ【レア】',type:'yummy',asset:'mashumao_rare',rarity:'SR',difficulty:.84,assetScale:1}
   ];
   const $=id=>document.getElementById(id);
   const shell=document.querySelector('.machine-wrap');

@@ -1,8 +1,8 @@
-/* CardWolf build v511 */
+/* CardWolf build v513 */
 const firebaseConfig = window.FIREBASE_CONFIG || {};
-if (window.CARDWOLF_BUILD_VERSION !== "v511") { window.CARDWOLF_BUILD_VERSION = "v511"; }
+if (window.CARDWOLF_BUILD_VERSION !== "v513") { window.CARDWOLF_BUILD_VERSION = "v513"; }
 const versionEl = document.querySelector(".build-version");
-if (versionEl) { versionEl.textContent = "v511"; versionEl.setAttribute("aria-label", "ゲームバージョン v511"); }
+if (versionEl) { versionEl.textContent = "v513"; versionEl.setAttribute("aria-label", "ゲームバージョン v513"); }
 
 // Firebase is loaded lazily so a CDN/auth/database problem can never disable
 // the basic game UI. The solo/setup buttons must remain usable even when the
@@ -438,14 +438,8 @@ function clueChoiceClass(statement, card){
 }
 function availableCpuClues(player){
   const used=new Set(game.usedClueIds||[]);
-  // CPU never uses ambiguous statements. Negative forms are valid CPU clues too.
-  const positive=shuffle(featureList(player.card,game.settings)).filter(s=>!used.has(s.id));
-  const negative=shuffle([
-    ...negativeBasicClues(),
-    ...negativeAttributeClues(),
-    ...negativeRaceClues()
-  ]).filter(s=>!used.has(s.id)&&safeTest(s,player.card)).slice(0,4);
-  let options=shuffle([...positive,...negative]);
+  // CPU never uses ambiguous statements. They are reserved for the human player.
+  let options=shuffle(featureList(player.card,game.settings)).filter(s=>!used.has(s.id));
   if(!options.length){
     options=shuffle(featureList(player.card,game.settings));
   }
@@ -461,7 +455,7 @@ function cpuFallbackStatement(player,used){
 function isCpuNameBoundaryClue(statement){
   return /^name-(initial|ending)-/.test(String(statement?.id||""));
 }
-function chooseCpuClue(options,nameBoundaryWeight=.18){
+function chooseCpuClue(options,nameBoundaryWeight=.06){
   if(!options?.length)return null;
   const ordinary=options.filter(s=>!isCpuNameBoundaryClue(s));
   const nameBoundary=options.filter(isCpuNameBoundaryClue);
@@ -470,21 +464,21 @@ function chooseCpuClue(options,nameBoundaryWeight=.18){
   }
   return randomItem(ordinary.length?ordinary:nameBoundary);
 }
+function cpuNegativeCluesForCard(card,used){
+  const negatives=[...negativeBasicClues(),...negativeAttributeClues(),...negativeRaceClues()];
+  return shuffle(negatives).filter(s=>!used.has(s.id)&&safeTest(s,card));
+}
+function cpuTruthfulClues(player,used){
+  const ordinary=statementsFor(player.card,game.settings).filter(s=>!used.has(s.id));
+  const negative=cpuNegativeCluesForCard(player.card,used);
+  return shuffle([...ordinary,...negative]);
+}
 function playNextCpuTurn(){
  if(!game||game.phase!=="clue"||game.busy)return;
  const turnRound=game.round,turnIndex=game.orderIndex,player=currentPlayer();
  game.busy=true;
  const used=new Set(game.usedClueIds||[]);
- const positiveTruthful=shuffle(statementsFor(player.card,game.settings)).filter(s=>!used.has(s.id));
- const negativePool=shuffle([
-   ...negativeBasicClues(),
-   ...negativeAttributeClues(),
-   ...negativeRaceClues()
- ]).filter(s=>!used.has(s.id));
- // Negative forms are included in CPU speech, but only a small random subset
- // is considered each turn so they do not overwhelm ordinary clues.
- const negativeTruthful=negativePool.filter(s=>safeTest(s,player.card)).slice(0,4);
- const truthful=shuffle([...positiveTruthful,...negativeTruthful]);
+ let truthful=cpuTruthfulClues(player,used);
  let falsehoods=shuffle(falseStatementsFor(player.card,game.settings)).filter(s=>!used.has(s.id));
  let statement=null;
  if(!player.isWolf){
@@ -557,7 +551,7 @@ function submitCpuGuess(){
     })
     .sort((a,b)=>b.score-a.score);
 
-  // v511: Honda and Jounouchi are intentionally less accurate at the
+  // v513: Honda and Jounouchi are intentionally less accurate at the
   // wolf's reversal declaration. They still use the clue data, but often
   // fail to choose the strongest candidate, increasing their wolf loss rate.
   const isFoolCpu=wolf && (wolf.name==="本田" || wolf.name==="城之内");
@@ -1602,7 +1596,7 @@ async function submitOnlineActionOnce(action){
     onlineActionPromises.set(actionId,finish);
     try{
       onValue(resultRef,listener);
-      await set(actionRef,{...action,matchId:onlineGame.matchId||onlineMatchId||"",uid:firebaseUid,actionId,clientVersion:"v511",createdAt:Date.now()});
+      await set(actionRef,{...action,matchId:onlineGame.matchId||onlineMatchId||"",uid:firebaseUid,actionId,clientVersion:"v513",createdAt:Date.now()});
     }catch(e){console.error("online action write failed",e);finish(false);return;}
     timer=setTimeout(()=>{onlineDebug("action-timeout",{actionId,action});finish(false);},8000);
   });
