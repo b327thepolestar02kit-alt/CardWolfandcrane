@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=v509">
+  <link rel="stylesheet" href="styles.css?v=v510">
   <style>
     :root{--cg-bg:#070b15;--cg-panel:#111827;--cg-panel2:#182338;--cg-line:#334155;--cg-blue:#45b8ff;--cg-cyan:#76f4ff;--cg-yellow:#ffd86a;--cg-pink:#ff78b7;--cg-green:#67e8a5}
     *{box-sizing:border-box}
@@ -337,7 +337,7 @@
     /* v168: rounded mechanical crane housing */
     .crane-carriage{width:82px;height:54px;z-index:9}.carriage-body{height:34px;border-radius:12px 12px 15px 15px;background:linear-gradient(180deg,#fff,#dce9eb 42%,#9fb4b8);border:2px solid #fff;box-shadow:0 5px 10px rgba(54,76,81,.25),inset 0 2px #fff}.carriage-body:before{content:"";position:absolute;left:8px;right:8px;top:4px;height:4px;border-radius:9px;background:linear-gradient(90deg,#85edf4,#ff9ecb,#ffe37a);opacity:.75}.carriage-body:after{content:"";position:absolute;left:4px;right:4px;bottom:-5px;height:7px;border-radius:0 0 10px 10px;background:linear-gradient(#b4c9cc,#6e878c);box-shadow:0 2px 3px rgba(46,65,70,.2)}
     .carriage-body .bot-eye{width:7px;height:9px;top:12px;background:#536b70;box-shadow:0 0 0 2px #fff}.carriage-body .bot-mouth{bottom:5px;border-color:#668087}.carriage-body .bot-fin{top:11px;width:6px;height:12px;background:#f1b3cd;border:1px solid #fff}.carriage-body .bot-fin.left{left:-7px}.carriage-body .bot-fin.right{right:-7px}
-    .cable{width:6px;background:linear-gradient(90deg,#73898d,#fff,#8ba2a6);box-shadow:0 0 0 1px rgba(68,89,94,.18)}.cable:after{content:"";position:absolute;left:50%;top:8px;width:11px;height:24px;transform:translateX(-50%);border-left:2px dotted rgba(75,101,106,.42);border-right:2px dotted rgba(255,255,255,.65);opacity:.8}
+    .cable{width:6px;background:linear-gradient(90deg,#73898d,#fff,#8ba2a6);box-shadow:0 0 0 1px rgba(68,89,94,.18)}
     .claw-ring{width:31px;height:31px;background:radial-gradient(circle at 35% 30%,#fff,#b7c9cc 45%,#6f8589 72%);border-color:#fff;box-shadow:0 2px 5px rgba(47,68,73,.25)}.finger{border-color:#b9c8cb;background:linear-gradient(90deg,#81989c,#edf8f7,#8da5a9);background-clip:border-box}.finger:after{background:#ffb5cf;box-shadow:0 0 7px rgba(255,158,202,.5)}
     /* v169: aiming lane and target reticle */
     .aim-guide{position:absolute;top:10%;bottom:7%;width:2px;left:8%;transform:translateX(-50%);z-index:5;pointer-events:none;opacity:0;transition:left .12s ease,opacity .2s}.aim-guide.active{opacity:1}.aim-line{position:absolute;left:0;top:0;bottom:0;width:2px;background:linear-gradient(180deg,rgba(255,255,255,.0),rgba(255,234,145,.65) 28%,rgba(255,155,203,.8) 72%,rgba(255,255,255,.05));box-shadow:0 0 9px rgba(255,196,215,.8)}.aim-reticle{position:absolute;left:50%;top:61%;width:28px;height:28px;transform:translate(-50%,-50%);border:2px solid rgba(255,235,139,.95);border-radius:50%;box-shadow:0 0 0 5px rgba(255,255,255,.14),0 0 16px rgba(255,210,108,.85);animation:reticleSpin 4s linear infinite}.aim-reticle:before,.aim-reticle:after{content:"";position:absolute;left:50%;top:50%;background:#fff1a1;box-shadow:0 0 6px #fff0a0}.aim-reticle:before{width:42px;height:2px;transform:translate(-50%,-50%)}.aim-reticle:after{width:2px;height:42px;transform:translate(-50%,-50%)}@keyframes reticleSpin{to{transform:translate(-50%,-50%) rotate(360deg)}}
@@ -877,19 +877,19 @@
   .win-card .win-plush .video-prize-art{left:50%!important;right:auto!important;width:100%!important;height:100%!important;object-fit:contain!important;object-position:center bottom!important;transform:translateX(-50%) scale(var(--asset-scale,1))!important;}
 }
 
-    /* v509: place the user-supplied prize outlet banner directly below the crane controls. */
+    /* v510: place the user-supplied prize outlet banner directly below the crane controls. */
     .crane-outlet-banner{width:100%;margin:10px 0 0;display:flex;justify-content:center;align-items:center;}
     .crane-outlet-banner img{display:block;width:min(834px,100%);height:auto;max-width:834px;object-fit:contain;}
     @media(max-width:680px){.crane-outlet-banner{margin-top:8px;padding:0}.crane-outlet-banner img{width:100%;}}
-/* v509: enlarge the machine-head button_logo to match the decorative horizontal rainbow line width. */
+/* v510: enlarge the machine-head button_logo to match the decorative horizontal rainbow line width. */
 </style>
 
-<style id="v509-pc-taller-cabinet-and-remove-scene-decor">
-/* v509: PC版のみ筐体内部を縦長化。クレーンの下降量も連動して調整。 */
+<style id="v510-pc-taller-cabinet-and-remove-scene-decor">
+/* v510: PC版のみ筐体内部を縦長化。クレーンの下降量も連動して調整。 */
 @media (min-width:681px){
   .cabinet{aspect-ratio:4 / 3;}
 }
-/* v509: ピンク・水色の草原風装飾（scene-decor）は不要のため非表示。
+/* v510: ピンク・水色の草原風装飾（scene-decor）は不要のため非表示。
    背景画像 .video-backdrop や景品画像には影響しない。 */
 .scene-decor{display:none!important;}
 </style>
@@ -1163,7 +1163,7 @@
   }
   function resetCraneTop(){setCraneTop(CRANE_HOME_TOP);}
   const CRANE_CABLE_HOME=30;
-  const CRANE_CABLE_DROP=window.matchMedia('(max-width:680px)').matches ? 145 : 204;
+  const CRANE_CABLE_DROP=window.matchMedia('(max-width:680px)').matches ? 155 : 204;
   function animateCraneVertical(to,duration=1200){
     const from=parseFloat(getComputedStyle(cable).getPropertyValue('--cable-height'))||CRANE_CABLE_HOME;
     return new Promise(resolve=>{

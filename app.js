@@ -1,8 +1,8 @@
-/* CardWolf build v509 */
+/* CardWolf build v510 */
 const firebaseConfig = window.FIREBASE_CONFIG || {};
-if (window.CARDWOLF_BUILD_VERSION !== "v509") { window.CARDWOLF_BUILD_VERSION = "v509"; }
+if (window.CARDWOLF_BUILD_VERSION !== "v510") { window.CARDWOLF_BUILD_VERSION = "v510"; }
 const versionEl = document.querySelector(".build-version");
-if (versionEl) { versionEl.textContent = "v509"; versionEl.setAttribute("aria-label", "ゲームバージョン v509"); }
+if (versionEl) { versionEl.textContent = "v510"; versionEl.setAttribute("aria-label", "ゲームバージョン v510"); }
 
 // Firebase is loaded lazily so a CDN/auth/database problem can never disable
 // the basic game UI. The solo/setup buttons must remain usable even when the
@@ -83,7 +83,7 @@ function reverseGuessInfo(card){
   return [type,attr?`${attr}属性`:"",race,level,cardStats(card)].filter(Boolean).join(" / ");
 }
 function cardDisplay(card){return `<div class="card-name-jp">${escapeHtml(jpName(card))}</div><div class="card-info-ja">${escapeHtml(cardInfo(card))}</div>${cardStats(card)?`<div class="card-stats">${escapeHtml(cardStats(card))}</div>`:""}`;}
-const CPU_NAMES=["遊戯","城之内","杏子","ヒロト","獏良","海馬","ペガサス","マリク"];
+const CPU_NAMES=["遊戯","城之内","杏子","本田","獏良","海馬","ペガサス","マリク"];
 const setupScreen=document.getElementById("setupScreen"),gameScreen=document.getElementById("gameScreen"),restartButton=document.getElementById("restartButton"),playersElement=document.getElementById("players"),yourCardElement=document.getElementById("yourCard"),actionPanel=document.getElementById("actionPanel"),phaseLabel=document.getElementById("phaseLabel"),phaseTitle=document.getElementById("phaseTitle"),talkLog=document.getElementById("talkLog"),logCount=document.getElementById("logCount"),rulesDialog=document.getElementById("rulesDialog"),poolDialog=document.getElementById("poolDialog"),poolGrid=document.getElementById("poolGrid"),poolCountElement=document.getElementById("poolCount");
 const speechCountSelect=document.getElementById("speechCount"),liePenaltyToggle=document.getElementById("liePenalty"),showLieCountToggle=document.getElementById("showLieCount");
 if(liePenaltyToggle) liePenaltyToggle.checked=false;
@@ -452,6 +452,18 @@ function cpuFallbackStatement(player,used){
  // but guarantees that a CPU turn can never silently disappear.
  return {id:`cpu-fallback-${player.id}-${game.round}-${game.orderIndex}`,label:"カードの特徴を持つカードです",test:()=>true};
 }
+function isCpuNameBoundaryClue(statement){
+  return /^name-(initial|ending)-/.test(String(statement?.id||""));
+}
+function chooseCpuClue(options,nameBoundaryWeight=.18){
+  if(!options?.length)return null;
+  const ordinary=options.filter(s=>!isCpuNameBoundaryClue(s));
+  const nameBoundary=options.filter(isCpuNameBoundaryClue);
+  if(nameBoundary.length&&ordinary.length){
+    return Math.random()<nameBoundaryWeight ? randomItem(nameBoundary) : randomItem(ordinary);
+  }
+  return randomItem(ordinary.length?ordinary:nameBoundary);
+}
 function playNextCpuTurn(){
  if(!game||game.phase!=="clue"||game.busy)return;
  const turnRound=game.round,turnIndex=game.orderIndex,player=currentPlayer();
@@ -460,11 +472,13 @@ function playNextCpuTurn(){
  let truthful=shuffle(statementsFor(player.card,game.settings)).filter(s=>!used.has(s.id));
  let falsehoods=shuffle(falseStatementsFor(player.card,game.settings)).filter(s=>!used.has(s.id));
  let statement=null;
- if(!player.isWolf){statement=truthful[0]||cpuFallbackStatement(player,used);}
+ if(!player.isWolf){
+   statement=chooseCpuClue(truthful)||cpuFallbackStatement(player,used);
+ }
  else{
    const citizen=game.citizenCard;
    const shared=truthful.filter(st=>safeTest(st,citizen));
-   statement=shared[0]||truthful[0]||falsehoods[0]||cpuFallbackStatement(player,used);
+   statement=chooseCpuClue(shared)||chooseCpuClue(truthful)||chooseCpuClue(falsehoods)||cpuFallbackStatement(player,used);
  }
  setTimeout(()=>{
    if(!game||game.phase!=="clue"||game.round!==turnRound||game.orderIndex!==turnIndex){if(game)game.busy=false;return;}
@@ -527,6 +541,17 @@ function submitCpuGuess(){
       return {card,score};
     })
     .sort((a,b)=>b.score-a.score);
+
+  // v510: Honda and Jounouchi are intentionally less accurate at the
+  // wolf's reversal declaration. They still use the clue data, but often
+  // fail to choose the strongest candidate, increasing their wolf loss rate.
+  const isFoolCpu=wolf && (wolf.name==="本田" || wolf.name==="城之内");
+  if(isFoolCpu && candidates.length){
+    const best=candidates[0].card;
+    const chosen=Math.random()<0.35 ? best : randomItem(candidates).card;
+    finishReverseGuess(chosen);
+    return;
+  }
   finishReverseGuess(candidates[0]?.card||game.citizenCard);
 }
 function finishReverseGuess(guess){game.reverseGuess=guess;const correct=guess&&guess.name===game.citizenCard.name;game.result=correct?"wolf-reversal":"citizen";game.logs.push({type:"system",name:"逆転宣言",text:`狼は「${guess?jpName(guess):"不明"}」と宣言しました。`});game.phase="result";renderGame();}
@@ -1562,7 +1587,7 @@ async function submitOnlineActionOnce(action){
     onlineActionPromises.set(actionId,finish);
     try{
       onValue(resultRef,listener);
-      await set(actionRef,{...action,matchId:onlineGame.matchId||onlineMatchId||"",uid:firebaseUid,actionId,clientVersion:"v509",createdAt:Date.now()});
+      await set(actionRef,{...action,matchId:onlineGame.matchId||onlineMatchId||"",uid:firebaseUid,actionId,clientVersion:"v510",createdAt:Date.now()});
     }catch(e){console.error("online action write failed",e);finish(false);return;}
     timer=setTimeout(()=>{onlineDebug("action-timeout",{actionId,action});finish(false);},8000);
   });
