@@ -953,6 +953,9 @@
 /* v519: mobile GET prize lower */
 @media(max-width:680px){
   .win-card .win-plush.video-win{top:35px!important;margin-top:6px!important;margin-bottom:53px!important;}
+  /* v520: move the actual rendered GET artwork downward.  The image is absolutely positioned at bottom:0, so changing the wrapper alone is not sufficient on mobile. */
+  .win-card .win-plush.video-win{overflow:visible!important;}
+  .win-card .win-plush.video-win .video-prize-art{bottom:-35px!important;}
   .collection-item.item-cookie .mini-plush,
   .collection-item.item-mashumao .mini-plush{top:4px!important;}
   .collection-item.item-lolipo-rare .mini-plush{top:-4px!important;}
