@@ -1,8 +1,8 @@
-/* CardWolf build v513 */
+/* CardWolf build v514 */
 const firebaseConfig = window.FIREBASE_CONFIG || {};
-if (window.CARDWOLF_BUILD_VERSION !== "v513") { window.CARDWOLF_BUILD_VERSION = "v513"; }
+if (window.CARDWOLF_BUILD_VERSION !== "v514") { window.CARDWOLF_BUILD_VERSION = "v514"; }
 const versionEl = document.querySelector(".build-version");
-if (versionEl) { versionEl.textContent = "v513"; versionEl.setAttribute("aria-label", "ゲームバージョン v513"); }
+if (versionEl) { versionEl.textContent = "v514"; versionEl.setAttribute("aria-label", "ゲームバージョン v514"); }
 
 // Firebase is loaded lazily so a CDN/auth/database problem can never disable
 // the basic game UI. The solo/setup buttons must remain usable even when the
@@ -88,8 +88,12 @@ const setupScreen=document.getElementById("setupScreen"),gameScreen=document.get
 const speechCountSelect=document.getElementById("speechCount"),liePenaltyToggle=document.getElementById("liePenalty"),showLieCountToggle=document.getElementById("showLieCount");
 if(liePenaltyToggle) liePenaltyToggle.checked=false;
 if(showLieCountToggle) showLieCountToggle.checked=false;
+const SETTINGS_STORAGE_KEY="cardwolf.settings";
+function loadPersistentSettings(){try{const v=JSON.parse(localStorage.getItem(SETTINGS_STORAGE_KEY)||"null");if(v){if(speechCountSelect&&["1","2","3"].includes(String(v.speechRounds)))speechCountSelect.value=String(v.speechRounds);if(liePenaltyToggle)liePenaltyToggle.checked=Boolean(v.liePenalty);if(showLieCountToggle)showLieCountToggle.checked=Boolean(v.showLieCount);if(noRevoteToggle)noRevoteToggle.checked=Boolean(v.noRevote);if(cardPoolSizeSelect&&["40","50","60","70","80","90","100"].includes(String(v.cardPoolSize)))cardPoolSizeSelect.value=String(v.cardPoolSize);if(practicePlayerCountSelect&&["3","4","5","6","7","8"].includes(String(v.practicePlayerCount)))practicePlayerCountSelect.value=String(v.practicePlayerCount);}}catch{}}
+function savePersistentSettings(){try{localStorage.setItem(SETTINGS_STORAGE_KEY,JSON.stringify({speechRounds:Number(speechCountSelect?.value||2),liePenalty:Boolean(liePenaltyToggle?.checked),showLieCount:Boolean(showLieCountToggle?.checked),noRevote:Boolean(noRevoteToggle?.checked),cardPoolSize:normalizeCardPoolSize(cardPoolSizeSelect?.value||100),practicePlayerCount:Number(practicePlayerCountSelect?.value||4)}));}catch{}}
+loadPersistentSettings();
 const playerNameInput=document.getElementById("playerName"),winCountElement=document.getElementById("winCount"),lossCountElement=document.getElementById("lossCount"),medalCountElement=document.getElementById("medalCount"),gameWinCountElement=document.getElementById("gameWinCount"),gameLossCountElement=document.getElementById("gameLossCount"),gameMedalCountElement=document.getElementById("gameMedalCount");
-const settingsDialog=document.getElementById("settingsDialog"),advancedSettingsButton=document.getElementById("advancedSettingsButton"),closeSettingsButton=document.getElementById("closeSettingsButton"),closeSettingsButtonBottom=document.getElementById("closeSettingsButtonBottom"),resetScoreButton=document.getElementById("resetScoreButton"),practicePlayerCountSelect=document.getElementById("practicePlayerCount"),cardPoolSizeSelect=document.getElementById("cardPoolSize");
+const noRevoteToggle=document.getElementById("noRevote"),settingsDialog=document.getElementById("settingsDialog"),advancedSettingsButton=document.getElementById("advancedSettingsButton"),closeSettingsButton=document.getElementById("closeSettingsButton"),closeSettingsButtonBottom=document.getElementById("closeSettingsButtonBottom"),resetScoreButton=document.getElementById("resetScoreButton"),practicePlayerCountSelect=document.getElementById("practicePlayerCount"),cardPoolSizeSelect=document.getElementById("cardPoolSize");
 const soloModeButton=document.getElementById("soloModeButton"),onlineModeButton=document.getElementById("onlineModeButton"),voiceModeButton=document.getElementById("voiceModeButton");
 const onlineDialog=document.getElementById("onlineDialog"),closeOnlineButton=document.getElementById("closeOnlineButton"),createRoomButton=document.getElementById("createRoomButton"),joinRoomButton=document.getElementById("joinRoomButton"),roomCodeInput=document.getElementById("roomCodeInput"),onlineLobby=document.getElementById("onlineLobby"),onlineRoomCode=document.getElementById("onlineRoomCode"),onlinePlayerList=document.getElementById("onlinePlayerList"),onlineLobbyStatus=document.getElementById("onlineLobbyStatus"),onlineCpuCount=document.getElementById("onlineCpuCount"),onlineStartButton=document.getElementById("onlineStartButton"),leaveRoomButton=document.getElementById("leaveRoomButton");
 
@@ -235,8 +239,9 @@ function syncPracticePlayerCount(){
   const value=Number(practicePlayerCountSelect?.value||4);
   selectedPlayerCount=Math.min(8,Math.max(3,value));
   if(practicePlayerCountSelect) practicePlayerCountSelect.value=String(selectedPlayerCount);
+  savePersistentSettings();
 }
-function getSettings(){return{speechRounds:Number(speechCountSelect.value||2),liePenalty:Boolean(liePenaltyToggle.checked),showLieCount:Boolean(showLieCountToggle&& showLieCountToggle.checked),cardPoolSize:normalizeCardPoolSize(cardPoolSizeSelect?.value||100)};}
+function getSettings(){return{speechRounds:Number(speechCountSelect?.value||2),liePenalty:Boolean(liePenaltyToggle?.checked),showLieCount:Boolean(showLieCountToggle?.checked),noRevote:Boolean(noRevoteToggle?.checked),cardPoolSize:normalizeCardPoolSize(cardPoolSizeSelect?.value||100)};}
 function randomPlayerName(){return randomItem(["ユウ","カイ","レン","アキラ","ナギ","ハヤト","ソラ","ミナ","リク","シン"]);}
 function chooseCpuNames(count){return shuffle(CPU_NAMES).slice(0,Math.max(0,Number(count)||0));}
 function getPlayerName(){const n=(playerNameInput?.value||"").trim();return n||randomPlayerName();}
@@ -551,7 +556,7 @@ function submitCpuGuess(){
     })
     .sort((a,b)=>b.score-a.score);
 
-  // v513: Honda and Jounouchi are intentionally less accurate at the
+  // v514: Honda and Jounouchi are intentionally less accurate at the
   // wolf's reversal declaration. They still use the clue data, but often
   // fail to choose the strongest candidate, increasing their wolf loss rate.
   const isFoolCpu=wolf && (wolf.name==="本田" || wolf.name==="城之内");
@@ -564,7 +569,7 @@ function submitCpuGuess(){
   finishReverseGuess(candidates[0]?.card||game.citizenCard);
 }
 function finishReverseGuess(guess){game.reverseGuess=guess;const correct=guess&&guess.name===game.citizenCard.name;game.result=correct?"wolf-reversal":"citizen";game.logs.push({type:"system",name:"逆転宣言",text:`狼は「${guess?jpName(guess):"不明"}」と宣言しました。`});game.phase="result";renderGame();}
-function recordFinishedGame(){if(!game||game.recorded)return;const wolfWon=game.result==="wolf"||game.result==="wolf-reversal";const won=game.players[0].isWolf===wolfWon;const reward=won?100:50;if(won){matchRecord.wins++;}else{matchRecord.losses++;}matchRecord.medals+=reward;game.rewardMedals=reward;game.recorded=true;renderRecord();}
+function recordFinishedGame(){if(!game||game.recorded)return;const wolfWon=game.result==="wolf"||game.result==="wolf-reversal";const won=game.players[0].isWolf===wolfWon;const playerCount=Math.min(8,Math.max(3,Number(game.players?.length||4)));const reward=won?100+(playerCount-4)*20:50+(playerCount-4)*20;if(won){matchRecord.wins++;}else{matchRecord.losses++;}matchRecord.medals+=reward;game.rewardMedals=reward;game.recorded=true;renderRecord();}
 function renderResultPhase(){recordFinishedGame();phaseLabel.textContent="GAME OVER / 答え合わせ";const wolfWon=game.result==="wolf"||game.result==="wolf-reversal";phaseTitle.textContent=wolfWon?"狼チームの勝利":"市民チームの勝利";const msg={wolf:"選ばれたプレイヤーは市民でした。狼は正体を隠し切りました。","wolf-reversal":`狼が市民カード「${jpName(game.citizenCard)}」を見事に当て、逆転しました。`,citizen:`狼の宣言は「${game.reverseGuess?jpName(game.reverseGuess):"不明"}」。正解は「${jpName(game.citizenCard)}」でした。`}[game.result];actionPanel.innerHTML=`<div class="result-banner ${wolfWon?"wolf-win":"citizen-win"}"><p>${wolfWon?"狼チームの勝利":"市民チームの勝利"}</p><h2>${wolfWon?"狼の勝利":"市民の勝利"}</h2><span>${msg}</span><strong class="reward-message"><img class="medal-icon" src="assets/medal-icon.png" alt=""> メダル +${game.rewardMedals||0}枚</strong></div><div class="answer-cards"><div><small>市民カード</small><img class="ygo-thumb" src="${cardImage(game.citizenCard)}"><strong>${jpName(game.citizenCard)}</strong><em>${cardInfo(game.citizenCard)}${cardStats(game.citizenCard)?" · "+cardStats(game.citizenCard):""}</em></div><div><small>狼カード</small><img class="ygo-thumb" src="${cardImage(game.wolfCard)}"><strong>${jpName(game.wolfCard)}</strong><em>${cardInfo(game.wolfCard)}${cardStats(game.wolfCard)?" · "+cardStats(game.wolfCard):""}</em></div></div><button class="primary-button compact" id="playAgainButton" type="button"><span>もう一度遊ぶ</span><span>↻</span></button>`;document.getElementById("playAgainButton").addEventListener("click",startGame);}
 async function returnToSetup(){
   stopFreeMatch();
@@ -775,6 +780,7 @@ document.addEventListener("click", event=>{
 }, true);
 
 practicePlayerCountSelect?.addEventListener("change",syncPracticePlayerCount);
+for(const id of ["speechCount","liePenalty","showLieCount","noRevote","cardPoolSize","practicePlayerCount"]){document.getElementById(id)?.addEventListener("change",()=>{savePersistentSettings();syncPracticePlayerCount();renderPoolCount();});}
 restartButton.addEventListener("click",returnToSetup);document.getElementById("rulesButton").addEventListener("click",()=>rulesDialog.showModal());document.getElementById("closeRulesButton").addEventListener("click",()=>rulesDialog.close());document.getElementById("poolButton").addEventListener("click",openPool);document.getElementById("closePoolButton").addEventListener("click",()=>poolDialog.close());advancedSettingsButton.addEventListener("click",()=>settingsDialog.showModal());closeSettingsButton.addEventListener("click",()=>settingsDialog.close());closeSettingsButtonBottom.addEventListener("click",()=>settingsDialog.close());resetScoreButton.addEventListener("click",()=>{if(confirm("勝利数と敗北数をリセットしますか？\nメダルはリセットされず、そのまま残ります。")){matchRecord.wins=0;matchRecord.losses=0;renderRecord();}});rulesDialog.addEventListener("click",e=>{if(e.target===rulesDialog)rulesDialog.close();});poolDialog.addEventListener("click",e=>{if(e.target===poolDialog)poolDialog.close();});settingsDialog.addEventListener("click",e=>{if(e.target===settingsDialog)settingsDialog.close();});syncPracticePlayerCount();renderRecord();if(CARD_POOL.length===0)soloModeButton.disabled=true;
 
 
@@ -1596,7 +1602,7 @@ async function submitOnlineActionOnce(action){
     onlineActionPromises.set(actionId,finish);
     try{
       onValue(resultRef,listener);
-      await set(actionRef,{...action,matchId:onlineGame.matchId||onlineMatchId||"",uid:firebaseUid,actionId,clientVersion:"v513",createdAt:Date.now()});
+      await set(actionRef,{...action,matchId:onlineGame.matchId||onlineMatchId||"",uid:firebaseUid,actionId,clientVersion:"v514",createdAt:Date.now()});
     }catch(e){console.error("online action write failed",e);finish(false);return;}
     timer=setTimeout(()=>{onlineDebug("action-timeout",{actionId,action});finish(false);},8000);
   });

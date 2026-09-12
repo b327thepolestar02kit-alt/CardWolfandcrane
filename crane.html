@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=v513">
+  <link rel="stylesheet" href="styles.css?v=v514">
   <style>
     :root{--cg-bg:#070b15;--cg-panel:#111827;--cg-panel2:#182338;--cg-line:#334155;--cg-blue:#45b8ff;--cg-cyan:#76f4ff;--cg-yellow:#ffd86a;--cg-pink:#ff78b7;--cg-green:#67e8a5}
     *{box-sizing:border-box}
@@ -850,7 +850,7 @@
 @media(max-width:680px){
   .mobile-cabinet-toast{position:absolute;left:50%;bottom:64px;transform:translate(-50%,10px);width:min(78%,300px);padding:10px 16px;border-radius:18px;background:rgba(255,255,255,.94);border:1px solid rgba(102,137,142,.35);box-shadow:0 8px 22px rgba(49,76,80,.18);color:#536c70;font-size:.78rem;font-weight:900;line-height:1.35;text-align:center;opacity:0;pointer-events:none;z-index:34;transition:opacity .18s ease,transform .18s ease;}
   .mobile-cabinet-toast.show{display:block;opacity:1;transform:translate(-50%,0);}
-  .win-card .win-plush.video-win{transform:scale(1.55)!important;}
+  .win-card .win-plush.video-win{transform:translateY(12px) scale(1.55)!important;}
   .win-card .video-win .video-prize-art{left:50%!important;right:auto!important;width:100%!important;height:100%!important;object-position:center bottom!important;transform:translateX(-50%) scale(var(--asset-scale,1))!important;}
 }
 
@@ -877,21 +877,45 @@
   .win-card .win-plush .video-prize-art{left:50%!important;right:auto!important;width:100%!important;height:100%!important;object-fit:contain!important;object-position:center bottom!important;transform:translateX(-50%) scale(var(--asset-scale,1))!important;}
 }
 
-    /* v513: place the user-supplied prize outlet banner directly below the crane controls. */
+    /* v514: place the user-supplied prize outlet banner directly below the crane controls. */
     .crane-outlet-banner{width:100%;margin:10px 0 0;display:flex;justify-content:center;align-items:center;}
     .crane-outlet-banner img{display:block;width:min(834px,100%);height:auto;max-width:834px;object-fit:contain;}
     @media(max-width:680px){.crane-outlet-banner{margin-top:8px;padding:0}.crane-outlet-banner img{width:100%;}}
-/* v513: enlarge the machine-head button_logo to match the decorative horizontal rainbow line width. */
+/* v514: enlarge the machine-head button_logo to match the decorative horizontal rainbow line width. */
 </style>
 
-<style id="v513-pc-taller-cabinet-and-remove-scene-decor">
-/* v513: PC版のみ筐体内部を縦長化。クレーンの下降量も連動して調整。 */
+<style id="v514-pc-taller-cabinet-and-remove-scene-decor">
+/* v514: PC版のみ筐体内部を縦長化。クレーンの下降量も連動して調整。 */
 @media (min-width:681px){
   .cabinet{aspect-ratio:4 / 3;}
 }
-/* v513: ピンク・水色の草原風装飾（scene-decor）は不要のため非表示。
+/* v514: ピンク・水色の草原風装飾（scene-decor）は不要のため非表示。
    背景画像 .video-backdrop や景品画像には影響しない。 */
 .scene-decor{display:none!important;}
+
+/* v514: mobile collection positioning refinements. */
+@media(max-width:680px){
+  .collection-item.item-cookie .mini-plush,
+  .collection-item.item-mashumao .mini-plush{top:-18px!important;}
+  .win-card .win-plush.video-win{transform:translateY(12px) scale(1.55)!important;}
+}
+
+/* v514: レアYummy 4種をコレクション画面で金色グラデーション表示。 */
+.collection-item.item-capsy-rare,
+.collection-item.item-cookie-rare,
+.collection-item.item-lolipo-rare,
+.collection-item.item-mashumao-rare{
+  background:linear-gradient(145deg,#fff9dc 0%,#fff1b4 55%,#f5dc82 100%)!important;
+  border-color:rgba(196,151,38,.55)!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.65),0 3px 10px rgba(190,145,40,.12);
+}
+.collection-item.item-capsy-rare .qty,
+.collection-item.item-cookie-rare .qty,
+.collection-item.item-lolipo-rare .qty,
+.collection-item.item-mashumao-rare .qty{
+  background:#f1d77d!important;
+  color:#6e5518!important;
+}
 </style>
 </head>
 <body class="crane-body">
@@ -949,10 +973,10 @@
     {id:'cookie',name:'クッキィ',type:'yummy',asset:'cookie',rarity:'N',difficulty:.54,assetScale:1},
     {id:'lolipo',name:'ロリポー',type:'yummy',asset:'lolipo',rarity:'R',difficulty:.60,assetScale:1},
     {id:'mashumao',name:'マシュマオ',type:'yummy',asset:'mashumao',rarity:'R',difficulty:.58,assetScale:1},
-    {id:'capsy-rare',name:'カプシー【レア】',type:'yummy',asset:'capsy_rare',rarity:'SR',difficulty:.70,assetScale:1},
-    {id:'cookie-rare',name:'クッキィ【レア】',type:'yummy',asset:'cookie_rare',rarity:'SR',difficulty:.76,assetScale:1},
-    {id:'lolipo-rare',name:'ロリポー【レア】',type:'yummy',asset:'lolipo_rare',rarity:'SR',difficulty:.82,assetScale:1.14},
-    {id:'mashumao-rare',name:'マシュマオ【レア】',type:'yummy',asset:'mashumao_rare',rarity:'SR',difficulty:.84,assetScale:1}
+    {id:'capsy-rare',name:'カプシー',type:'yummy',asset:'capsy_rare',rarity:'SR',difficulty:.70,assetScale:1},
+    {id:'cookie-rare',name:'クッキィ',type:'yummy',asset:'cookie_rare',rarity:'SR',difficulty:.76,assetScale:1},
+    {id:'lolipo-rare',name:'ロリポー',type:'yummy',asset:'lolipo_rare',rarity:'SR',difficulty:.82,assetScale:1.14},
+    {id:'mashumao-rare',name:'マシュマオ',type:'yummy',asset:'mashumao_rare',rarity:'SR',difficulty:.84,assetScale:1}
   ];
   const $=id=>document.getElementById(id);
   const shell=document.querySelector('.machine-wrap');
