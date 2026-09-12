@@ -953,7 +953,7 @@
 /* v519: mobile GET prize lower */
 @media(max-width:680px){
   .win-card .win-plush.video-win{top:35px!important;margin-top:6px!important;margin-bottom:53px!important;}
-  /* v520: move the actual rendered GET artwork downward.  The image is absolutely positioned at bottom:0, so changing the wrapper alone is not sufficient on mobile. */
+  /* v521: move the actual rendered GET artwork downward.  The image is absolutely positioned at bottom:0, so changing the wrapper alone is not sufficient on mobile. */
   .win-card .win-plush.video-win{overflow:visible!important;}
   .win-card .win-plush.video-win .video-prize-art{bottom:-35px!important;}
   .collection-item.item-cookie .mini-plush,
@@ -1004,6 +1004,19 @@
   /* Normal Lolipo: move slightly downward from the previous -12px position. */
   .collection-item.item-lolipo .mini-plush{top:0px!important;}
 }
+
+/* v521: mobile GET screen text position adjustment.
+   Keep the prize character and OK button in their existing positions.
+   Move only the GET! title and acquisition text upward visually. */
+@media(max-width:680px){
+  .win-card .burst,
+  .win-card .got,
+  .win-card .get-total{
+    position:relative!important;
+    top:-20px!important;
+  }
+}
+
 </style>
 </head>
 <body class="crane-body">
@@ -1279,7 +1292,7 @@
   }
   function resetCraneTop(){setCraneTop(CRANE_HOME_TOP);}
   const CRANE_CABLE_HOME=30;
-  const CRANE_CABLE_DROP=window.matchMedia('(max-width:680px)').matches ? 175 : 214;
+  const CRANE_CABLE_DROP=window.matchMedia('(max-width:680px)').matches ? 175 : 234;
   function animateCraneVertical(to,duration=1200){
     const from=parseFloat(getComputedStyle(cable).getPropertyValue('--cable-height'))||CRANE_CABLE_HOME;
     return new Promise(resolve=>{
