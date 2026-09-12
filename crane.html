@@ -917,24 +917,43 @@
   color:#6e5518!important;
 }
 </style>
-<style id="v515-crane-fixes">
+<style id="v516-crane-fixes">
 @media(max-width:680px){
   .win-card .win-plush.video-win{position:relative!important;top:0!important;transform:translateY(24px) scale(1.55)!important;margin-top:6px!important;}
   .collection-item.item-cookie .mini-plush,.collection-item.item-mashumao .mini-plush{top:-10px!important;}
 }
-/* v515: extend the visible cable into the crane artwork so it remains continuous during return/open-arm motion. */
+/* v516: extend the visible cable into the crane artwork so it remains continuous during return/open-arm motion. */
 .crane-carriage.video-state .cable{z-index:20!important;}
 .crane-carriage.video-state .cable:after{content:"";position:absolute;left:0;top:calc(100% - 1px);width:100%;height:14px;background:linear-gradient(90deg,#73898d,#fff,#8ba2a6);box-shadow:0 0 2px rgba(255,255,255,.55);pointer-events:none;}
-/* v515: crane-game sound is OFF by default; the small button toggles it. */
+/* v516: crane-game sound is OFF by default; the small button toggles it. */
 .sound-toggle{position:absolute;right:18px;top:18px;width:28px;height:28px;padding:0;border:1px solid rgba(91,116,121,.24);border-radius:50%;background:rgba(255,255,255,.68);color:#65797d;font-size:13px;line-height:26px;text-align:center;z-index:50;cursor:pointer;opacity:.72;box-shadow:0 2px 6px rgba(48,72,76,.12);}
 .sound-toggle:hover{opacity:.95;}.sound-toggle:active{transform:scale(.94);}.sound-toggle.is-on{color:#8b6615;background:rgba(255,239,170,.8);}
 @media(max-width:680px){.sound-toggle{right:9px;top:10px;width:25px;height:25px;font-size:12px;line-height:23px;opacity:.62;}}
 </style>
+<style id="v516-crane-fixes">
+/* v516: mobile GET prize is positioned by the win-card box itself; avoid transform-only movement. */
+@media(max-width:680px){
+  .win-card .win-plush.video-win{
+    top:20px!important;
+    margin-top:6px!important;
+    margin-bottom:38px!important;
+  }
+  .collection-item.item-cookie .mini-plush,
+  .collection-item.item-mashumao .mini-plush{top:-4px!important;}
+}
+/* v516: keep the crane cable behind the crane artwork/body. */
+.crane-carriage.video-state .cable{z-index:10!important;}
+.crane-carriage.video-state .video-crane-art{z-index:18!important;}
+/* v516: volume button belongs to the upper-right of PLAY INFO. */
+.play-info-card{position:relative!important;}
+.play-info-card .sound-toggle{right:8px!important;top:8px!important;}
+</style>
+
 </head>
 <body class="crane-body">
   <div class="crane-shell">
     <main class="cg-layout">
-      <section class="machine-wrap" aria-label="クレーンゲーム機"><button class="sound-toggle" id="soundToggle" type="button" aria-label="効果音オフ" aria-pressed="false">🔇</button>
+      <section class="machine-wrap" aria-label="クレーンゲーム機">
         <div class="machine-head"><img class="machine-head-logo" src="assets/yummy/button_logo.png" alt="PRIZE CATCHER"><span class="head-lights"><i></i><i></i><i></i><i></i><i></i></span></div>
         <div class="cabinet" id="cabinet">
           <div class="cabinet-side-decor left" aria-hidden="true"></div><div class="cabinet-side-decor right" aria-hidden="true"></div>
@@ -959,7 +978,7 @@
       </section>
 
       <aside class="side-panel">
-        <section class="cg-card play-info-card"><h2>PLAY INFO</h2><div class="owned-medals"><img src="assets/medal-icon.png" alt="メダル"><span>所持メダル</span><strong id="medalCount">0</strong></div><div class="cost"><span>1プレイ</span><strong>100枚</strong></div><p>左側のホーム位置から右へ移動して狙い、降下後は上昇して左側の排出口へ戻ります。内部の掴み判定は「位置・タイミング・景品難度」を組み合わせた中間方式です。</p><p class="notice">※ボタンを押すたびに100メダルを先払い。複数回押すと、その回数分を連続プレイできます。</p></section>
+        <section class="cg-card play-info-card"><button class="sound-toggle" id="soundToggle" type="button" aria-label="効果音オフ" aria-pressed="false">🔇</button><h2>PLAY INFO</h2><div class="owned-medals"><img src="assets/medal-icon.png" alt="メダル"><span>所持メダル</span><strong id="medalCount">0</strong></div><div class="cost"><span>1プレイ</span><strong>100枚</strong></div><p>左側のホーム位置から右へ移動して狙い、降下後は上昇して左側の排出口へ戻ります。内部の掴み判定は「位置・タイミング・景品難度」を組み合わせた中間方式です。</p><p class="notice">※ボタンを押すたびに100メダルを先払い。複数回押すと、その回数分を連続プレイできます。</p></section>
         <section class="cg-card collection-card"><h2>COLLECTION <span id="collectionCount">0 / 8</span></h2><div class="collection-progress"><span id="collectionProgress"></span></div><div class="collection-grid" id="collectionGrid"></div><p class="notice">獲得数はこのブラウザに保存されます。</p><p class="reset-note">コレクションをリセット</p><button class="cg-btn" id="resetCollection" type="button">COLLECTION RESET</button></section>
         <a class="cg-card back-button" href="index.html">← カードウルフへ戻る</a>
       </aside>
@@ -968,7 +987,7 @@
 
   <div class="status-toast" id="toast" role="status" aria-live="polite"></div>
   <div class="crane-result-overlay" id="craneResultOverlay" aria-hidden="true"><div class="crane-result-card"><img id="craneResultImage" src="" alt="クレーン結果"></div></div>
-  <div class="win-overlay" id="winOverlay"><div class="win-card"><div class="burst">GET!</div><div class="win-plush" id="winPlush"></div><div class="got" id="winText">景品を獲得しました！</div><button id="closeWin" type="button">コレクションを見る</button></div></div>
+  <div class="win-overlay" id="winOverlay"><div class="win-card"><div class="burst">GET!</div><div class="win-plush" id="winPlush"></div><div class="got" id="winText">景品を獲得しました！</div><button id="closeWin" type="button">OK</button></div></div>
 
 <script>
 (() => {

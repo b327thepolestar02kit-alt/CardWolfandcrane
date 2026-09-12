@@ -1,8 +1,8 @@
-/* CardWolf build v515 */
+/* CardWolf build v516 */
 const firebaseConfig = window.FIREBASE_CONFIG || {};
-if (window.CARDWOLF_BUILD_VERSION !== "v515") { window.CARDWOLF_BUILD_VERSION = "v515"; }
+if (window.CARDWOLF_BUILD_VERSION !== "v516") { window.CARDWOLF_BUILD_VERSION = "v516"; }
 const versionEl = document.querySelector(".build-version");
-if (versionEl) { versionEl.textContent = "v515"; versionEl.setAttribute("aria-label", "ゲームバージョン v515"); }
+if (versionEl) { versionEl.textContent = "v516"; versionEl.setAttribute("aria-label", "ゲームバージョン v516"); }
 
 // Firebase is loaded lazily so a CDN/auth/database problem can never disable
 // the basic game UI. The solo/setup buttons must remain usable even when the
@@ -571,7 +571,7 @@ function submitCpuGuess(){
     })
     .sort((a,b)=>b.score-a.score);
 
-  // v515: Honda and Jounouchi are intentionally less accurate at the
+  // v516: Honda and Jounouchi are intentionally less accurate at the
   // wolf's reversal declaration. They still use the clue data, but often
   // fail to choose the strongest candidate, increasing their wolf loss rate.
   const isFoolCpu=wolf && (wolf.name==="本田" || wolf.name==="城之内");
@@ -1617,7 +1617,7 @@ async function submitOnlineActionOnce(action){
     onlineActionPromises.set(actionId,finish);
     try{
       onValue(resultRef,listener);
-      await set(actionRef,{...action,matchId:onlineGame.matchId||onlineMatchId||"",uid:firebaseUid,actionId,clientVersion:"v515",createdAt:Date.now()});
+      await set(actionRef,{...action,matchId:onlineGame.matchId||onlineMatchId||"",uid:firebaseUid,actionId,clientVersion:"v516",createdAt:Date.now()});
     }catch(e){console.error("online action write failed",e);finish(false);return;}
     timer=setTimeout(()=>{onlineDebug("action-timeout",{actionId,action});finish(false);},8000);
   });
