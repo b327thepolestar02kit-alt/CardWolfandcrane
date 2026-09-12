@@ -1,8 +1,8 @@
-/* CardWolf build v514 */
+/* CardWolf build v515 */
 const firebaseConfig = window.FIREBASE_CONFIG || {};
-if (window.CARDWOLF_BUILD_VERSION !== "v514") { window.CARDWOLF_BUILD_VERSION = "v514"; }
+if (window.CARDWOLF_BUILD_VERSION !== "v515") { window.CARDWOLF_BUILD_VERSION = "v515"; }
 const versionEl = document.querySelector(".build-version");
-if (versionEl) { versionEl.textContent = "v514"; versionEl.setAttribute("aria-label", "ゲームバージョン v514"); }
+if (versionEl) { versionEl.textContent = "v515"; versionEl.setAttribute("aria-label", "ゲームバージョン v515"); }
 
 // Firebase is loaded lazily so a CDN/auth/database problem can never disable
 // the basic game UI. The solo/setup buttons must remain usable even when the
@@ -469,6 +469,21 @@ function chooseCpuClue(options,nameBoundaryWeight=.06){
   }
   return randomItem(ordinary.length?ordinary:nameBoundary);
 }
+function isCpuNegativeClue(statement){
+  const id=String(statement?.id||'');
+  return id.startsWith('negative-') || id.startsWith('not-') || /(^|[-_])negative([-_]|$)/i.test(id);
+}
+function chooseCpuTruthfulClue(options,nameBoundaryWeight=.06,negativeWeight=.68){
+  if(!options?.length)return null;
+  const ordinary=options.filter(s=>!isCpuNameBoundaryClue(s));
+  const nameBoundary=options.filter(isCpuNameBoundaryClue);
+  if(nameBoundary.length&&ordinary.length&&Math.random()<nameBoundaryWeight)return randomItem(nameBoundary);
+  const base=ordinary.length?ordinary:nameBoundary;
+  if(!base.length)return null;
+  const weighted=base.flatMap(s=>isCpuNegativeClue(s)?(Math.random()<negativeWeight?[s]:[]):[s]);
+  const nonNegative=base.filter(s=>!isCpuNegativeClue(s));
+  return randomItem(weighted.length?weighted:(nonNegative.length?nonNegative:base));
+}
 function cpuNegativeCluesForCard(card,used){
   const negatives=[...negativeBasicClues(),...negativeAttributeClues(),...negativeRaceClues()];
   return shuffle(negatives).filter(s=>!used.has(s.id)&&safeTest(s,card));
@@ -487,7 +502,7 @@ function playNextCpuTurn(){
  let falsehoods=shuffle(falseStatementsFor(player.card,game.settings)).filter(s=>!used.has(s.id));
  let statement=null;
  if(!player.isWolf){
-   statement=chooseCpuClue(truthful)||cpuFallbackStatement(player,used);
+   statement=chooseCpuTruthfulClue(truthful)||cpuFallbackStatement(player,used);
  }
  else{
    const citizen=game.citizenCard;
@@ -556,7 +571,7 @@ function submitCpuGuess(){
     })
     .sort((a,b)=>b.score-a.score);
 
-  // v514: Honda and Jounouchi are intentionally less accurate at the
+  // v515: Honda and Jounouchi are intentionally less accurate at the
   // wolf's reversal declaration. They still use the clue data, but often
   // fail to choose the strongest candidate, increasing their wolf loss rate.
   const isFoolCpu=wolf && (wolf.name==="本田" || wolf.name==="城之内");
@@ -1602,7 +1617,7 @@ async function submitOnlineActionOnce(action){
     onlineActionPromises.set(actionId,finish);
     try{
       onValue(resultRef,listener);
-      await set(actionRef,{...action,matchId:onlineGame.matchId||onlineMatchId||"",uid:firebaseUid,actionId,clientVersion:"v514",createdAt:Date.now()});
+      await set(actionRef,{...action,matchId:onlineGame.matchId||onlineMatchId||"",uid:firebaseUid,actionId,clientVersion:"v515",createdAt:Date.now()});
     }catch(e){console.error("online action write failed",e);finish(false);return;}
     timer=setTimeout(()=>{onlineDebug("action-timeout",{actionId,action});finish(false);},8000);
   });
