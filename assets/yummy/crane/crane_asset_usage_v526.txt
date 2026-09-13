@@ -1,0 +1,71 @@
+CardWolf v526 - assets/yummy/crane 画像使用状況
+
+【運用方針】
+開発が落ち着くまでは、現在未使用の画像は削除せず useless フォルダ内で管理する。
+
+【使用中 / crane直下】
+- descend_arm_left.png: 降下時の左アーム。v526では最下点で内側へ回転させて閉鎖アニメーションにも使用。
+- descend_arm_right.png: 降下時の右アーム。v526では最下点で内側へ回転させて閉鎖アニメーションにも使用。
+- descend_core.png: 降下～最下点～アーム閉鎖アニメーション中の通常表情の本体。
+- fail_arm_left.png: 掴み失敗後の左アーム。
+- fail_arm_right.png: 掴み失敗後の右アーム。
+- fail_core.png: 掴み失敗後、上昇開始時の本体表情。
+- fail_drop_arm_left.png: 失敗後のドロップ状態の左アーム。
+- fail_drop_arm_right.png: 失敗後のドロップ状態の右アーム。
+- fail_drop_clean.png: 失敗後の完成表示用画像。
+- fail_drop_core.png: 失敗後のドロップ状態の本体。
+- open_arm_left_clean.png: 待機状態で開いた左アーム素材。
+- open_arm_right_clean.png: 待機状態で開いた右アーム素材。
+- ready_arm_left.png: 待機状態レイヤーの初期左アーム。
+- ready_arm_left_clean.png: 待機状態の閉じた左アーム素材。
+- ready_arm_right.png: 待機状態レイヤーの初期右アーム。
+- ready_arm_right_clean.png: 待機状態の閉じた右アーム素材。
+- ready_core.png: 待機状態レイヤーの初期本体画像。
+- ready_core_clean.png: 待機状態で使用する通常表情の本体レイヤー。
+- ready_full.png: 待機中・降下前の左右移動で表示するクレーン全体画像（新画像ではケーブルを含まないため、ケーブルはHTML/CSSで背面描画）。
+- result_fail.png: 失敗時の結果表示画像。
+- result_success.png: GET成功時の結果表示画像。
+- success_arm_left.png: 掴み成功後の左アーム。
+- success_arm_right.png: 掴み成功後の右アーム。
+- success_core.png: 掴み成功後、上昇開始時の本体表情。
+- success_drop.png: 成功時のドロップ系完成画像。
+- success_drop_arm_left.png: 成功後のドロップ状態の左アーム。
+- success_drop_arm_right.png: 成功後のドロップ状態の右アーム。
+- success_drop_core.png: 成功後のドロップ状態の本体。
+
+【未使用 / useless】
+- descend.png
+- fail.png
+- fail_body.png
+- fail_drop.png
+- fail_drop_body.png
+- ready.png
+- ready_body.png
+- success.png
+- success_body.png
+- success_drop_body.png
+
+【v526の描画メモ】
+- 待機中・降下前の左右移動では ready_full.png を表示し、ケーブルは別DOMの .cable をクレーン本体の背面に描画する。
+- 降下 → 最下点 → 閉鎖アニメーションまでは descend_core.png の通常表情を維持する。
+- 閉鎖アニメーションでは descend_arm_left/right.png を左右それぞれ内側へ約18度回転させる。
+- 閉鎖完了後、上昇開始時に初めて success / fail の本体・アーム画像へ切り替える。
+
+
+【v526 アーム閉鎖描画の修正】
+- 閉鎖中は descend_core.png（通常表情）を固定し、左右アームだけを回転させる。
+- coreをアームより前面に描画し、アームPNGに含まれる本体重複部分が顔・本体へ被らないようにした。
+- arm-closing状態を各ビジュアル切替時に必ず解除する。
+- 2回目以降も一度open状態を描画してからarm-closingを付与し直し、CSS transitionを毎回再起動する。
+- 現状の画像だけで修正可能。追加画像は不要。
+
+
+[v526 additional notes]
+- descend_core.png was replaced with the newly supplied artwork.
+- Root cause of the one-frame break after arm closure: the split descend and success/fail
+  layers use different source canvas sizes; swapping the core/arm image sources at the same
+  moment as the state-class reset could expose a transient mixed frame.
+- success.png and fail.png were promoted from useless/ and are now used as preloaded
+  whole-frame artwork for the upward success/fail states. Because they are already decoded
+  and switch by class opacity only, the closure -> lift boundary does not mix layers.
+- The separated descend layers remain in use for the arm-closing animation.

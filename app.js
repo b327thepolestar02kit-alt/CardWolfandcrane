@@ -1,8 +1,8 @@
-/* CardWolf build v522 */
+/* CardWolf build v526 */
 const firebaseConfig = window.FIREBASE_CONFIG || {};
-if (window.CARDWOLF_BUILD_VERSION !== "v522") { window.CARDWOLF_BUILD_VERSION = "v522"; }
+if (window.CARDWOLF_BUILD_VERSION !== "v526") { window.CARDWOLF_BUILD_VERSION = "v526"; }
 const versionEl = document.querySelector(".build-version");
-if (versionEl) { versionEl.textContent = "v522"; versionEl.setAttribute("aria-label", "ゲームバージョン v522"); }
+if (versionEl) { versionEl.textContent = "v526"; versionEl.setAttribute("aria-label", "ゲームバージョン v526"); }
 
 // Firebase is loaded lazily so a CDN/auth/database problem can never disable
 // the basic game UI. The solo/setup buttons must remain usable even when the
@@ -1617,7 +1617,7 @@ async function submitOnlineActionOnce(action){
     onlineActionPromises.set(actionId,finish);
     try{
       onValue(resultRef,listener);
-      await set(actionRef,{...action,matchId:onlineGame.matchId||onlineMatchId||"",uid:firebaseUid,actionId,clientVersion:"v522",createdAt:Date.now()});
+      await set(actionRef,{...action,matchId:onlineGame.matchId||onlineMatchId||"",uid:firebaseUid,actionId,clientVersion:"v526",createdAt:Date.now()});
     }catch(e){console.error("online action write failed",e);finish(false);return;}
     timer=setTimeout(()=>{onlineDebug("action-timeout",{actionId,action});finish(false);},8000);
   });

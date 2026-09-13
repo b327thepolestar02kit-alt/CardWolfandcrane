@@ -1018,6 +1018,62 @@
 }
 
 </style>
+
+<style id="v526-stable-lift-frame">
+/* v526: success/fail upward artwork uses a single preloaded composited frame.
+   This prevents a transient mixed frame caused by core and arm PNGs having
+   different canvas sizes while their src/state changes after arm closure. */
+.video-crane-art .lift-full{opacity:0!important;z-index:6!important;transition:none!important;}
+.video-crane-art.lift-success-full .success-lift-full{opacity:1!important;}
+.video-crane-art.lift-fail-full .fail-lift-full{opacity:1!important;}
+.video-crane-art.lift-success-full .core,
+.video-crane-art.lift-success-full .arm,
+.video-crane-art.lift-success-full .ready-full,
+.video-crane-art.lift-success-full .fail-full,
+.video-crane-art.lift-success-full .drop-full,
+.video-crane-art.lift-fail-full .core,
+.video-crane-art.lift-fail-full .arm,
+.video-crane-art.lift-fail-full .ready-full,
+.video-crane-art.lift-fail-full .fail-full,
+.video-crane-art.lift-fail-full .drop-full{opacity:0!important;}
+</style>
+
+<style id="v526-arm-close-and-ready-cable">
+/* v526: animate only the separated descend arms at the lowest point.
+   The normal descend core/expression stays fixed and is always drawn above the
+   moving arm layers. This masks the arm PNGs' overlapping shoulder/body pixels
+   so the face/body cannot break apart while the arms rotate. */
+.video-crane-art .open-arm{
+  transition:opacity .16s ease, transform var(--arm-close-duration,700ms) cubic-bezier(.32,.02,.22,1)!important;
+}
+.video-crane-art.arm-closing .core{z-index:4!important;}
+.video-crane-art.arm-closing .open-arm{opacity:1!important;z-index:2!important;}
+.video-crane-art.arm-closing .closed-arm{opacity:0!important;z-index:1!important;}
+.video-crane-art.arm-closing .open-arm.left{
+  transform-origin:46% 41%!important;
+  transform:rotate(-18deg)!important;
+}
+.video-crane-art.arm-closing .open-arm.right{
+  transform-origin:54% 41%!important;
+  transform:rotate(18deg)!important;
+}
+/* When not closing, explicitly restore the neutral transform. This makes every
+   play start from the same open pose instead of inheriting the previous run. */
+.video-crane-art:not(.arm-closing) .open-arm{transform:none!important;}
+
+/* Refreshed ready artwork no longer contains a cable. Show the existing cable
+   behind the crane body during idle/left-right movement, just like other states. */
+.crane-carriage.ready-display .cable{
+  visibility:visible!important;
+  z-index:10!important;
+  top:0!important;
+  height:var(--cable-height,30px)!important;
+}
+.crane-carriage.ready-display .cable:after{
+  z-index:10!important;
+}
+.crane-carriage.ready-display .video-crane-art{z-index:30!important;}
+</style>
 </head>
 <body class="crane-body">
   <div class="crane-shell">
@@ -1034,7 +1090,7 @@
 </div><div class="route-line" id="routeLine" aria-hidden="true"></div><div class="target-sweep" id="targetSweep" aria-hidden="true"></div><div class="rail-shimmer" id="railShimmer" aria-hidden="true"></div><div class="keyboard-hint" id="keyboardHint" aria-hidden="true">← → MOVE  •  ENTER / ↓ DROP</div><div class="depth-meter" id="depthMeter" aria-hidden="true"><i id="depthFill"></i><b>DEPTH</b></div><div class="grab-tension" id="grabTension" aria-hidden="true"><i id="tensionFill"></i><b>GRIP TENSION</b></div><div class="play-progress" id="playProgress" aria-hidden="true"></div><div class="stage-counter" id="stageCounter">PLAY 01</div><div class="prize-counter" id="prizeCounter">COLLECTED 0</div>
             <div class="top-rail"></div><div class="rail-light"></div><div class="rail-scale" id="railScale" aria-hidden="true"></div><div class="return-track" aria-hidden="true"></div><div class="return-marker" aria-hidden="true"></div><div class="drop-trajectory" id="dropTrajectory" aria-hidden="true"></div><div class="get-reward-ring" id="getRewardRing" aria-hidden="true"></div>
             <div class="crane-carriage" id="carriage"><div id="videoCraneArt" class="video-crane-art" aria-hidden="true"><img class="crane-layer ready-full" data-layer="ready-full" src="assets/yummy/crane/ready_full.png" alt="" draggable="false">
-<img class="crane-layer fail-full" data-layer="fail-full" src="assets/yummy/crane/fail_core.png" alt="" draggable="false"><img class="crane-layer core" data-layer="core" src="assets/yummy/crane/ready_core.png" alt="" draggable="false"><img class="crane-layer arm left closed-arm" data-layer="closed-left" src="assets/yummy/crane/ready_arm_left.png" alt="" draggable="false"><img class="crane-layer arm right closed-arm" data-layer="closed-right" src="assets/yummy/crane/ready_arm_right.png" alt="" draggable="false"><img class="crane-layer arm left open-arm" data-layer="open-left" src="assets/yummy/crane/ready_arm_left.png" alt="" draggable="false"><img class="crane-layer arm right open-arm" data-layer="open-right" src="assets/yummy/crane/ready_arm_right.png" alt="" draggable="false"><img class="crane-layer drop-full" data-layer="drop-full" src="assets/yummy/crane/success_drop.png" alt="" draggable="false"></div><div class="carriage-body"><img class="crane-mascot" src="assets/crane_head_cut.png" alt=""><span class="bot-eye left"></span><span class="bot-eye right"></span><span class="bot-mouth"></span><span class="bot-fin left"></span><span class="bot-fin right"></span></div><div class="cable" id="cable"></div><div class="claw" id="claw"><div class="claw-ring"></div><div class="claw-shadow" aria-hidden="true"></div><div class="finger left"></div><div class="finger right"></div></div></div>
+<img class="crane-layer fail-full" data-layer="fail-full" src="assets/yummy/crane/fail_core.png" alt="" draggable="false"><img class="crane-layer lift-full success-lift-full" data-layer="success-lift-full" src="assets/yummy/crane/success.png" alt="" draggable="false"><img class="crane-layer lift-full fail-lift-full" data-layer="fail-lift-full" src="assets/yummy/crane/fail.png" alt="" draggable="false"><img class="crane-layer core" data-layer="core" src="assets/yummy/crane/ready_core.png" alt="" draggable="false"><img class="crane-layer arm left closed-arm" data-layer="closed-left" src="assets/yummy/crane/ready_arm_left.png" alt="" draggable="false"><img class="crane-layer arm right closed-arm" data-layer="closed-right" src="assets/yummy/crane/ready_arm_right.png" alt="" draggable="false"><img class="crane-layer arm left open-arm" data-layer="open-left" src="assets/yummy/crane/ready_arm_left.png" alt="" draggable="false"><img class="crane-layer arm right open-arm" data-layer="open-right" src="assets/yummy/crane/ready_arm_right.png" alt="" draggable="false"><img class="crane-layer drop-full" data-layer="drop-full" src="assets/yummy/crane/success_drop.png" alt="" draggable="false"></div><div class="carriage-body"><img class="crane-mascot" src="assets/crane_head_cut.png" alt=""><span class="bot-eye left"></span><span class="bot-eye right"></span><span class="bot-mouth"></span><span class="bot-fin left"></span><span class="bot-fin right"></span></div><div class="cable" id="cable"></div><div class="claw" id="claw"><div class="claw-ring"></div><div class="claw-shadow" aria-hidden="true"></div><div class="finger left"></div><div class="finger right"></div></div></div>
             <div class="move-hint" id="moveHint">← → / A D で左右移動　　↓ / S で降下</div>
             <div class="prize-bed"><div class="bed-count" id="bedCount">PRIZES 00</div><div class="tray-ribbon" aria-hidden="true">PRIZE AREA</div><div class="prizes" id="prizes"></div><div class="drop-glow"></div><div class="chute-door" id="chuteDoor" aria-hidden="true"></div><div class="chute-label"><span>PRIZE OUT</span><small>GET ZONE</small></div></div>
           </div>
@@ -1111,9 +1167,9 @@
     const map={
       ready:{core:'ready_core_clean.png',closedLeft:'ready_arm_left_clean.png',closedRight:'ready_arm_right_clean.png',openLeft:'open_arm_left_clean.png',openRight:'open_arm_right_clean.png',open:true,readyFull:'ready_full.png'},
       descend:{core:'descend_core.png',closedLeft:'descend_arm_left.png',closedRight:'descend_arm_right.png',openLeft:'descend_arm_left.png',openRight:'descend_arm_right.png',open:true},
-      success:{core:'success_core.png',closedLeft:'success_arm_left.png',closedRight:'success_arm_right.png',openLeft:'success_drop_arm_left.png',openRight:'success_drop_arm_right.png',open:false},
+      success:{core:'success_core.png',closedLeft:'success_arm_left.png',closedRight:'success_arm_right.png',openLeft:'success_drop_arm_left.png',openRight:'success_drop_arm_right.png',open:false,liftFull:'success'},
       successDrop:{core:'success_drop_core.png',closedLeft:'success_drop_arm_left.png',closedRight:'success_drop_arm_right.png',openLeft:'success_drop_arm_left.png',openRight:'success_drop_arm_right.png',open:true,dropFull:'success_drop.png'},
-      fail:{core:'fail_core.png',closedLeft:'fail_arm_left.png',closedRight:'fail_arm_right.png',openLeft:'fail_drop_arm_left.png',openRight:'fail_drop_arm_right.png',open:false},
+      fail:{core:'fail_core.png',closedLeft:'fail_arm_left.png',closedRight:'fail_arm_right.png',openLeft:'fail_drop_arm_left.png',openRight:'fail_drop_arm_right.png',open:false,liftFull:'fail'},
       failDrop:{core:'fail_drop_core.png',closedLeft:'fail_drop_arm_left.png',closedRight:'fail_drop_arm_right.png',openLeft:'fail_drop_arm_left.png',openRight:'fail_drop_arm_right.png',open:true,dropFull:'fail_drop_clean.png'}
     };
     const cfg=map[kind];
@@ -1132,18 +1188,22 @@
     const readyFull=videoCraneArt.querySelector('[data-layer="ready-full"]');
     const failFull=videoCraneArt.querySelector('[data-layer="fail-full"]');
     const base='assets/yummy/crane/';
-    if(core)core.src=base+cfg.core;
-    if(cl)cl.src=base+cfg.closedLeft;
-    if(cr)cr.src=base+cfg.closedRight;
-    if(ol)ol.src=base+cfg.openLeft;
-    if(or)or.src=base+cfg.openRight;
+    if(!cfg.liftFull){
+      if(core)core.src=base+cfg.core;
+      if(cl)cl.src=base+cfg.closedLeft;
+      if(cr)cr.src=base+cfg.closedRight;
+      if(ol)ol.src=base+cfg.openLeft;
+      if(or)or.src=base+cfg.openRight;
+    }
     if(dropFull && cfg.dropFull)dropFull.src=base+cfg.dropFull;
     if(readyFull && cfg.readyFull)readyFull.src=base+cfg.readyFull;
     if(failFull && cfg.failFull)failFull.src=base+cfg.failFull;
     videoCraneArt.dataset.visual=kind;
-    videoCraneArt.classList.remove('arm-open','arm-closed','arm-opening','drop-full','ready-full-mode','fail-full-mode'); carriage.classList.remove('ready-display');
+    videoCraneArt.classList.remove('arm-open','arm-closed','arm-opening','arm-closing','drop-full','ready-full-mode','fail-full-mode','lift-success-full','lift-fail-full'); carriage.classList.remove('ready-display');
     if(cfg.readyFull){videoCraneArt.classList.add('ready-full-mode'); carriage.classList.add('ready-display');}
     else if(cfg.failFull){videoCraneArt.classList.add('fail-full-mode');}
+    else if(cfg.liftFull==='success')videoCraneArt.classList.add('lift-success-full');
+    else if(cfg.liftFull==='fail')videoCraneArt.classList.add('lift-fail-full');
     else if(cfg.dropFull)videoCraneArt.classList.add('drop-full');
     else videoCraneArt.classList.add(cfg.open?'arm-open':'arm-closed');
     videoCraneArt.style.display='block';
@@ -1152,28 +1212,25 @@
   }
   async function animateArmClosure(kind,duration=700){
     if(!videoCraneArt)return;
-    const base='assets/yummy/crane/';
-    const cl=videoCraneArt.querySelector('[data-layer="closed-left"]');
-    const cr=videoCraneArt.querySelector('[data-layer="closed-right"]');
-    const ol=videoCraneArt.querySelector('[data-layer="open-left"]');
-    const or=videoCraneArt.querySelector('[data-layer="open-right"]');
-    if(!cl||!cr||!ol||!or)return;
-    /* v523: the closure phase must retain the normal/descend expression.
-       Success/fail artwork is selected only after the arms finish closing,
-       immediately before the upward lift begins. */
-    const closed=['descend_arm_left.png','descend_arm_right.png'];
-    cl.src=base+closed[0]; cr.src=base+closed[1];
-    videoCraneArt.classList.remove('arm-open','arm-closed','arm-opening','arm-closing');
-    videoCraneArt.classList.add('arm-closing');
+    /* v526: keep the normal descend face/core fixed. Reset the previous closing
+       class first, commit the open pose for at least one animation frame, then
+       start the close transition. This guarantees the animation restarts on
+       the second and later plays as well as the first. */
     videoCraneArt.style.setProperty('--arm-close-duration',duration+'ms');
+    videoCraneArt.classList.remove('arm-closed','arm-opening','arm-closing');
+    videoCraneArt.classList.add('arm-open');
+    void videoCraneArt.offsetWidth;
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    videoCraneArt.classList.remove('arm-open');
+    videoCraneArt.classList.add('arm-closing');
     await wait(duration);
-    videoCraneArt.classList.remove('arm-closing');
-    videoCraneArt.classList.add('arm-closed');
+    /* Do not clear arm-closing here: setCraneVisual(success/fail) removes it in
+       the same turn when lift starts, preventing a one-frame snap back open. */
   }
 
   function openSeparatedArms(){
     if(!videoCraneArt)return;
-    videoCraneArt.classList.remove('arm-closed','arm-open');
+    videoCraneArt.classList.remove('arm-closed','arm-open','arm-closing');
     videoCraneArt.classList.add('arm-opening');
     setTimeout(()=>{videoCraneArt.classList.remove('arm-opening');videoCraneArt.classList.add('arm-open');},190);
   }
@@ -1185,6 +1242,7 @@
       'ready_full.png','ready_core_clean.png','ready_arm_left_clean.png','ready_arm_right_clean.png',
       'open_arm_left_clean.png','open_arm_right_clean.png',
       'descend_core.png','descend_arm_left.png','descend_arm_right.png',
+      'success.png','fail.png',
       'success_core.png','success_arm_left.png','success_arm_right.png',
       'success_drop_core.png','success_drop_arm_left.png','success_drop_arm_right.png',
       'fail_core.png','fail_arm_left.png','fail_arm_right.png',
@@ -1835,9 +1893,12 @@
     const stability=chosen?carryStability(chosen,quality,grab.contact):0;
     const won=!!chosen && Math.random()<Math.min(.86,successChance(chosen)*(0.75+quality*.12+grab.contact.pinch*.07+stability*.04));
     /* v522: at the lowest point, close the separated arm artwork gradually before lifting. */
-    /* v523: closure completes while the crane keeps the normal/descend face.
+    /* v526: closure completes while the crane keeps the normal/descend face.
        The next functions switch to success/fail only when upward motion starts. */
     await animateArmClosure(won?'success':'fail',700);
+    /* v526: success/fail lift visuals are complete preloaded frames. This keeps
+       the closure pose visible until the lift state is ready, with no mixed
+       split-layer frame between different canvas sizes. */
     if(won){await grabPrize(chosen);} else {await missPrize(chosen);}
   }
   async function grabPrize(chosen){
