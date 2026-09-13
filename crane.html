@@ -1019,8 +1019,8 @@
 
 </style>
 
-<style id="v526-stable-lift-frame">
-/* v526: success/fail upward artwork uses a single preloaded composited frame.
+<style id="v527-stable-lift-frame">
+/* v527: success/fail upward artwork uses a single preloaded composited frame.
    This prevents a transient mixed frame caused by core and arm PNGs having
    different canvas sizes while their src/state changes after arm closure. */
 .video-crane-art .lift-full{opacity:0!important;z-index:6!important;transition:none!important;}
@@ -1038,8 +1038,8 @@
 .video-crane-art.lift-fail-full .drop-full{opacity:0!important;}
 </style>
 
-<style id="v526-arm-close-and-ready-cable">
-/* v526: animate only the separated descend arms at the lowest point.
+<style id="v527-arm-close-and-ready-cable">
+/* v527: animate only the separated descend arms at the lowest point.
    The normal descend core/expression stays fixed and is always drawn above the
    moving arm layers. This masks the arm PNGs' overlapping shoulder/body pixels
    so the face/body cannot break apart while the arms rotate. */
@@ -1212,7 +1212,7 @@
   }
   async function animateArmClosure(kind,duration=700){
     if(!videoCraneArt)return;
-    /* v526: keep the normal descend face/core fixed. Reset the previous closing
+    /* v527: keep the normal descend face/core fixed. Reset the previous closing
        class first, commit the open pose for at least one animation frame, then
        start the close transition. This guarantees the animation restarts on
        the second and later plays as well as the first. */
@@ -1893,10 +1893,10 @@
     const stability=chosen?carryStability(chosen,quality,grab.contact):0;
     const won=!!chosen && Math.random()<Math.min(.86,successChance(chosen)*(0.75+quality*.12+grab.contact.pinch*.07+stability*.04));
     /* v522: at the lowest point, close the separated arm artwork gradually before lifting. */
-    /* v526: closure completes while the crane keeps the normal/descend face.
+    /* v527: closure completes while the crane keeps the normal/descend face.
        The next functions switch to success/fail only when upward motion starts. */
     await animateArmClosure(won?'success':'fail',700);
-    /* v526: success/fail lift visuals are complete preloaded frames. This keeps
+    /* v527: success/fail lift visuals are complete preloaded frames. This keeps
        the closure pose visible until the lift state is ready, with no mixed
        split-layer frame between different canvas sizes. */
     if(won){await grabPrize(chosen);} else {await missPrize(chosen);}
@@ -2022,7 +2022,7 @@
     burst(30);
     await wait(180);
     state='result'; status('GET'); stageLight('get'); displayBadge.textContent='GET! • PRIZE OUT'; resultPulse();
-    winPlush.innerHTML=plushMarkup(chosen.p,'win'); winText.textContent=isFreeWin?`${chosen.p.name} を獲得！  FREE PLAY（コレクションには追加されません）`:`${chosen.p.name} を獲得！  所持数 ×${collection[chosen.p.id]}`; updateGetMeta(isFreeWin?null:chosen); let totalEl=overlay.querySelector('.get-total'); if(!totalEl){totalEl=document.createElement('div');totalEl.className='get-total';winText.insertAdjacentElement('afterend',totalEl);} const remainingAfterThis=Math.max(0,playCredits-1); totalEl.innerHTML=isFreeWin?`FREE PLAY ・ メダル消費なし ・ のこり <strong>00</strong>`:`今回の所持数 <strong>×${collection[chosen.p.id]}</strong> ・ のこり <strong>${String(remainingAfterThis).padStart(2,'0')}</strong>`; overlay.classList.add('show','cinematic-get');
+    winPlush.innerHTML=plushMarkup(chosen.p,'win'); winText.textContent=isFreeWin?`${chosen.p.name} を獲得！  （コレクションには追加されません）`:`${chosen.p.name} を獲得！  所持数 ×${collection[chosen.p.id]}`; updateGetMeta(isFreeWin?null:chosen); let totalEl=overlay.querySelector('.get-total'); if(!totalEl){totalEl=document.createElement('div');totalEl.className='get-total';winText.insertAdjacentElement('afterend',totalEl);} const remainingAfterThis=Math.max(0,playCredits-1); totalEl.innerHTML=isFreeWin?`FREE PLAY ・ メダル消費なし ・ のこり <strong>00</strong>`:`今回の所持数 <strong>×${collection[chosen.p.id]}</strong> ・ のこり <strong>${String(remainingAfterThis).padStart(2,'0')}</strong>`; overlay.classList.add('show','cinematic-get');
     showToast('GET! 景品が排出口へ');
     finishSession(true);
   }

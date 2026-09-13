@@ -1,8 +1,8 @@
-/* CardWolf build v526 */
+/* CardWolf build v527 */
 const firebaseConfig = window.FIREBASE_CONFIG || {};
-if (window.CARDWOLF_BUILD_VERSION !== "v526") { window.CARDWOLF_BUILD_VERSION = "v526"; }
+if (window.CARDWOLF_BUILD_VERSION !== "v527") { window.CARDWOLF_BUILD_VERSION = "v527"; }
 const versionEl = document.querySelector(".build-version");
-if (versionEl) { versionEl.textContent = "v526"; versionEl.setAttribute("aria-label", "ゲームバージョン v526"); }
+if (versionEl) { versionEl.textContent = "v527"; versionEl.setAttribute("aria-label", "ゲームバージョン v527"); }
 
 // Firebase is loaded lazily so a CDN/auth/database problem can never disable
 // the basic game UI. The solo/setup buttons must remain usable even when the
@@ -85,15 +85,17 @@ function reverseGuessInfo(card){
 function cardDisplay(card){return `<div class="card-name-jp">${escapeHtml(jpName(card))}</div><div class="card-info-ja">${escapeHtml(cardInfo(card))}</div>${cardStats(card)?`<div class="card-stats">${escapeHtml(cardStats(card))}</div>`:""}`;}
 const CPU_NAMES=["遊戯","城之内","杏子","本田","獏良","海馬","ペガサス","マリク"];
 const setupScreen=document.getElementById("setupScreen"),gameScreen=document.getElementById("gameScreen"),restartButton=document.getElementById("restartButton"),playersElement=document.getElementById("players"),yourCardElement=document.getElementById("yourCard"),actionPanel=document.getElementById("actionPanel"),phaseLabel=document.getElementById("phaseLabel"),phaseTitle=document.getElementById("phaseTitle"),talkLog=document.getElementById("talkLog"),logCount=document.getElementById("logCount"),rulesDialog=document.getElementById("rulesDialog"),poolDialog=document.getElementById("poolDialog"),poolGrid=document.getElementById("poolGrid"),poolCountElement=document.getElementById("poolCount");
-const speechCountSelect=document.getElementById("speechCount"),liePenaltyToggle=document.getElementById("liePenalty"),showLieCountToggle=document.getElementById("showLieCount");
+const speechCountSelect=document.getElementById("speechCount"),liePenaltyToggle=document.getElementById("liePenalty"),showLieCountToggle=document.getElementById("showLieCount"),noRevoteToggle=document.getElementById("noRevote"),practicePlayerCountSelect=document.getElementById("practicePlayerCount"),cardPoolSizeSelect=document.getElementById("cardPoolSize"),hideCardCutinToggle=document.getElementById("hideCardCutin");
 if(liePenaltyToggle) liePenaltyToggle.checked=false;
 if(showLieCountToggle) showLieCountToggle.checked=false;
+if(noRevoteToggle) noRevoteToggle.checked=false;
+if(hideCardCutinToggle) hideCardCutinToggle.checked=false;
 const SETTINGS_STORAGE_KEY="cardwolf.settings";
-function loadPersistentSettings(){try{const v=JSON.parse(localStorage.getItem(SETTINGS_STORAGE_KEY)||"null");if(v){if(speechCountSelect&&["1","2","3"].includes(String(v.speechRounds)))speechCountSelect.value=String(v.speechRounds);if(liePenaltyToggle)liePenaltyToggle.checked=Boolean(v.liePenalty);if(showLieCountToggle)showLieCountToggle.checked=Boolean(v.showLieCount);if(noRevoteToggle)noRevoteToggle.checked=Boolean(v.noRevote);if(cardPoolSizeSelect&&["40","50","60","70","80","90","100"].includes(String(v.cardPoolSize)))cardPoolSizeSelect.value=String(v.cardPoolSize);if(practicePlayerCountSelect&&["3","4","5","6","7","8"].includes(String(v.practicePlayerCount)))practicePlayerCountSelect.value=String(v.practicePlayerCount);}}catch{}}
-function savePersistentSettings(){try{localStorage.setItem(SETTINGS_STORAGE_KEY,JSON.stringify({speechRounds:Number(speechCountSelect?.value||2),liePenalty:Boolean(liePenaltyToggle?.checked),showLieCount:Boolean(showLieCountToggle?.checked),noRevote:Boolean(noRevoteToggle?.checked),cardPoolSize:normalizeCardPoolSize(cardPoolSizeSelect?.value||100),practicePlayerCount:Number(practicePlayerCountSelect?.value||4)}));}catch{}}
+function loadPersistentSettings(){try{const v=JSON.parse(localStorage.getItem(SETTINGS_STORAGE_KEY)||"null");if(v){if(speechCountSelect&&["1","2","3"].includes(String(v.speechRounds)))speechCountSelect.value=String(v.speechRounds);if(liePenaltyToggle)liePenaltyToggle.checked=Boolean(v.liePenalty);if(showLieCountToggle)showLieCountToggle.checked=Boolean(v.showLieCount);if(noRevoteToggle)noRevoteToggle.checked=Boolean(v.noRevote);if(hideCardCutinToggle)hideCardCutinToggle.checked=Boolean(v.hideCardCutin);if(cardPoolSizeSelect&&["40","50","60","70","80","90","100"].includes(String(v.cardPoolSize)))cardPoolSizeSelect.value=String(v.cardPoolSize);if(practicePlayerCountSelect&&["3","4","5","6","7","8"].includes(String(v.practicePlayerCount)))practicePlayerCountSelect.value=String(v.practicePlayerCount);}}catch{}}
+function savePersistentSettings(){try{localStorage.setItem(SETTINGS_STORAGE_KEY,JSON.stringify({speechRounds:Number(speechCountSelect?.value||2),liePenalty:Boolean(liePenaltyToggle?.checked),showLieCount:Boolean(showLieCountToggle?.checked),noRevote:Boolean(noRevoteToggle?.checked),hideCardCutin:Boolean(hideCardCutinToggle?.checked),cardPoolSize:normalizeCardPoolSize(cardPoolSizeSelect?.value||100),practicePlayerCount:Number(practicePlayerCountSelect?.value||4)}));}catch{}}
 loadPersistentSettings();
 const playerNameInput=document.getElementById("playerName"),winCountElement=document.getElementById("winCount"),lossCountElement=document.getElementById("lossCount"),medalCountElement=document.getElementById("medalCount"),gameWinCountElement=document.getElementById("gameWinCount"),gameLossCountElement=document.getElementById("gameLossCount"),gameMedalCountElement=document.getElementById("gameMedalCount");
-const noRevoteToggle=document.getElementById("noRevote"),settingsDialog=document.getElementById("settingsDialog"),advancedSettingsButton=document.getElementById("advancedSettingsButton"),closeSettingsButton=document.getElementById("closeSettingsButton"),closeSettingsButtonBottom=document.getElementById("closeSettingsButtonBottom"),resetScoreButton=document.getElementById("resetScoreButton"),practicePlayerCountSelect=document.getElementById("practicePlayerCount"),cardPoolSizeSelect=document.getElementById("cardPoolSize");
+const settingsDialog=document.getElementById("settingsDialog"),advancedSettingsButton=document.getElementById("advancedSettingsButton"),closeSettingsButton=document.getElementById("closeSettingsButton"),closeSettingsButtonBottom=document.getElementById("closeSettingsButtonBottom"),resetScoreButton=document.getElementById("resetScoreButton");
 const soloModeButton=document.getElementById("soloModeButton"),onlineModeButton=document.getElementById("onlineModeButton"),voiceModeButton=document.getElementById("voiceModeButton");
 const onlineDialog=document.getElementById("onlineDialog"),closeOnlineButton=document.getElementById("closeOnlineButton"),createRoomButton=document.getElementById("createRoomButton"),joinRoomButton=document.getElementById("joinRoomButton"),roomCodeInput=document.getElementById("roomCodeInput"),onlineLobby=document.getElementById("onlineLobby"),onlineRoomCode=document.getElementById("onlineRoomCode"),onlinePlayerList=document.getElementById("onlinePlayerList"),onlineLobbyStatus=document.getElementById("onlineLobbyStatus"),onlineCpuCount=document.getElementById("onlineCpuCount"),onlineStartButton=document.getElementById("onlineStartButton"),leaveRoomButton=document.getElementById("leaveRoomButton");
 
@@ -106,6 +108,40 @@ function randomItem(items){return items[Math.floor(Math.random()*items.length)];
 function cardImage(card){ if(document.documentElement.dataset.debugMode === "true" && location.protocol === "file:") return ""; return String(card?.image||""); }
 function cardImageFallback(card){return `<div class="card-image-fallback"><strong>${escapeHtml(jpName(card))}</strong><span>${escapeHtml(cardInfo(card))}</span>${cardStats(card)?`<small>${escapeHtml(cardStats(card))}</small>`:""}</div>`;}
 function cardShort(card){return jpName(card);}
+const cardCutin=document.getElementById("cardCutin"),cardCutinImage=document.getElementById("cardCutinImage"),cardCutinName=document.getElementById("cardCutinName"),cardCutinInfo=document.getElementById("cardCutinInfo");
+let cardCutinTimer=null,cardCutinCloseTimer=null,lastOnlineCutinMatchId="";
+function closeCardCutin(){
+  if(!cardCutin||cardCutin.hidden)return;
+  if(cardCutinTimer){clearTimeout(cardCutinTimer);cardCutinTimer=null;}
+  cardCutin.classList.add("is-closing");
+  if(cardCutinCloseTimer)clearTimeout(cardCutinCloseTimer);
+  cardCutinCloseTimer=setTimeout(()=>{cardCutin.hidden=true;cardCutin.setAttribute("aria-hidden","true");cardCutin.classList.remove("is-closing");cardCutinCloseTimer=null;},170);
+}
+function showCardCutin(card,settings=getSettings()){
+  if(!card||settings?.hideCardCutin||!cardCutin)return false;
+  if(cardCutinTimer)clearTimeout(cardCutinTimer);
+  if(cardCutinCloseTimer){clearTimeout(cardCutinCloseTimer);cardCutinCloseTimer=null;}
+  cardCutin.classList.remove("is-closing");
+  const src=cardImage(card),name=jpName(card);
+  cardCutinImage.innerHTML=src?`<img src="${escapeHtml(src)}" alt="${escapeHtml(name)}">`:cardImageFallback(card);
+  const img=cardCutinImage.querySelector("img");
+  if(img)img.addEventListener("error",()=>{cardCutinImage.innerHTML=cardImageFallback(card);},{once:true});
+  cardCutinName.textContent=name;
+  cardCutinInfo.innerHTML=cardDisplay(card);
+  cardCutin.hidden=false;cardCutin.setAttribute("aria-hidden","false");
+  cardCutinTimer=setTimeout(closeCardCutin,3000);
+  return true;
+}
+cardCutin?.addEventListener("pointerup",e=>{e.preventDefault();closeCardCutin();});
+cardCutin?.addEventListener("click",closeCardCutin);
+document.addEventListener("keydown",e=>{if(!cardCutin?.hidden&&(e.key==="Enter"||e.key===" "||e.key==="Escape"))closeCardCutin();});
+function maybeShowOnlineCardCutin(){
+  if(!onlineGame||!onlineMyCard)return;
+  const matchId=String(onlineGame.matchId||onlineGame.matchStartedAt||"");
+  if(!matchId||matchId===lastOnlineCutinMatchId)return;
+  lastOnlineCutinMatchId=matchId;
+  showCardCutin(onlineMyCard,onlineGame.settings||getSettings());
+}
 const AMBIGUOUS_CLUES=[
 {id:"vague-cool",label:"かっこいいカードです",ambiguous:true},
 {id:"vague-cute",label:"かわいいカードです",ambiguous:true},
@@ -241,7 +277,7 @@ function syncPracticePlayerCount(){
   if(practicePlayerCountSelect) practicePlayerCountSelect.value=String(selectedPlayerCount);
   savePersistentSettings();
 }
-function getSettings(){return{speechRounds:Number(speechCountSelect?.value||2),liePenalty:Boolean(liePenaltyToggle?.checked),showLieCount:Boolean(showLieCountToggle?.checked),noRevote:Boolean(noRevoteToggle?.checked),cardPoolSize:normalizeCardPoolSize(cardPoolSizeSelect?.value||100)};}
+function getSettings(){return{speechRounds:Number(speechCountSelect?.value||2),liePenalty:Boolean(liePenaltyToggle?.checked),showLieCount:Boolean(showLieCountToggle?.checked),noRevote:Boolean(noRevoteToggle?.checked),hideCardCutin:Boolean(hideCardCutinToggle?.checked),cardPoolSize:normalizeCardPoolSize(cardPoolSizeSelect?.value||100)};}
 function randomPlayerName(){return randomItem(["ユウ","カイ","レン","アキラ","ナギ","ハヤト","ソラ","ミナ","リク","シン"]);}
 function chooseCpuNames(count){return shuffle(CPU_NAMES).slice(0,Math.max(0,Number(count)||0));}
 function getPlayerName(){const n=(playerNameInput?.value||"").trim();return n||randomPlayerName();}
@@ -268,6 +304,7 @@ function startGame(){
     setupScreen.hidden=true;
     gameScreen.hidden=false;
     renderGame();
+    showCardCutin(players[0].card,settings);
     if(!actionPanel.innerHTML.trim()) throw new Error("Practice action panel was empty after render");
   }catch(error){
     console.error("Practice start failed",error);
@@ -795,7 +832,7 @@ document.addEventListener("click", event=>{
 }, true);
 
 practicePlayerCountSelect?.addEventListener("change",syncPracticePlayerCount);
-for(const id of ["speechCount","liePenalty","showLieCount","noRevote","cardPoolSize","practicePlayerCount"]){document.getElementById(id)?.addEventListener("change",()=>{savePersistentSettings();syncPracticePlayerCount();renderPoolCount();});}
+for(const id of ["speechCount","liePenalty","showLieCount","noRevote","hideCardCutin","cardPoolSize","practicePlayerCount"]){document.getElementById(id)?.addEventListener("change",()=>{savePersistentSettings();syncPracticePlayerCount();renderPoolCount();});}
 restartButton.addEventListener("click",returnToSetup);document.getElementById("rulesButton").addEventListener("click",()=>rulesDialog.showModal());document.getElementById("closeRulesButton").addEventListener("click",()=>rulesDialog.close());document.getElementById("poolButton").addEventListener("click",openPool);document.getElementById("closePoolButton").addEventListener("click",()=>poolDialog.close());advancedSettingsButton.addEventListener("click",()=>settingsDialog.showModal());closeSettingsButton.addEventListener("click",()=>settingsDialog.close());closeSettingsButtonBottom.addEventListener("click",()=>settingsDialog.close());resetScoreButton.addEventListener("click",()=>{if(confirm("勝利数と敗北数をリセットしますか？\nメダルはリセットされず、そのまま残ります。")){matchRecord.wins=0;matchRecord.losses=0;renderRecord();}});rulesDialog.addEventListener("click",e=>{if(e.target===rulesDialog)rulesDialog.close();});poolDialog.addEventListener("click",e=>{if(e.target===poolDialog)poolDialog.close();});settingsDialog.addEventListener("click",e=>{if(e.target===settingsDialog)settingsDialog.close();});syncPracticePlayerCount();renderRecord();if(CARD_POOL.length===0)soloModeButton.disabled=true;
 
 
@@ -1602,6 +1639,7 @@ function renderOnlineResult(){
 function renderOnlineGame(){
   if(!onlineGame)return;
   renderOnlinePlayers();renderOnlineCard();renderOnlineLog();
+  maybeShowOnlineCardCutin();
   if(onlineGame.phase==="discussion")renderOnlineDiscussion();else if(onlineGame.phase==="clue")renderOnlineClue();else if(onlineGame.phase==="vote")renderOnlineVote();else if(onlineGame.phase==="reverse")renderOnlineReverse();else renderOnlineResult();
 }
 async function submitOnlineActionOnce(action){
@@ -1617,7 +1655,7 @@ async function submitOnlineActionOnce(action){
     onlineActionPromises.set(actionId,finish);
     try{
       onValue(resultRef,listener);
-      await set(actionRef,{...action,matchId:onlineGame.matchId||onlineMatchId||"",uid:firebaseUid,actionId,clientVersion:"v526",createdAt:Date.now()});
+      await set(actionRef,{...action,matchId:onlineGame.matchId||onlineMatchId||"",uid:firebaseUid,actionId,clientVersion:"v527",createdAt:Date.now()});
     }catch(e){console.error("online action write failed",e);finish(false);return;}
     timer=setTimeout(()=>{onlineDebug("action-timeout",{actionId,action});finish(false);},8000);
   });
