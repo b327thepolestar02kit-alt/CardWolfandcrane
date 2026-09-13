@@ -1150,6 +1150,27 @@
     carriage.dataset.craneVisual=kind;
     carriage.classList.add('video-state');
   }
+  async function animateArmClosure(kind,duration=700){
+    if(!videoCraneArt)return;
+    const base='assets/yummy/crane/';
+    const cl=videoCraneArt.querySelector('[data-layer="closed-left"]');
+    const cr=videoCraneArt.querySelector('[data-layer="closed-right"]');
+    const ol=videoCraneArt.querySelector('[data-layer="open-left"]');
+    const or=videoCraneArt.querySelector('[data-layer="open-right"]');
+    if(!cl||!cr||!ol||!or)return;
+    /* v523: the closure phase must retain the normal/descend expression.
+       Success/fail artwork is selected only after the arms finish closing,
+       immediately before the upward lift begins. */
+    const closed=['descend_arm_left.png','descend_arm_right.png'];
+    cl.src=base+closed[0]; cr.src=base+closed[1];
+    videoCraneArt.classList.remove('arm-open','arm-closed','arm-opening','arm-closing');
+    videoCraneArt.classList.add('arm-closing');
+    videoCraneArt.style.setProperty('--arm-close-duration',duration+'ms');
+    await wait(duration);
+    videoCraneArt.classList.remove('arm-closing');
+    videoCraneArt.classList.add('arm-closed');
+  }
+
   function openSeparatedArms(){
     if(!videoCraneArt)return;
     videoCraneArt.classList.remove('arm-closed','arm-open');
@@ -1813,6 +1834,10 @@
     if(chosen){pushNeighbors(chosen,grab.contact);stackInteraction(chosen,grab.contact);stackPushPhysics(chosen,grab.contact);}
     const stability=chosen?carryStability(chosen,quality,grab.contact):0;
     const won=!!chosen && Math.random()<Math.min(.86,successChance(chosen)*(0.75+quality*.12+grab.contact.pinch*.07+stability*.04));
+    /* v522: at the lowest point, close the separated arm artwork gradually before lifting. */
+    /* v523: closure completes while the crane keeps the normal/descend face.
+       The next functions switch to success/fail only when upward motion starts. */
+    await animateArmClosure(won?'success':'fail',700);
     if(won){await grabPrize(chosen);} else {await missPrize(chosen);}
   }
   async function grabPrize(chosen){
