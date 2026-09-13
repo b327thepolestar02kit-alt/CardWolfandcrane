@@ -3821,7 +3821,7 @@ html[data-free-matched-room="true"] #onlineDialog .room-code-card{display:none!i
 }
 
 
-/* v528: temporary game-start card cut-in */
+/* v529: temporary game-start card cut-in */
 .card-cutin[hidden]{display:none!important}
 .card-cutin{position:fixed;inset:0;z-index:12000;display:grid;place-items:center;overflow:hidden;isolation:isolate;cursor:pointer;touch-action:manipulation}
 .card-cutin-backdrop{position:absolute;inset:0;background:radial-gradient(circle at 50% 45%,rgba(49,78,120,.72),rgba(4,8,16,.97) 68%);backdrop-filter:blur(4px)}
@@ -3842,3 +3842,26 @@ html[data-free-matched-room="true"] #onlineDialog .room-code-card{display:none!i
 @keyframes cardCutinOut{to{opacity:0;transform:scale(.98)}}
 @media(max-width:720px){.card-cutin-panel{width:min(94vw,620px);padding:18px;border-radius:18px}.card-cutin-content{grid-template-columns:1fr;gap:12px;text-align:center}.card-cutin-image{min-height:0}.card-cutin-image img{max-height:47vh;max-width:72vw}.card-cutin-copy h2{font-size:clamp(1.65rem,8vw,2.6rem);margin-bottom:10px}.card-cutin-info{font-size:.95rem}.card-cutin-skip{text-align:center;margin-top:14px}}
 @media(prefers-reduced-motion:reduce){.card-cutin-panel,.card-cutin.is-closing .card-cutin-panel{animation:none}}
+
+/* v529: WIN/LOSE result cut-in. Reuses card-cutin timing/overlay behavior. */
+.result-cutin-panel{
+  min-height:min(52vh,430px);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+.result-cutin-word{
+  font-size:clamp(4.5rem,14vw,10rem);
+  font-weight:1000;
+  letter-spacing:.04em;
+  line-height:.9;
+  text-shadow:0 .06em .18em rgba(0,0,0,.34);
+}
+.result-cutin.is-win .result-cutin-word{filter:drop-shadow(0 0 20px rgba(255,255,255,.22));}
+.result-cutin.is-lose .result-cutin-word{opacity:.92;}
+@media (max-width:700px){
+  .result-cutin-panel{min-height:42vh;}
+  .result-cutin-word{font-size:clamp(4rem,23vw,7rem);}
+}

@@ -1,11 +1,11 @@
-CardWolf v528 - assets/yummy/crane 画像使用状況
+CardWolf v529 - assets/yummy/crane 画像使用状況
 
 【運用方針】
 開発が落ち着くまでは、現在未使用の画像は削除せず useless フォルダ内で管理する。
 
 【使用中 / crane直下】
-- descend_arm_left.png: 降下時の左アーム。v528では最下点で内側へ回転させて閉鎖アニメーションにも使用。
-- descend_arm_right.png: 降下時の右アーム。v528では最下点で内側へ回転させて閉鎖アニメーションにも使用。
+- descend_arm_left.png: 降下時の左アーム。v529では最下点で内側へ回転させて閉鎖アニメーションにも使用。
+- descend_arm_right.png: 降下時の右アーム。v529では最下点で内側へ回転させて閉鎖アニメーションにも使用。
 - descend_core.png: 降下～最下点～アーム閉鎖アニメーション中の通常表情の本体。
 - fail_arm_left.png: 掴み失敗後の左アーム。
 - fail_arm_right.png: 掴み失敗後の右アーム。
@@ -45,14 +45,14 @@ CardWolf v528 - assets/yummy/crane 画像使用状況
 - success_body.png
 - success_drop_body.png
 
-【v528の描画メモ】
+【v529の描画メモ】
 - 待機中・降下前の左右移動では ready_full.png を表示し、ケーブルは別DOMの .cable をクレーン本体の背面に描画する。
 - 降下 → 最下点 → 閉鎖アニメーションまでは descend_core.png の通常表情を維持する。
 - 閉鎖アニメーションでは descend_arm_left/right.png を左右それぞれ内側へ約18度回転させる。
 - 閉鎖完了後、上昇開始時に初めて success / fail の本体・アーム画像へ切り替える。
 
 
-【v528 アーム閉鎖描画の修正】
+【v529 アーム閉鎖描画の修正】
 - 閉鎖中は descend_core.png（通常表情）を固定し、左右アームだけを回転させる。
 - coreをアームより前面に描画し、アームPNGに含まれる本体重複部分が顔・本体へ被らないようにした。
 - arm-closing状態を各ビジュアル切替時に必ず解除する。
@@ -60,7 +60,7 @@ CardWolf v528 - assets/yummy/crane 画像使用状況
 - 現状の画像だけで修正可能。追加画像は不要。
 
 
-[v528 additional notes]
+[v529 additional notes]
 - descend_core.png was replaced with the newly supplied artwork.
 - Root cause of the one-frame break after arm closure: the split descend and success/fail
   layers use different source canvas sizes; swapping the core/arm image sources at the same

@@ -1,8 +1,8 @@
-/* CardWolf build v528 */
+/* CardWolf build v529 */
 const firebaseConfig = window.FIREBASE_CONFIG || {};
-if (window.CARDWOLF_BUILD_VERSION !== "v528") { window.CARDWOLF_BUILD_VERSION = "v528"; }
+if (window.CARDWOLF_BUILD_VERSION !== "v529") { window.CARDWOLF_BUILD_VERSION = "v529"; }
 const versionEl = document.querySelector(".build-version");
-if (versionEl) { versionEl.textContent = "v528"; versionEl.setAttribute("aria-label", "ゲームバージョン v528"); }
+if (versionEl) { versionEl.textContent = "v529"; versionEl.setAttribute("aria-label", "ゲームバージョン v529"); }
 
 // Firebase is loaded lazily so a CDN/auth/database problem can never disable
 // the basic game UI. The solo/setup buttons must remain usable even when the
@@ -68,7 +68,7 @@ function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":
 function isEffectMonster(card){return /Effect|Flip/.test(String(card?.type||""));}
 function typeJa(card){const t=String(card.type||"");if(t.includes("Spell"))return "魔法カード";if(t.includes("Trap"))return "罠カード";if(t.includes("Fusion"))return isEffectMonster(card)?"融合・効果モンスター":"融合モンスター";if(t.includes("Synchro"))return isEffectMonster(card)?"シンクロ・効果モンスター":"シンクロモンスター";if(/Xyz|XYZ/.test(t))return isEffectMonster(card)?"エクシーズ・効果モンスター":"エクシーズモンスター";if(t.includes("Link"))return isEffectMonster(card)?"リンク・効果モンスター":"リンクモンスター";if(t.includes("Ritual"))return t.includes("Effect")?"儀式・効果モンスター":"儀式モンスター";if(isEffectMonster(card))return "効果モンスター";return "通常モンスター";}
 function attributeJa(a){return ({LIGHT:"光",DARK:"闇",FIRE:"炎",WATER:"水",WIND:"風",EARTH:"地",DIVINE:"神"})[String(a||"").toUpperCase()]||"";}
-function raceJa(r){return ({Dragon:"ドラゴン族",Spellcaster:"魔法使い族",Warrior:"戦士族",Fiend:"悪魔族",Beast:"獣族","Beast-Warrior":"獣戦士族",Machine:"機械族",Fairy:"天使族",Aqua:"水族",Pyro:"炎族",Plant:"植物族",Rock:"岩石族",Zombie:"アンデット族",Thunder:"雷族","Winged-Beast":"鳥獣族",Dinosaur:"恐竜族","Sea-Serpent":"海竜族",Reptile:"爬虫類族",Psychic:"サイキック族",Wyrm:"幻竜族",Cyberse:"サイバース族"})[r]||r||"";}
+function raceJa(r){return ({Dragon:"ドラゴン族",Spellcaster:"魔法使い族",Warrior:"戦士族",Fiend:"悪魔族",Beast:"獣族","Beast-Warrior":"獣戦士族",Machine:"機械族",Fairy:"天使族",Aqua:"水族",Pyro:"炎族",Plant:"植物族",Rock:"岩石族",Zombie:"アンデット族",Thunder:"雷族","Winged-Beast":"鳥獣族",Dinosaur:"恐竜族","Sea-Serpent":"海竜族",Reptile:"爬虫類族",Psychic:"サイキック族",Wyrm:"幻竜族",Cyberse:"サイバース族","Divine-Beast":"幻神獣族"})[r]||r||"";}
 function cardInfo(card){const parts=[typeJa(card)],a=attributeJa(card.attribute),r=raceJa(card.race);if(a)parts.push(a+"属性");if(r)parts.push(r);if(String(card.type||"").includes("Link") && card.linkval!=null)parts.push("リンク"+card.linkval);else if(card.level!=null && card.level!=="")parts.push(/Xyz|XYZ/.test(String(card.type||""))?"ランク"+card.level:"レベル"+card.level);return parts.join(" / ");}
 function isKnownStat(v){if(v===-1||v==="-1"||v===null||v===undefined||v==="")return false;const n=Number(v);return Number.isFinite(n)&&n>=0;}
 function statDisplay(v,kind="atk"){if(v===-1||v==="-1")return kind==="def"?"－":"？";if(v===null||v===undefined||v==="")return "？";const n=Number(v);return Number.isFinite(n)?String(n):"？";}
@@ -135,6 +135,29 @@ function showCardCutin(card,settings=getSettings()){
 cardCutin?.addEventListener("pointerup",e=>{e.preventDefault();closeCardCutin();});
 cardCutin?.addEventListener("click",closeCardCutin);
 document.addEventListener("keydown",e=>{if(!cardCutin?.hidden&&(e.key==="Enter"||e.key===" "||e.key==="Escape"))closeCardCutin();});
+const resultCutin=document.getElementById("resultCutin"),resultCutinWord=document.getElementById("resultCutinWord");
+let resultCutinTimer=null,resultCutinCloseTimer=null,lastOnlineResultCutinMatchId="";
+function closeResultCutin(){
+  if(!resultCutin||resultCutin.hidden)return;
+  if(resultCutinTimer){clearTimeout(resultCutinTimer);resultCutinTimer=null;}
+  resultCutin.classList.add("is-closing");
+  if(resultCutinCloseTimer)clearTimeout(resultCutinCloseTimer);
+  resultCutinCloseTimer=setTimeout(()=>{resultCutin.hidden=true;resultCutin.setAttribute("aria-hidden","true");resultCutin.classList.remove("is-closing","is-win","is-lose");resultCutinCloseTimer=null;},170);
+}
+function showResultCutin(won,settings=getSettings()){
+  if(settings?.hideCardCutin||!resultCutin)return false;
+  if(resultCutinTimer)clearTimeout(resultCutinTimer);
+  if(resultCutinCloseTimer){clearTimeout(resultCutinCloseTimer);resultCutinCloseTimer=null;}
+  resultCutin.classList.remove("is-closing","is-win","is-lose");
+  resultCutin.classList.add(won?"is-win":"is-lose");
+  if(resultCutinWord)resultCutinWord.textContent=won?"WIN!":"LOSE";
+  resultCutin.hidden=false;resultCutin.setAttribute("aria-hidden","false");
+  resultCutinTimer=setTimeout(closeResultCutin,3000);
+  return true;
+}
+resultCutin?.addEventListener("pointerup",e=>{e.preventDefault();closeResultCutin();});
+resultCutin?.addEventListener("click",closeResultCutin);
+document.addEventListener("keydown",e=>{if(!resultCutin?.hidden&&(e.key==="Enter"||e.key===" "||e.key==="Escape"))closeResultCutin();});
 function maybeShowOnlineCardCutin(){
   if(!onlineGame||!onlineMyCard)return;
   const matchId=String(onlineGame.matchId||onlineGame.matchStartedAt||"");
@@ -369,7 +392,7 @@ function availableClues(player){
  options.push(...negativeQuick.slice(0,2));
  if(game.settings.speechRounds>=2 && !(player.clues||[]).some(c=>c.ambiguous)){
    const vague=shuffle(AMBIGUOUS_CLUES).filter(v=>!used.has(v.id));
-   options.push(...vague.slice(0,2));
+   options.push(...vague.slice(0,1));
  }
  if(options.length<4){const extra=shuffle(featureList(player.card)).filter(s=>!used.has(s.id)&&!options.some(o=>o.id===s.id));options.push(...extra.slice(0,4-options.length));}
  const pinnedIds=new Set(pinned.map(s=>s.id));
@@ -582,9 +605,43 @@ function canWolfReverse(wolf){
   return !(Number(wolf.lies||0)>=2 || (madeAmbiguous&&madeLie));
 }
 function resolveVoteWinner(eliminated){game.eliminatedId=eliminated.id;if(eliminated.isWolf){if(!canWolfReverse(game.players[game.wolfIndex])||(game.settings.liePenalty&&game.players[game.wolfIndex].lies>=2)){game.result="citizen";game.phase="result";}else game.phase="reverse";}else{game.result="wolf";game.phase="result";}renderGame();}
-function renderRevotePhase(){const candidates=game.revoteCandidates||[];phaseLabel.textContent="PHASE / 再投票";phaseTitle.textContent="同票のため再投票";actionPanel.innerHTML=`<div class="action-heading"><p>REVOTE</p><h2>同票だったプレイヤーから選ぶ</h2><span>もう一度、狼だと思うプレイヤーを選んでください。</span></div><div class="vote-grid">${candidates.map(p=>`<button class="vote-button" type="button" data-revote-id="${p.id}"><span class="mini-avatar">${String(p.id).padStart(2,"0")}</span><span><strong>${escapeHtml(p.name)}</strong><small>前回 ${game.tallies?.[p.id]||0}票</small></span></button>`).join("")}</div>`;actionPanel.querySelectorAll("[data-revote-id]").forEach(b=>b.addEventListener("click",()=>submitRevote(Number(b.dataset.revoteId))));}
-function submitRevote(humanVoteId, forcedVotes=null){if(!game||game.phase!=="revote")return;const candidates=game.revoteCandidates||[];if(!candidates.some(p=>p.id===Number(humanVoteId)))return;game.players.forEach(p=>p.vote=null);game.players[0].vote=Number(humanVoteId);if(forcedVotes){game.players.forEach(p=>{if(forcedVotes[p.id]!=null)p.vote=forcedVotes[p.id];});}else{game.players.slice(1).forEach(p=>p.vote=randomItem(candidates).id);}const tallies=Object.fromEntries(game.players.map(p=>[p.id,0]));game.players.forEach(p=>{if(tallies[p.vote]!=null)tallies[p.vote]++;});game.tallies=tallies;const high=Math.max(...candidates.map(p=>tallies[p.id]||0));const winners=candidates.filter(p=>(tallies[p.id]||0)===high);const eliminated=randomItem(winners);game.logs.push({type:"system",name:"再投票",text:`再投票の結果、${eliminated.name}が最多票になりました。`});game.revoteCandidates=null;resolveVoteWinner(eliminated);}
-function submitVotes(humanVoteId, forcedVotes=null){game.players[0].vote=humanVoteId;if(forcedVotes){game.players.forEach(p=>{if(forcedVotes[p.id]!=null)p.vote=forcedVotes[p.id];});}else{game.players.slice(1).forEach(p=>p.vote=chooseCpuVote(p));}const tallies=Object.fromEntries(game.players.map(p=>[p.id,0]));game.players.forEach(p=>{if(tallies[p.vote]!=null)tallies[p.vote]++;});game.tallies=tallies;const high=Math.max(...Object.values(tallies)),tied=game.players.filter(p=>tallies[p.id]===high);if(tied.length>1&&!game.settings.noRevote&&game.players.length>tied.length){game.revoteCandidates=tied;game.players.forEach(p=>p.vote=null);game.logs.push({type:"system",name:"再投票",text:`最多票が同数（${high}票）のため再投票を行います。`});game.phase="revote";renderGame();return;}resolveVoteWinner(randomItem(tied));}
+function renderRevotePhase(){
+ const candidates=game.revoteCandidates||[];
+ const voterIds=new Set((game.revoteVoterIds||game.players.filter(p=>!candidates.some(c=>c.id===p.id)).map(p=>p.id)).map(Number));
+ const humanCanVote=voterIds.has(Number(game.players[0]?.id));
+ phaseLabel.textContent="PHASE / 再投票";phaseTitle.textContent="同票のため再投票";
+ if(humanCanVote){
+   actionPanel.innerHTML=`<div class="action-heading"><p>REVOTE</p><h2>同票だったプレイヤーから選ぶ</h2><span>最多得票で同票だったプレイヤー本人は投票しません。対象外のプレイヤーだけで再投票します。</span></div><div class="vote-grid">${candidates.map(p=>`<button class="vote-button" type="button" data-revote-id="${p.id}"><span class="mini-avatar">${String(p.id).padStart(2,"0")}</span><span><strong>${escapeHtml(p.name)}</strong><small>再投票対象</small></span></button>`).join("")}</div>`;
+   actionPanel.querySelectorAll("[data-revote-id]").forEach(b=>b.addEventListener("click",()=>submitRevote(Number(b.dataset.revoteId))));
+ }else{
+   actionPanel.innerHTML=`<div class="thinking-state"><span class="thinking-card" aria-hidden="true">↻</span><div><p>REVOTE</p><h2>同票者は再投票しません</h2><span>同票ではないプレイヤーだけで再投票しています…</span></div></div>`;
+   if(!game.revoteAutoPending){game.revoteAutoPending=true;setTimeout(()=>{if(game?.phase==="revote")submitRevote(null);},450);}
+ }
+}
+function submitRevote(humanVoteId=null, forcedVotes=null){
+ if(!game||game.phase!=="revote")return;
+ const candidates=game.revoteCandidates||[];
+ const voterIds=new Set((game.revoteVoterIds||game.players.filter(p=>!candidates.some(c=>c.id===p.id)).map(p=>p.id)).map(Number));
+ const human=game.players[0];
+ if(voterIds.has(Number(human?.id)) && !candidates.some(p=>p.id===Number(humanVoteId)))return;
+ game.players.forEach(p=>p.vote=null);
+ if(voterIds.has(Number(human?.id))) human.vote=Number(humanVoteId);
+ if(forcedVotes){
+   game.players.forEach(p=>{if(voterIds.has(Number(p.id))&&forcedVotes[p.id]!=null&&candidates.some(c=>c.id===Number(forcedVotes[p.id])))p.vote=Number(forcedVotes[p.id]);});
+ }else{
+   game.players.slice(1).forEach(p=>{if(voterIds.has(Number(p.id)))p.vote=randomItem(candidates).id;});
+ }
+ const tallies=Object.fromEntries(game.players.map(p=>[p.id,0]));
+ game.players.forEach(p=>{if(voterIds.has(Number(p.id))&&tallies[p.vote]!=null)tallies[p.vote]++;});
+ game.tallies=tallies;
+ const high=Math.max(...candidates.map(p=>tallies[p.id]||0));
+ const winners=candidates.filter(p=>(tallies[p.id]||0)===high);
+ const eliminated=randomItem(winners);
+ game.logs.push({type:"system",name:"再投票",text:`同票者を除く${voterIds.size}人で再投票し、${eliminated.name}が最多票になりました。`});
+ game.revoteCandidates=null;game.revoteVoterIds=null;game.revoteAutoPending=false;
+ resolveVoteWinner(eliminated);
+}
+function submitVotes(humanVoteId, forcedVotes=null){game.players[0].vote=humanVoteId;if(forcedVotes){game.players.forEach(p=>{if(forcedVotes[p.id]!=null)p.vote=forcedVotes[p.id];});}else{game.players.slice(1).forEach(p=>p.vote=chooseCpuVote(p));}const tallies=Object.fromEntries(game.players.map(p=>[p.id,0]));game.players.forEach(p=>{if(tallies[p.vote]!=null)tallies[p.vote]++;});game.tallies=tallies;const high=Math.max(...Object.values(tallies)),tied=game.players.filter(p=>tallies[p.id]===high);if(tied.length>1&&!game.settings.noRevote&&game.players.length>tied.length){game.revoteCandidates=tied;game.revoteVoterIds=game.players.filter(p=>!tied.some(t=>t.id===p.id)).map(p=>p.id);game.revoteAutoPending=false;game.players.forEach(p=>p.vote=null);game.logs.push({type:"system",name:"再投票",text:`最多票が同数（${high}票）のため、同票者を除く${game.revoteVoterIds.length}人で再投票を行います。`});game.phase="revote";renderGame();return;}resolveVoteWinner(randomItem(tied));}
 function voteSummaryHtml(){
   if(!game||!game.tallies) return "";
   const rows=game.players.map(p=>`<div class="vote-row"><span>${escapeHtml(p.name)}</span><strong>${game.tallies[p.id]||0}票</strong></div>`).join("");
@@ -622,7 +679,7 @@ function submitCpuGuess(){
 }
 function finishReverseGuess(guess){game.reverseGuess=guess;const correct=guess&&guess.name===game.citizenCard.name;game.result=correct?"wolf-reversal":"citizen";game.logs.push({type:"system",name:"逆転宣言",text:`狼は「${guess?jpName(guess):"不明"}」と宣言しました。`});game.phase="result";renderGame();}
 function recordFinishedGame(){if(!game||game.recorded)return;const wolfWon=game.result==="wolf"||game.result==="wolf-reversal";const won=game.players[0].isWolf===wolfWon;const playerCount=Math.min(8,Math.max(3,Number(game.players?.length||4)));const reward=won?100+(playerCount-4)*20:50+(playerCount-4)*20;if(won){matchRecord.wins++;}else{matchRecord.losses++;}matchRecord.medals+=reward;game.rewardMedals=reward;game.recorded=true;renderRecord();}
-function renderResultPhase(){recordFinishedGame();phaseLabel.textContent="GAME OVER / 答え合わせ";const wolfWon=game.result==="wolf"||game.result==="wolf-reversal";phaseTitle.textContent=wolfWon?"狼チームの勝利":"市民チームの勝利";const msg={wolf:"選ばれたプレイヤーは市民でした。狼は正体を隠し切りました。","wolf-reversal":`狼が市民カード「${jpName(game.citizenCard)}」を見事に当て、逆転しました。`,citizen:`狼の宣言は「${game.reverseGuess?jpName(game.reverseGuess):"不明"}」。正解は「${jpName(game.citizenCard)}」でした。`}[game.result];actionPanel.innerHTML=`<div class="result-banner ${wolfWon?"wolf-win":"citizen-win"}"><p>${wolfWon?"狼チームの勝利":"市民チームの勝利"}</p><h2>${wolfWon?"狼の勝利":"市民の勝利"}</h2><span>${msg}</span><strong class="reward-message"><img class="medal-icon" src="assets/medal-icon.png" alt=""> メダル +${game.rewardMedals||0}枚</strong></div><div class="answer-cards"><div><small>市民カード</small><img class="ygo-thumb" src="${cardImage(game.citizenCard)}"><strong>${jpName(game.citizenCard)}</strong><em>${cardInfo(game.citizenCard)}${cardStats(game.citizenCard)?" · "+cardStats(game.citizenCard):""}</em></div><div><small>狼カード</small><img class="ygo-thumb" src="${cardImage(game.wolfCard)}"><strong>${jpName(game.wolfCard)}</strong><em>${cardInfo(game.wolfCard)}${cardStats(game.wolfCard)?" · "+cardStats(game.wolfCard):""}</em></div></div><button class="primary-button compact" id="playAgainButton" type="button"><span>もう一度遊ぶ</span><span>↻</span></button>`;document.getElementById("playAgainButton").addEventListener("click",startGame);}
+function renderResultPhase(){recordFinishedGame();phaseLabel.textContent="GAME OVER / 答え合わせ";const wolfWon=game.result==="wolf"||game.result==="wolf-reversal";if(!game.resultCutinShown){game.resultCutinShown=true;const playerWon=Boolean(game.players?.[0]?.isWolf)===wolfWon;showResultCutin(playerWon,game.settings);}phaseTitle.textContent=wolfWon?"狼チームの勝利":"市民チームの勝利";const msg={wolf:"選ばれたプレイヤーは市民でした。狼は正体を隠し切りました。","wolf-reversal":`狼が市民カード「${jpName(game.citizenCard)}」を見事に当て、逆転しました。`,citizen:`狼の宣言は「${game.reverseGuess?jpName(game.reverseGuess):"不明"}」。正解は「${jpName(game.citizenCard)}」でした。`}[game.result];actionPanel.innerHTML=`<div class="result-banner ${wolfWon?"wolf-win":"citizen-win"}"><p>${wolfWon?"狼チームの勝利":"市民チームの勝利"}</p><h2>${wolfWon?"狼の勝利":"市民の勝利"}</h2><span>${msg}</span><strong class="reward-message"><img class="medal-icon" src="assets/medal-icon.png" alt=""> メダル +${game.rewardMedals||0}枚</strong></div><div class="answer-cards"><div><small>市民カード</small><img class="ygo-thumb" src="${cardImage(game.citizenCard)}"><strong>${jpName(game.citizenCard)}</strong><em>${cardInfo(game.citizenCard)}${cardStats(game.citizenCard)?" · "+cardStats(game.citizenCard):""}</em></div><div><small>狼カード</small><img class="ygo-thumb" src="${cardImage(game.wolfCard)}"><strong>${jpName(game.wolfCard)}</strong><em>${cardInfo(game.wolfCard)}${cardStats(game.wolfCard)?" · "+cardStats(game.wolfCard):""}</em></div></div><button class="primary-button compact" id="playAgainButton" type="button"><span>もう一度遊ぶ</span><span>↻</span></button>`;document.getElementById("playAgainButton").addEventListener("click",startGame);}
 async function returnToSetup(){
   stopFreeMatch();
   clearTimeout(cpuTimer);
@@ -1625,6 +1682,13 @@ function renderOnlineReverse(){
 }
 function renderOnlineResult(){
   const wolfWon=onlineGame.result==="wolf"||onlineGame.result==="wolf-reversal";
+  const resultMatchId=String(onlineGame.matchId||onlineGame.matchStartedAt||"");
+  if(resultMatchId&&lastOnlineResultCutinMatchId!==resultMatchId){
+    lastOnlineResultCutinMatchId=resultMatchId;
+    const myRole=onlineGame.reveal?.roles?.[firebaseUid];
+    const playerWon=(myRole==="wolf"&&wolfWon)||(myRole==="citizen"&&!wolfWon);
+    showResultCutin(playerWon,onlineGame.settings||getSettings());
+  }
   phaseLabel.textContent="GAME OVER / 答え合わせ";phaseTitle.textContent=wolfWon?"狼チームの勝利":"市民チームの勝利";
   const revName=typeof onlineGame.reveal?.reverseGuess==="string"?onlineGame.reveal.reverseGuess:(onlineGame.reveal?.reverseGuess?.name||null);
   const rev=revName?getActiveCardPool(onlineGame?.settings).find(c=>c.name===revName)||null:null;
@@ -1655,7 +1719,7 @@ async function submitOnlineActionOnce(action){
     onlineActionPromises.set(actionId,finish);
     try{
       onValue(resultRef,listener);
-      await set(actionRef,{...action,matchId:onlineGame.matchId||onlineMatchId||"",uid:firebaseUid,actionId,clientVersion:"v528",createdAt:Date.now()});
+      await set(actionRef,{...action,matchId:onlineGame.matchId||onlineMatchId||"",uid:firebaseUid,actionId,clientVersion:"v529",createdAt:Date.now()});
     }catch(e){console.error("online action write failed",e);finish(false);return;}
     timer=setTimeout(()=>{onlineDebug("action-timeout",{actionId,action});finish(false);},8000);
   });

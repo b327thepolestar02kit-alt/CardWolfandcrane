@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=v528">
+    <link rel="stylesheet" href="styles.css?v=v529">
 </head>
 <body>
     <div class="grain" aria-hidden="true"></div>
@@ -88,7 +88,7 @@
                 <button class="reset-score-button" id="resetScoreButton" type="button">戦績をリセット</button>
             </div>
 
-            <span class="build-version" aria-label="ゲームバージョン v528">v528</span>
+            <span class="build-version" aria-label="ゲームバージョン v529">v529</span>
 
 
             <ol class="rule-strip" aria-label="ゲームの流れ">
@@ -165,6 +165,14 @@
                     <div class="card-cutin-info" id="cardCutinInfo"></div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div class="card-cutin result-cutin" id="resultCutin" hidden aria-hidden="true">
+        <div class="card-cutin-backdrop"></div>
+        <div class="card-cutin-panel result-cutin-panel" role="dialog" aria-modal="true" aria-label="ゲーム結果">
+            <p class="card-cutin-kicker" id="resultCutinKicker">GAME RESULT</p>
+            <div class="result-cutin-word" id="resultCutinWord">WIN!</div>
         </div>
     </div>
 
@@ -272,7 +280,7 @@
                 <input id="showLieCount" type="checkbox">
             </div>
             <div class="setting-row">
-                <label for="hideCardCutin"><strong>カットインを非表示</strong><span>チェックするとゲーム開始時のカード提示カットインを表示しません</span></label>
+                <label for="hideCardCutin"><strong>カットインを非表示</strong><span>チェックするとゲーム開始時のカード提示・勝敗確定時のカットインを表示しません</span></label>
                 <input id="hideCardCutin" type="checkbox">
             </div>
         </div>
@@ -300,9 +308,9 @@
         <div class="pool-grid" id="poolGrid"></div>
     </dialog>
     <script src="data/cards.js"></script>
-    <script src="firebase-config.js?v=v528"></script>
-    <script src="version-check.js?v=v528"></script>
-    <script src="app.js?v=v528"></script>
-    <script src="debug.js?v=v528"></script>
+    <script src="firebase-config.js?v=v529"></script>
+    <script src="version-check.js?v=v529"></script>
+    <script src="app.js?v=v529"></script>
+    <script src="debug.js?v=v529"></script>
 </body>
 </html>
