@@ -1019,8 +1019,8 @@
 
 </style>
 
-<style id="v529-stable-lift-frame">
-/* v529: success/fail upward artwork uses a single preloaded composited frame.
+<style id="v530-stable-lift-frame">
+/* v530: success/fail upward artwork uses a single preloaded composited frame.
    This prevents a transient mixed frame caused by core and arm PNGs having
    different canvas sizes while their src/state changes after arm closure. */
 .video-crane-art .lift-full{opacity:0!important;z-index:6!important;transition:none!important;}
@@ -1038,8 +1038,8 @@
 .video-crane-art.lift-fail-full .drop-full{opacity:0!important;}
 </style>
 
-<style id="v529-arm-close-and-ready-cable">
-/* v529: animate only the separated descend arms at the lowest point.
+<style id="v530-arm-close-and-ready-cable">
+/* v530: animate only the separated descend arms at the lowest point.
    The normal descend core/expression stays fixed and is always drawn above the
    moving arm layers. This masks the arm PNGs' overlapping shoulder/body pixels
    so the face/body cannot break apart while the arms rotate. */
@@ -1074,6 +1074,33 @@
 }
 .crane-carriage.ready-display .video-crane-art{z-index:30!important;}
 </style>
+
+<style id="v530-mobile-crane-corrections">
+/* v530: mobile-only crane corrections.
+   The arm PNGs are object-fit:contain inside a taller mobile layer box, so the
+   desktop 41% vertical transform origin points too low on the actual arm art.
+   35% maps the pivot back to the same source-image point used on desktop. */
+@media (max-width:680px){
+  .video-crane-art.arm-closing .open-arm.left{
+    transform-origin:46% 35%!important;
+    transform:rotate(-18deg)!important;
+  }
+  .video-crane-art.arm-closing .open-arm.right{
+    transform-origin:54% 35%!important;
+    transform:rotate(18deg)!important;
+  }
+
+  /* The refreshed ready_full starts drawing at about 18px inside the mobile
+     composited image, while the artwork itself is offset 10px from the carriage.
+     End the cable just before that opaque body begins so it cannot show through
+     the crane body. PC keeps the existing 30px cable. */
+  .crane-carriage.ready-display .cable{
+    height:26px!important;
+    --cable-height:26px!important;
+  }
+}
+</style>
+
 </head>
 <body class="crane-body">
   <div class="crane-shell">
@@ -1212,7 +1239,7 @@
   }
   async function animateArmClosure(kind,duration=700){
     if(!videoCraneArt)return;
-    /* v529: keep the normal descend face/core fixed. Reset the previous closing
+    /* v530: keep the normal descend face/core fixed. Reset the previous closing
        class first, commit the open pose for at least one animation frame, then
        start the close transition. This guarantees the animation restarts on
        the second and later plays as well as the first. */
@@ -1893,10 +1920,10 @@
     const stability=chosen?carryStability(chosen,quality,grab.contact):0;
     const won=!!chosen && Math.random()<Math.min(.86,successChance(chosen)*(0.75+quality*.12+grab.contact.pinch*.07+stability*.04));
     /* v522: at the lowest point, close the separated arm artwork gradually before lifting. */
-    /* v529: closure completes while the crane keeps the normal/descend face.
+    /* v530: closure completes while the crane keeps the normal/descend face.
        The next functions switch to success/fail only when upward motion starts. */
     await animateArmClosure(won?'success':'fail',700);
-    /* v529: success/fail lift visuals are complete preloaded frames. This keeps
+    /* v530: success/fail lift visuals are complete preloaded frames. This keeps
        the closure pose visible until the lift state is ready, with no mixed
        split-layer frame between different canvas sizes. */
     if(won){await grabPrize(chosen);} else {await missPrize(chosen);}
