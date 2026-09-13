@@ -3821,7 +3821,7 @@ html[data-free-matched-room="true"] #onlineDialog .room-code-card{display:none!i
 }
 
 
-/* v527: temporary game-start card cut-in */
+/* v528: temporary game-start card cut-in */
 .card-cutin[hidden]{display:none!important}
 .card-cutin{position:fixed;inset:0;z-index:12000;display:grid;place-items:center;overflow:hidden;isolation:isolate;cursor:pointer;touch-action:manipulation}
 .card-cutin-backdrop{position:absolute;inset:0;background:radial-gradient(circle at 50% 45%,rgba(49,78,120,.72),rgba(4,8,16,.97) 68%);backdrop-filter:blur(4px)}
