@@ -1,8 +1,8 @@
-/* CardWolf build v531 */
+/* CardWolf build v532 */
 const firebaseConfig = window.FIREBASE_CONFIG || {};
-if (window.CARDWOLF_BUILD_VERSION !== "v531") { window.CARDWOLF_BUILD_VERSION = "v531"; }
+if (window.CARDWOLF_BUILD_VERSION !== "v532") { window.CARDWOLF_BUILD_VERSION = "v532"; }
 const versionEl = document.querySelector(".build-version");
-if (versionEl) { versionEl.textContent = "v531"; versionEl.setAttribute("aria-label", "ゲームバージョン v531"); }
+if (versionEl) { versionEl.textContent = "v532"; versionEl.setAttribute("aria-label", "ゲームバージョン v532"); }
 
 // Firebase is loaded lazily so a CDN/auth/database problem can never disable
 // the basic game UI. The solo/setup buttons must remain usable even when the
@@ -281,8 +281,11 @@ function featureList(card,settings){
     {id:"level-none",label:"レベルを持たないモンスターです。",test:c=>Number(c.level)===0},
     ...statFeatureList("atk",getStatUnitFromSettings(settings)),
     ...statFeatureList("def",getStatUnitFromSettings(settings)),
+    {id:"atk-over-def",label:"守備力より攻撃力が高いモンスターです。",test:c=>isKnownStat(c.atk)&&isKnownStat(c.def)&&Number(c.atk)>Number(c.def)},
+    {id:"def-over-atk",label:"攻撃力より守備力が高いモンスターです。",test:c=>isKnownStat(c.atk)&&isKnownStat(c.def)&&Number(c.def)>Number(c.atk)},
+    {id:"atk-def-equal",label:"攻撃力と守備力が一致するモンスターです。",test:c=>isKnownStat(c.atk)&&isKnownStat(c.def)&&Number(c.atk)===Number(c.def)},
     {id:"name-blue",label:"「青眼」に関係するカードです",test:c=>c.name.includes("Blue-Eyes")},
-    {id:"name-dark",label:"「ブラック」または「ダーク」に関係する名前です",test:c=>c.name.includes("Dark")||c.name.includes("Black")},
+    {id:"name-dark",label:"英語名に「BLACK」または「DARK」が含まれます。",test:c=>/BLACK|DARK/i.test(String(c.name||""))},
     {id:"name-red",label:"「真紅眼」に関係するカードです",test:c=>c.name.includes("Red-Eyes")},
     {id:"toon",label:"「トゥーン」の名前を持ちます",test:c=>c.name.includes("Toon")},
     {id:"forbidden",label:"「封印されし」の名前を持ちます",test:c=>c.name.includes("Forbidden")},
@@ -1719,7 +1722,7 @@ async function submitOnlineActionOnce(action){
     onlineActionPromises.set(actionId,finish);
     try{
       onValue(resultRef,listener);
-      await set(actionRef,{...action,matchId:onlineGame.matchId||onlineMatchId||"",uid:firebaseUid,actionId,clientVersion:"v531",createdAt:Date.now()});
+      await set(actionRef,{...action,matchId:onlineGame.matchId||onlineMatchId||"",uid:firebaseUid,actionId,clientVersion:"v532",createdAt:Date.now()});
     }catch(e){console.error("online action write failed",e);finish(false);return;}
     timer=setTimeout(()=>{onlineDebug("action-timeout",{actionId,action});finish(false);},8000);
   });

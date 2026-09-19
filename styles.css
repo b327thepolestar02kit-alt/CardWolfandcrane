@@ -3821,7 +3821,7 @@ html[data-free-matched-room="true"] #onlineDialog .room-code-card{display:none!i
 }
 
 
-/* v531: temporary game-start card cut-in */
+/* v532: temporary game-start card cut-in */
 .card-cutin[hidden]{display:none!important}
 .card-cutin{position:fixed;inset:0;z-index:12000;display:grid;place-items:center;overflow:hidden;isolation:isolate;cursor:pointer;touch-action:manipulation}
 .card-cutin-backdrop{position:absolute;inset:0;background:radial-gradient(circle at 50% 45%,rgba(49,78,120,.72),rgba(4,8,16,.97) 68%);backdrop-filter:blur(4px)}
@@ -3843,7 +3843,7 @@ html[data-free-matched-room="true"] #onlineDialog .room-code-card{display:none!i
 @media(max-width:720px){.card-cutin-panel{width:min(94vw,620px);padding:18px;border-radius:18px}.card-cutin-content{grid-template-columns:1fr;gap:12px;text-align:center}.card-cutin-image{min-height:0}.card-cutin-image img{max-height:47vh;max-width:72vw}.card-cutin-copy h2{font-size:clamp(1.65rem,8vw,2.6rem);margin-bottom:10px}.card-cutin-info{font-size:.95rem}.card-cutin-skip{text-align:center;margin-top:14px}}
 @media(prefers-reduced-motion:reduce){.card-cutin-panel,.card-cutin.is-closing .card-cutin-panel{animation:none}}
 
-/* v531: WIN/LOSE result cut-in. Reuses card-cutin timing/overlay behavior. */
+/* v532: WIN/LOSE result cut-in. Reuses card-cutin timing/overlay behavior. */
 .result-cutin-panel{
   min-height:min(52vh,430px);
   display:flex;
@@ -3864,4 +3864,16 @@ html[data-free-matched-room="true"] #onlineDialog .room-code-card{display:none!i
 @media (max-width:700px){
   .result-cutin-panel{min-height:42vh;}
   .result-cutin-word{font-size:clamp(4rem,23vw,7rem);}
+}
+
+/* v532: slightly smaller card/result cut-in artwork and typography. */
+.card-cutin-image img{max-width:min(100%,330px);max-height:54vh}
+.card-cutin-copy h2{font-size:clamp(1.85rem,4.5vw,4rem)}
+.card-cutin-info{font-size:clamp(.95rem,1.65vw,1.22rem)}
+.result-cutin-word{font-size:clamp(4.2rem,12.5vw,9rem)}
+@media(max-width:720px){
+ .card-cutin-image img{max-height:43vh;max-width:67vw}
+ .card-cutin-copy h2{font-size:clamp(1.5rem,7.2vw,2.35rem)}
+ .card-cutin-info{font-size:.9rem}
+ .result-cutin-word{font-size:clamp(3.6rem,20vw,6.3rem)}
 }
